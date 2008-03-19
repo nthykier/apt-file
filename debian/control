@@ -1,9 +1,9 @@
 Source: apt-file
 Section: base
 Priority: optional
-Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
-XSBC-Original-Maintainer: Sebastien J. Gross <sjg@debian.org>
-Build-Depends: debhelper (>= 5), cdbs
+Maintainer: Stefan Fritsch <sf@debian.org>
+Uploaders: Thijs Kinkhorst <thijs@debian.org>
+Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.3
 
 Package: apt-file

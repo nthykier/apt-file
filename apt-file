@@ -28,7 +28,7 @@ use Getopt::Long qw/:config no_ignore_case/;
 use Data::Dumper;
 use File::Basename;
 use AptPkg::Config '$_config';
-use constant VERSION => "2.0.8.2";
+use constant VERSION => "2.1.0";
 
 
 my $Conf;
