@@ -1,0 +1,417 @@
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN">
+<refentry>
+  <refentryinfo>
+    <address>
+      <email>sjg@debian.org</email>
+    </address>
+    <author>
+      <firstname>Sebastien</firstname>
+      <surname>Gross</surname>
+      <othername>J.</othername>
+    </author>
+    <date>May 2003</date>
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>apt-file</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>apt-file</refname>
+    <refpurpose>
+      APT package searching utility -- command-line interface
+    </refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>apt-file</command>
+      <arg><option>options</option></arg>
+      <arg>action</arg>
+      <arg>pattern</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para><command>apt-file</command> is a command line tool for
+      searching packages for the APT packaging system.</para>
+    <para>Some actions are required to run the search:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>update</term>
+	<listitem>
+	  <para>
+	    Resynchronize the package contents from their sources. The
+	    lists of the contents of packages are fetched from the location(s)
+	    specified in
+	    <filename>/etc/apt/sources.list</filename>. This command
+	    attempts to fetch the
+	    <filename>Contents-&lt;ARCH&gt;.gz</filename> files from
+	    remote sources.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>search</term>
+	<listitem>
+	  <para>
+	    Search in which package file is included. A list of all
+	    package containing the <option>pattern</option> pattern
+	    is returned.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>find</term>
+	<listitem>
+	  <para>
+	    Alias for <option>search</option>.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>list</term>
+	<listitem>
+	  <para>
+	    List the contents of a package matching the
+	    <option>pattern</option> pattern. This action is very
+	    close to the <command>dpkg -S</command> command except the
+	    package does not need to be installed or fetched.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>show</term>
+	<listitem>
+	  <para>
+	    Alias for <option>list</option>.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>purge</term>
+	<listitem>
+	  <para>
+	    remove all <filename>Contents-&lt;ARCH&gt;.gz</filename>
+	    files in cache directory.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <option>--cache | -c</option> <literal>cache-directory</literal>
+	</term>
+	<listitem>
+	  <para>
+	    Sets the cache directory to
+	    <literal>cache-directory</literal> instead of its default
+	    value (<filename>/var/cache/apt</filename>) thus you can
+	    use <command>apt-file</command> even if you do not have
+	    administrator privileges.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>--verbose | -v</option>
+	</term>
+	<listitem>
+	  <para>
+	    Run <command>apt-file</command> in verbose mode.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>--cdrom-mount | -d</option> <literal>cdrom-mount-point</literal>
+	</term>
+	<listitem>
+	  <para>
+Use <literal>cdrom-mount-point</literal> instead of
+<command>apt</command>'s.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>--ignore-case | -i</option>
+	</term>
+	<listitem>
+	  <para>Do not expand <literal>pattern</literal>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>--regexp | -x</option>
+	</term>
+	<listitem>
+	  <para>
+	    Treat <literal>pattern</literal> as a regular expression.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>--version | -V</option>
+	</term>
+	<listitem>
+	  <para>Show version number.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>--architecture | -a</option>
+	  architecture
+	</term>
+	<listitem>
+	  <para>
+	  Sets architecture to <literal>architecture</literal>. This
+	  option is useful if you search a package for a different
+	  architecture from the one installed on your system.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>--sources-list</option> | <option>-s</option>
+	  sources.list
+	</term>
+	<listitem>
+	  <para>
+	    Sets the <filename>sources.list</filename> file to a
+	    different value from its default
+	    <filename>/etc/apt/sources.list</filename>.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>--package-only | -l</option>
+	</term>
+	<listitem>
+	  <para>
+	    Only display package name. Do not display file names.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>--fixed-string | -F</option>
+	</term>
+	<listitem>
+	  <para>
+	    Do not expand search pattern with generic characters at
+	    pattern's start and end.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <option>--dummy | -y</option>
+	</term>
+	<listitem>
+	  <para>
+	    Run in dummy mode (no action).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <option>--help | -h</option>
+	</term>
+	<listitem>
+	  <para>Display a short help screen.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>CONFIGURATION FILE</title>
+    <para>
+      The <command>apt-file</command> configuration file
+      (<filename>/etc/apt/apt-file.conf)</filename> changed from
+      version 1 to version 2. Now only fetch backends are defined in
+      the configuration file. Thus it is much easier to configure
+      proxies.
+    </para>
+    <para>
+      A string expension is done on several values. See <literal>string
+	expension</literal> section.
+    </para>
+    <variablelist>
+      <varlistentry>
+	<term>destination</term>
+	<listitem>
+	  <para>
+	    This variable describes how cached files will be named.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>http | ftp | ssh | rsh | file | cdrom</term>
+	<listitem>
+	  <para>
+	    Define are the commands used to fetch files.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+    <refsect2>
+      <title>String expansion</title>
+      <para>
+	A <filename>sources.list</filename> entry is defined as:
+	<screen>
+	  deb uri dist component1 component2 ...
+	</screen>
+	A <literal>uri</literal> is defined as:
+	<screen>
+	  proto:/[/][user[:password]@]host[:port][/path]
+	</screen>
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term>&lt;host&gt;</term>
+	  <listitem>
+	    <para>replace with the hostname.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&lt;port&gt;</term>
+	  <listitem>
+	    <para>replace with the port number.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&lt;uri&gt;</term>
+	  <listitem>
+	    <para>replace with full uri</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&lt;path&gt;</term>
+	  <listitem>
+	    <para>
+	      replace with full path (relative to / on the host)
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&lt;dist&gt;</term>
+	  <listitem>
+	    <para>replace with distribution name</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&lt;comp&gt;</term>
+	  <listitem>
+	    <para>replace with component name</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&lt;cache&gt;</term>
+	  <listitem><para>replace with cache directory</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&lt;dest&gt;</term>
+	  <listitem>
+	    <para>
+	      replace with <literal>destination</literal> expanded
+	      value.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&lt;cdrom&gt;</term>
+	  <listitem>
+	    <para>
+	      replace with <literal>cdrom-mount-point</literal>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+      </variablelist>
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>FILES</title>
+
+    <variablelist>
+      <varlistentry>
+	<term><filename>/etc/apt/sources.list</filename></term>
+	<listitem>
+	  <para>Locations to fetch package contents from.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><filename>/etc/apt/apt-file.conf</filename></term>
+	<listitem>
+	  <para>
+	    Configuration file for <command>apt-file</command>.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <command>auto-apt</command>(1), <command>apt-cache</command>(8),
+      <command>apt-cdrom</command>(8), <command>dpkg</command>(8),
+      <command>dselect</command>(8),
+      <filename>sources.list</filename>(5),
+      <filename>apt.conf</filename>(5),
+      <command>apt_preferences</command>(5).
+    </para>
+    <para>
+      The APT users guide in
+      <filename>/usr/share/doc/apt/</filename>
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>BUGS</title>
+    <para>cdrom backend has not been tested.</para>
+    <para>
+      Non-release line in sources.list is not handled by apt-file.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+      <command>apt-file</command> was written by Sebastien J. Gross
+      <email>sjg@debian.org</email>.
+    </para>
+  </refsect1>
+</refentry>

@@ -1,0 +1,39 @@
+have apt-file &&
+_apt-file()
+{
+	local cur prev special i
+
+	COMPREPLY=()
+	cur=${COMP_WORDS[COMP_CWORD]}
+	prev=${COMP_WORDS[COMP_CWORD-1]}
+
+	for (( i=0; i < ${#COMP_WORDS}-1; i++ )); do
+		if [[ ${COMP_WORDS[i]} == @(list) ]]; then
+			special=${COMP_WORDS[i]}
+		fi
+	done
+
+	if [ -n "$special" ]; then
+            COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) )
+            return 0
+        fi
+
+	if [[ "$cur" == -* ]]; then
+
+		COMPREPLY=( $( compgen -W '-c -v -V -a -s -l -F -y -H \
+				--cache --verbose --version --architecture \
+				--sources-list --package-only --fixed-string \
+				--dummy --help' -- $cur ) )
+	else
+
+		COMPREPLY=( $( compgen -W 'update search list \
+                                show purge' -- $cur ) )
+
+	fi
+
+
+	return 0
+
+}
+complete -F _apt-file apt-file
+

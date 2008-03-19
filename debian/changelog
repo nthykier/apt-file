@@ -1,0 +1,258 @@
+apt-file (2.0.8.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * The Contents.gz files map a file to the list of packages that
+    contain it. do_grep grabs all these packages, this fix
+    post-processes its result so that we only print out the packages
+    that do match the given pattern.  Also, take account that a file
+    name may have spaces and avoid false positives by tightening the
+    grep pattern.  NOTE: this is a minimal NMU patch to close
+    important bug #382312 (it also closes two similar bugs). 
+    There is a more complete patch available in the bts for
+    #382312 that I think would make apt-file much more useful and
+    closes other bugs.     (Closes: #382312, #376607, #358821)
+  * Updated Version String to 2.0.8.2 (Closes: #376458)
+
+ -- Kevin Glynn <glynn@info.ucl.ac.be>  Mon,  6 Nov 2006 15:47:57 -0600
+
+apt-file (2.0.8.1) unstable; urgency=low
+
+  * Non-maintainer upload by Gunnar Wolf
+  * Updated dependency on libconfigfile-perl to libconfig-file-perl;
+    updated the reference in code to ConfigFile to point to Config::File
+    instead as well. (Closes: #387018)
+
+ -- Gunnar Wolf <gwolf@debian.org>  Fri, 27 Oct 2006 13:38:03 -0500
+
+apt-file (2.0.8) unstable; urgency=low
+
+  * Allow curl to redirect (Closes: #363670)
+  * Download to temp file when using curl (Closes: #349585)
+  * Remove cache when package purge (Closes: #362031)
+  * Close old bugs (Closes: #319867) 
+
+ -- Sebastien J. Gross <sjg@debian.org>  Thu, 20 Apr 2006 12:13:45 +0200
+
+apt-file (2.0.7) unstable; urgency=low
+
+  * change cache dir to /var/cache/apt-/apt-file (Closes: #341169)
+  * fixed up "bad file descriptor" error when running in debug
+    (Closes: #348527)
+  * Changes configuration file to handle 404s and not erase
+    existing Contents files (Closes: #349585)
+  * changed configuration to not complain if Contents files are not
+    in cache yet (Closes: #316310, #317964)
+  * changed configuration to softly ignore missing Contents files
+    (Closes: #316311)
+  * changed configuration to permissions in cache directory
+    (Closes: #319066)
+  * minor fixes (Closes: #320318, #323641, #323682, #320313)
+  * add find command as a search alias (Closes: #320737)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Thu,  2 Mar 2006 00:12:54 +0100
+
+apt-file (2.0.6) unstable; urgency=low
+
+  * Now ftp method works (Closes: #307971, #307973)
+  * Add wget methods to config file (in comments) (Closes: #307972)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Mon,  9 May 2005 15:04:43 +0200
+
+apt-file (2.0.5) unstable; urgency=low
+
+  * Remove duplicate lines (Closes: #238852)
+  * Search error fix (Closes:  #276394)
+  * Remove tailling slash (Closes: #280690) 
+  * Add notes on both curl and wget (Closes: #307714, #229540, #226070)
+  * Old bug closed (Closes: #217678)
+  
+ -- Sebastien J. Gross <sjg@debian.org>  Thu,  5 May 2005 18:00:15 +0200
+
+apt-file (2.0.4) unstable; urgency=low
+
+  * Update configuration file from wget to curl (Closes: #186846) 
+  * Fixed some typos (Closes: #264967, #236719)
+  * Changes license/copyright (Closes: #290057)
+  * Explicitly change Contents file to 644 (Closes: #271349)
+  * "show" is now an alias for "list" (Closes: #286757)
+  * add bash_completion (Closes: #301997)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Wed,  4 May 2005 15:32:10 +0200
+
+apt-file (2.0.3-7) unstable; urgency=low
+
+  * Add french man page (Closes: #235338)
+  * As the wget backend can be changed in configuration file, apt-file
+    recommends but does not depend on it (see #183942)
+    (Closes: #237802, #242582)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Tue, 29 Jun 2004 10:56:58 +0200
+
+apt-file (2.0.3-6) unstable; urgency=low
+
+  * Added -x option (Thanks to Olaf Klischat) 
+
+ -- Sebastien J. Gross <sjg@debian.org>  Mon, 15 Mar 2004 00:38:23 +0100
+
+apt-file (2.0.3-5) unstable; urgency=low
+
+  * Fixed write in current directory when using FTP (Closes: #226969) 
+
+ -- Sebastien J. Gross <sjg@debian.org>  Wed, 14 Jan 2004 01:56:07 +0100
+
+apt-file (2.0.3-4) unstable; urgency=low
+
+  * Fixed uninitialized values (Closes: #195198, #203607, #211439)
+  * Fixed lines begining with spaces (Closes: #225269)
+  * Fixed copy method in configuration file (Closes: #224485)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Mon, 12 Jan 2004 13:49:56 +0100
+
+apt-file (2.0.3-3) unstable; urgency=low
+
+  * Fixed typo in debian/changelog (Closes: #196959)
+  * Fixed vendors information is included in sources.list (Closes: #206358)
+  * Fixed update fails if experimental is used (Closes: #216894)
+  Fixes thanks to Marc 'HE' Brockschmidt
+
+ -- Sebastien J. Gross <sjg@debian.org>  Wed, 22 Oct 2003 22:13:28 +0200
+
+apt-file (2.0.3-2) unstable; urgency=low
+
+  * Remove leading slash in pattern (Closes: #190122) 
+
+ -- Sebastien J. Gross <sjg@debian.org>  Fri, 16 May 2003 15:14:51 +0200
+
+apt-file (2.0.3-1) unstable; urgency=low
+
+  * Fixed some typos in manpage (Closes: #176774)
+  * Regexp optimization (case insensitive support) (Closes: #193480)
+  * Recommends wget (Closes: #183942)
+  * Do not store empty files (Closes: #183270)
+  * Quote filename passed to zcat (Closes: #185664)
+  * Handles right cdrom device (Closes: #182382)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Fri, 16 May 2003 12:42:47 +0200
+
+apt-file (2.0.2-1) unstable; urgency=low
+
+  * Fixed inexistent content files (Closes: #172596) 
+
+ -- Sebastien J. Gross <sjg@debian.org>  Wed, 11 Dec 2002 12:25:35 +0100
+
+apt-file (2.0.1-2) unstable; urgency=low
+
+  * Check pattern argument (Closes: #171573)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Tue,  3 Dec 2002 14:42:08 +0100
+
+apt-file (2.0.1-1) unstable; urgency=low
+
+  * Fix non-release line in sources.list causes failure (Closes: #171490)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Tue,  3 Dec 2002 12:13:15 +0100
+
+apt-file (2.0.0) unstable; urgency=low
+
+  * Entire program rewriting (Closes: #128553, #161393, #131146, #149188,
+    #153544, #167258, #170720, #128769, #128850, #130308, #132966, #155769,
+    #159569, #170672, #170674, #147442, #158038, #127338, #141039)
+  
+ -- Sebastien J. Gross <sjg@debian.org>  Mon,  2 Dec 2002 17:56:06 +0100
+
+apt-file (0.2.3-3) unstable; urgency=low
+
+  * Does not check write privilege but for update (Closes: #128466)
+  * Fix typo in man page (Closes: #128551, #131366)
+  * Update description (Closes: #133042)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Sat, 23 Feb 2002 17:17:03 +0100
+
+apt-file (0.2.3-2) unstable; urgency=low
+
+  * Fix return code
+  * use http_proxy if needed
+
+ -- Sebastien J. Gross <sjg@debian.org>  Wed,  9 Jan 2002 15:37:33 +0100
+
+apt-file (0.2.3-1) unstable; urgency=low
+
+  * Use ftp_proxy if needed (Closes: #128289)
+  * Warns if file not found while fetching (Closes: #128290)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Tue,  8 Jan 2002 16:42:49 +0100
+
+apt-file (0.2.2-5) unstable; urgency=low
+
+  * Use locale architecture (closes #127025)
+  * Create cache directory if unexistant (closes #128007)
+  * Check write privilege on cache dir (closes #128008, #128007)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Mon,  7 Jan 2002 14:09:49 +0100
+
+apt-file (0.2.2-4) unstable; urgency=low
+
+  * Fix Undefined value (closes #127339)
+  * Now use by default auto-apt cache dir (see Bug#126908)
+  * Fix tabs breaks in sources.list (closes #127553)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Fri,  4 Jan 2002 12:08:25 +0100
+
+apt-file (0.2.2-3) unstable; urgency=low
+
+  * Fix package description (closes #126639)
+  * Add auto-apt(1) cache support (closes #126908)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Sun, 30 Dec 2001 02:12:24 +0100
+
+apt-file (0.2.2-2) unstable; urgency=low
+
+  * Fix missing coma (closes #126862) 
+
+ -- Sebastien J. Gross <sjg@debian.org>  Sat, 29 Dec 2001 14:21:02 +0100
+
+apt-file (0.2.2-1) unstable; urgency=low
+
+  * Fix pattern search
+  * Add multiple packages files
+  * Add in to the Debian Project (closes #125386)
+
+ -- Sebastien J. Gross <sjg@debian.org>  Thu, 20 Dec 2001 17:50:15 +0100
+
+apt-file (0.2.1-3) unstable; urgency=low
+
+  * Add netbase and libwww-perl dependencies
+
+ -- Sebastien J. Gross <sjg@debian.org>  Thu, 20 Dec 2001 01:11:15 +0100
+
+apt-file (0.2.1-2) unstable; urgency=low
+
+  * Conf file location update
+  
+ --  Sebastien J. Gross <seb@sjgross.org>  Tue, 13 Nov 2001 04:45:25 +0200
+  
+apt-file (0.2.1-1) unstable; urgency=low
+
+  * Improved regexp search
+  * Add --version option
+  * Disabled --recursive option
+  * Add `gzip' dependancy
+  * Add conffile
+  
+ -- Sebastien J. Gross <seb@sjgross.org>  Mon, 12 Nov 2001 21:55:25 +0200
+  
+apt-file (0.2.0-2) unstable; urgency=low
+
+  * Changed bad value for CONF_FILE
+
+ -- Sebastien J. Gross <seb@sjgross.org>  Wed, 17 Oct 2001 11:22:00 +0200
+
+apt-file (0.2.0-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Sebastien J. Gross <seb@sjgross.org>  Sat, 13 Oct 2001 21:36:47 +0200
+	
+Local variables:
+mode: debian-changelog
+End:

@@ -1,0 +1,53 @@
+Version 2.0.3
+	2003-05-16 <sjg> Fixed some typos in manpage
+	  		 Regexp optimization (case insensitive support)
+	      		 Do not store empty files
+	        	 Quote filename passed to zcat
+		  	 Handles right cdrom device
+			 Remove leading / in pattern
+
+Version 2.0.2
+        2002-12-11 <sjg> Creates inexistent content files fix.
+
+Version 2.0.1
+	2002-12-03 <sjg> Non-release line in sources.list causes failure
+			 Support for $(ARCH) in sources.list
+			 Check pattern argument for both list and search
+			 options
+
+Version 2.0.0
+	2002-12-02 <sjg> Entirelly rewrote the program
+			 Now fetch commands are external thus no proxy
+			 problem.
+
+Version 0.2.5
+	2002-05-09 <sjg> use ->mirror instead of -> request, http files
+	                 won't be downloaded again if they are unchanged
+			 (thanks to Ariel Shkedi <asdebian@dsgml.com>)
+
+Version 0.2.4
+	2002-05-03 <sjg> Add RPM support (thanks to Richard Bos
+			 <allabos@freeler.nl>)
+Version 0.2.3
+	2002-01-08 <sjg> Use ftp_proxy if needed
+	                 Warns if file not found while fetching
+Version 0.2.2
+        2002-01-07 <sjg> Use locale architecture
+	                 Create cache directory if unexistant
+			 Check write privilege on cache dir
+	2002-01-04 <sjg> Fix Undefined value in main()
+	                 Now use by default auto-apt cache dir
+			 Fix tabs breaks in sources.list
+        2001-12-29 <sjg> Fix typo
+        2001-12-21 <sjg> Fix some command line parse problems
+	2001-12-20 <sjg> Fix pattern search
+	                 Add multiple packages files
+version 0.2.1
+	2001-11-12 <sjg> Emproved regexp search
+			 Add --version option
+			 Remove --recursive option
+
+version 0.2.0
+
+	2001-10-17 <sjg> Changed bad value for CONF_FILE
+	2001-10-15 <sjg> First realease

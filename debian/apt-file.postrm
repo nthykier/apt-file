@@ -1,0 +1,8 @@
+#! /bin/sh
+# postremoval script for apt-file
+set -e;
+
+if [ "purge" = "$1" ]; then
+	rm -fr /var/cache/apt/apt-file/
+fi;
+
