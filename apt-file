@@ -93,6 +93,7 @@ sub find_command
 	$key = $key.$i if $i != 1;
 	return unless defined $conf->{$key};
 	my $cmd = $conf->{$key};
+	$cmd =~ s/^[( ]+//;
 	$cmd =~ s/ .*//;
 	for my $path (split( /:/,$ENV{'PATH'}))
 	{
@@ -112,31 +113,35 @@ sub parse_sources_list($) {
 
     my ($cmd, $dest);
 
-    open(SOURCE, "< $file") || error "Can't open $file";
-    while(<SOURCE>) {
-	next if /^\s*(?:$|\#|(?:deb-|rpm-))/xo;
-	chomp;
-	my $line = $_;
-	debug "got \'$line\'";
-	$line =~ s/([^\/])\#.*$/$1/o;
-	$line =~ s/^(\S+\s+)\[\S+\]/$1/o;
-	$line =~ s/\s+/ /go;
-	$line =~ s/^\s+//o;
+    my @files = ref $file ? @$file : [ $file ];
 
-	# CDROM entry
-	if (@tmp = $line =~ m/^([^\[]*)\[([^\]]*)\](.*)$/o) {
-	    $tmp[1] =~ s/ /_/g;
-	    $line = $tmp[0].'['.$tmp[1].']'.$tmp[2];
-	}
+    foreach $file (grep -f, @files) {
+        debug "reading sources file $file";
+	open(SOURCE, "< $file") || error "Can't open $file";
+	while(<SOURCE>) {
+	    next if /^\s*(?:$|\#|(?:deb-|rpm-))/xo;
+	    chomp;
+	    my $line = $_;
+	    debug "got \'$line\'";
+	    $line =~ s/([^\/])\#.*$/$1/o;
+	    $line =~ s/^(\S+\s+)\[\S+\]/$1/o;
+	    $line =~ s/\s+/ /go;
+	    $line =~ s/^\s+//o;
 
-	# Handle $(ARCH) in sources.list
-	$line =~ s/\$\(ARCH\)/$Conf->{arch}/g;
-	debug "kept \'$line\'";
+	    # CDROM entry
+	    if (@tmp = $line =~ m/^([^\[]*)\[([^\]]*)\](.*)$/o) {
+		$tmp[1] =~ s/ /_/g;
+		$line = $tmp[0].'['.$tmp[1].']'.$tmp[2];
+	    }
 
-	my( $pkg, $uri, $dist, @extra) = split /\s+/, $line;
-	$uri =~ s/\/+$//;
-	my($scheme, $user, $passwd, $host, $port, $path, $query,
-	   $fragment) =
+	    # Handle $(ARCH) in sources.list
+	    $line =~ s/\$\(ARCH\)/$Conf->{arch}/g;
+	    debug "kept \'$line\'";
+
+	    my( $pkg, $uri, $dist, @extra) = split /\s+/, $line;
+	    $uri =~ s/\/+$//;
+	    my($scheme, $user, $passwd, $host, $port, $path, $query,
+	       $fragment) =
 	       $uri =~
 	       m|^
 	       (?:([^:/?\#]+):)?           # scheme
@@ -155,45 +160,46 @@ sub parse_sources_list($) {
 
 #	print "$scheme, $user, $passwd, $host, $port, $path, $query, $fragment\n";
 
-	my $fetch=[];
+	    my $fetch=[];
 
-	foreach (@extra) {
-	    push @$fetch,  m/(.*?)\/(?:.*)/o ? "$dist/$1" : "$dist";
-	}
-
-	foreach (@{(unique $fetch)}) {
-	    if (!defined $Conf->{"${scheme}"}) {
-		warning "Don't know how to handle $scheme";
-		next;
+	    foreach (@extra) {
+		push @$fetch,  m/(.*?)\/(?:.*)/o ? "$dist/$1" : "$dist";
 	    }
-	    $dist = $_;
-	    $cmd = find_command( $Conf, $scheme );
+
+	    foreach (@{(unique $fetch)}) {
+		if (!defined $Conf->{"${scheme}"}) {
+		    warning "Don't know how to handle $scheme";
+		    next;
+		}
+		$dist = $_;
+		$cmd = find_command( $Conf, $scheme );
 #	    $cmd = $Conf->{"${scheme}"};
-	    die "Could not find suitable command for $scheme" unless $cmd;
-	    $dest = $Conf->{destination};
-	    my $cache = $Conf->{cache};
-	    my $arch = $Conf->{arch};
-	    my $cdrom = $Conf->{cdrom_mount};
-	    foreach my $var (qw/host port user passwd path dist pkg
-			     cache arch uri cdrom/) {
-		map {
-		    $_ =~ s{<$var(?:\|(.+?))?>}{
-			defined eval "\$$var" ? eval "\$$var" :
+		die "Could not find suitable command for $scheme" unless $cmd;
+		$dest = $Conf->{destination};
+		my $cache = $Conf->{cache};
+		my $arch = $Conf->{arch};
+		my $cdrom = $Conf->{cdrom_mount};
+		foreach my $var (qw/host port user passwd path dist pkg
+				 cache arch uri cdrom/) {
+		    map {
+			$_ =~ s{<$var(?:\|(.+?))?>}{
+			    defined eval "\$$var" ? eval "\$$var" :
 			    defined $1 ? $1 : "";
-		    }gsex;
-		} ($cmd, $dest)
-	    }
-	    $dest =~ s/(\/|_)+/_/go;
-	    $cmd =~ s/<dest>/$dest/g;
-	    my $hash;
-	    foreach (qw/host port user passwd path dist pkg uri line
-		     dest cmd/) {
-		$hash->{$_} = eval "\$$_";
-	    }
-	    push @$ret, $hash;
-	};
+			}gsex;
+		    } ($cmd, $dest)
+		}
+		$dest =~ s/(\/|_)+/_/go;
+		$cmd =~ s/<dest>/$dest/g;
+		my $hash;
+		foreach (qw/host port user passwd path dist pkg uri line
+			 dest cmd/) {
+		    $hash->{$_} = eval "\$$_";
+		}
+		push @$ret, $hash;
+	    };
+	}
+	close SOURCE;
     }
-    close SOURCE;
     return $ret;
 }
 
@@ -202,7 +208,7 @@ sub fetch_files ($) {
     error "Can't write in $Conf->{cache}" if ! -w $Conf->{cache};
     foreach (@{(shift)}) {
 	debug $_->{cmd};
-	qx|$_->{cmd}| if ! defined $Conf->{dummy};
+	print qx|$_->{cmd}| if ! defined $Conf->{dummy};
     }
 }
 
@@ -235,23 +241,34 @@ sub print_winners ($$) {
 sub do_grep($$) {
     my ($data, $pattern) = @_;
     my $ret;
-    my ($pack, $file);
+    my ($pkgs, $fname, $in_header);
     debug "regexp: $pattern";
     $|=1;
     my $regexp = eval { $Conf->{ignore_case} ? qr/$pattern/i : qr/$pattern/ };
     error($@) if $@;
+    my %seen = ();
     foreach(@$data) {
 	my $file = "$Conf->{cache}/$_->{dest}";
 	next if (! -f $file);
+        # Skip already searched files:
+        next if $seen{$file}++;
 	$file = quotemeta $file;
 	debug "Search in $file";
+        $in_header = 1;
 	open (ZCAT, "zcat $file |") ||
 	    warning "Can't zcat $file";
 	while(<ZCAT>) {
-	    next if ! (($pack, $file) = /$regexp/);
+            if ($in_header) {
+                if (m/FILE\s+LOCATION/) {
+                    $in_header = 0;
+                }
+                next;
+            }
+	    next if ! (($fname, $pkgs) = /$regexp/o);
 	    debug_line ".";
-	    foreach (split /,/, $file) {
-		push @{$ret->{$pack}}, basename $_;
+	    foreach (split /,/, $pkgs) {
+                # Put leading slash on file name
+		push @{$ret->{"/$fname"}}, basename $_;
 	    }
 	}
 	close ZCAT;
@@ -262,11 +279,32 @@ sub do_grep($$) {
 
 sub grep_file($) {
     my $data = shift;
-    my $pattern = join "", (
-			    '^(.*?',
-			    $Conf->{pattern},
+    my $pattern = $Conf->{pattern};
+    if($Conf->{is_regexp}) {
+        if( substr($pattern,0,1) eq '^' ) {
+            # Pattern is anchored, so we're just not prefixing it with .*
+            # and remove ^ and slash
+            $pattern =~ s/^\^\/?//;
+        }
+        elsif( substr($pattern,0,1) eq '/' ) {
+            # same logic as below, but the "/" is not escaped here
+            $pattern = substr($pattern,1).'|.*?'.$pattern;
+        }
+        else {
+            $pattern = '.*?'.$pattern;
+        }
+    }
+    elsif( substr($pattern,0,2) eq '\/' ) {
+        # If pattern starts with /, match both ^pattern-without-slash
+        # and ^.*pattern.
+        $pattern = substr($pattern,2).'|.*?'.$pattern;
+    }
+    else {
+        $pattern = '.*?'.$pattern;
+    }
+    $pattern = '^('.$pattern.join "", (
 			    defined $Conf->{fixed_strings} ?
-			    ")" : '[^\s]*)',
+			      ")" : '[^\s]*)',
 			    '\s+(\S+)\s*$',
 			    );
     my $ret = do_grep $data, $pattern;
@@ -275,12 +313,23 @@ sub grep_file($) {
 
 sub grep_package($) {
     my $data = shift;
+    # Strip leading^ / trailing $ if regexp
+    my $pkgpat = $Conf->{pattern};
+    if ($Conf->{is_regexp}) {
+        if (! substr($pkgpat,0,1) eq "^") {
+            $pkgpat = '\S*';
+        }
+        $pkgpat = substr($pkgpat,1);
+    }
+    else {
+        $pkgpat = '\S*'.$Conf->{pattern};
+    }
     # File name may contain spaces, so match template is 
     # ($fname, $pkgs) = (line =~ '^\s*(.*?)\s+(\S+)\s*$')
     my $pattern = join "", (
 			    '^\s*(.*?)\s+',
 			    '(\S*/',
-			    $Conf->{pattern},
+			    $pkgpat,
 			    defined $Conf->{fixed_strings} ?
 			    '(,\S*|)' : '\S*',
 			    ')\s*$',
@@ -294,8 +343,8 @@ sub purge_cache($) {
     foreach (@$data) {
 	debug "Purging $Conf->{cache}/$_->{dest}";
 	next if defined $Conf->{dummy};
-	unlink "$Conf->{cache}/$_->{dest}" ||
-	    warning "Can't remove $Conf->{cache}/$_->{dest}";
+	next if (unlink "$Conf->{cache}/$_->{dest}") > 0;
+	warning "Can't remove $Conf->{cache}/$_->{dest}";
     }
 }
 
@@ -358,6 +407,19 @@ sub get_options() {
     GetOptions(%options) || print_help 1;
 }
 
+sub dir_is_empty
+{
+    my ($path) = @_;
+    opendir DIR, $path;
+    while(my $entry = readdir DIR) {
+        next if($entry =~ /^\.\.?$/);
+        closedir DIR;
+        return 0;
+    }
+    closedir DIR;
+    return 1;
+}
+
 sub main {
     my $conf_file;
     map { $conf_file = $_ if -f $_ } ("/etc/apt/apt-file.conf",
@@ -376,8 +438,16 @@ sub main {
 
     $_config->init;
     $Conf->{arch} ||= $_config->{'APT::Architecture'};
-    $Conf->{sources_list} ||=  $_config->{'Dir'} .
-	$_config->{'Dir::Etc'} . $_config->{'Dir::Etc::sourcelist'};
+    $Conf->{sources_list} = [
+			     $Conf->{sources_list} ?
+			     $Conf->{sources_list} :
+			     (
+			      $_config->{'Dir'} . $_config->{'Dir::Etc'} .
+			      $_config->{'Dir::Etc::sourcelist'},
+			      glob($_config->{'Dir'} . $_config->{'Dir::Etc'} .
+				   $_config->{'Dir::Etc::sourceparts'} .
+				   '/*.list'))
+    ];
     $Conf->{cache} ||= $_config->{'Dir'} . $_config->{'Dir::Cache'} . 'apt-file';
     $Conf->{cache} =~ s/\/\s*$//;
     $Conf->{cdrom_mount} ||= $_config->{'Acquire::cdrom::Mount'} ||
@@ -386,8 +456,11 @@ sub main {
     $Conf->{action} = shift @ARGV || "none";
     $Conf->{pattern} = shift @ARGV;
     if(defined $Conf->{pattern}) {
-	$Conf->{pattern} =~ s/^\///;
 	$Conf->{pattern} = quotemeta($Conf->{pattern}) unless $Conf->{is_regexp};
+	if ($Conf->{is_regexp} and $Conf->{pattern} =~ /(\\[zZ]|\$)$/) {
+	    $Conf->{pattern} =~ s/(\\[zZ]|\$)$//;
+	    $Conf->{fixed_strings} = 1
+	}
     }
     undef $!;
 
@@ -400,15 +473,21 @@ sub main {
 	purge => \&purge_cache,
     };
 
-    $Conf->{help}=2 if $Conf->{action} =~ m/search|list/ &&
+    $Conf->{help}=2 if $Conf->{action} =~ m/search|find|list|show/ &&
     	! defined $Conf->{pattern};
     $Conf->{help}=2 if ! defined $actions->{$Conf->{action}} &&
 	! defined $Conf->{help};
     print_help($Conf->{help}-1) if defined $Conf->{help};
 
     my $sources = parse_sources_list $Conf->{sources_list};
-    error "No valid sources in $Conf->{sources_list}" if ! defined
+    error "No valid sources in @{$Conf->{sources_list}}" if ! defined
 	$sources;
+
+    if($Conf->{action} =~ m/search|find|list|show/ && dir_is_empty($Conf->{cache}))
+    {
+        undef $!; # unset "Bad file descriptor" error from dir_is_empty
+        error "The cache directory is empty. You need to run 'apt-file update' first.";
+    }
 
     $actions->{$Conf->{action}}->($sources);
 }

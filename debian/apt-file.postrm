@@ -6,3 +6,4 @@ if [ "purge" = "$1" ]; then
 	rm -fr /var/cache/apt/apt-file/
 fi;
 
+##DEBHELPER##

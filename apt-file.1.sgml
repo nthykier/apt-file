@@ -81,7 +81,7 @@
 	  <para>
 	    List the contents of a package matching the
 	    <option>pattern</option> pattern. This action is very
-	    close to the <command>dpkg -S</command> command except the
+	    close to the <command>dpkg -L</command> command except the
 	    package does not need to be installed or fetched.
 	  </para>
 	</listitem>

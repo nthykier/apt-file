@@ -1,14 +1,16 @@
 Source: apt-file
 Section: base
 Priority: optional
-Maintainer: Sebastien J. Gross <sjg@debian.org>
-Build-Depends-Indep: debhelper (>> 3.0.0)
-Standards-Version: 3.6.1
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+XSBC-Original-Maintainer: Sebastien J. Gross <sjg@debian.org>
+Build-Depends: debhelper (>= 5), cdbs
+Standards-Version: 3.7.3
 
 Package: apt-file
 Architecture: all
-Depends: ${perl:Depends}, wget | curl,gzip (>= 1.2.4), libconfig-file-perl, libapt-pkg-perl
+Depends: ${perl:Depends}, wget | curl, gzip (>= 1.2.4), libconfig-file-perl, libapt-pkg-perl, menu
 Suggests: ssh, sudo
+Recommends: file
 Description: APT package searching utility -- command-line interface
  apt-file is a command line tool for searching packages for the APT
  packaging system.

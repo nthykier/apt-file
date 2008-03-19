@@ -70,7 +70,7 @@
 	  <para>
 	    Liste le contenu d'un paquet correspondant au motif
 	    <literal>motif</literal>. Cette action ressemble beaucoup à la commande
-	    <command>dpkg -S</command> sauf que les paquets n'ont pas besoin d'être
+	    <command>dpkg -L</command> sauf que les paquets n'ont pas besoin d'être
 	    installés ou récupérés.
 	  </para>
 	</listitem>

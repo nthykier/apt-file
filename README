@@ -4,10 +4,10 @@ apt-file version 2.0.5
 DESCRIPTION
 
 apt-file allows you to find in which package a file is included. This
-application has the same behaviour than the James Treacy's script
+application has the same behaviour as James Treacy's script
 found at http://packages.debian.org.
 
-In an other hand you can list all files included in a package without
+Additionally you can list all files included in a package without
 installing or downloading it (see dpkg -S and dpkg --contents for more
 details about listing a package content).
 
@@ -16,14 +16,14 @@ INSTALLATION
 apt-file requires Andy Wardley's AppConfig perl module version 1.52 or
 greater found on the CPAN (http://www.cpan.org).
 
-run make install to install apt-file.
+Run make install to install apt-file.
 
 USAGE
 
-see apt-file (1) man page for more details
+See apt-file (1) man page for more details
 
-Please note that curl is need with _THIS_ configuration file only
+Please note that curl is needed with _THE DEFAULT_ configuration file only
 If you prefer using wget, it's up to you but you _MUST_ change the
-chanfinguration file according to your choice.
-This explains why nor wget nor curl are in the package dependances but
-on recommends.
+confinguration file according to your choice.
+This explains why neither wget nor curl are in the package dependencies but
+recommended instead.

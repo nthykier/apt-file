@@ -1,3 +1,79 @@
+apt-file (2.0.8.2ubuntu4) hardy; urgency=low
+
+  * apt-file.bash_completion: use _apt_file instead of _apt-file for
+    completion function (LP: #173057, Closes: #441041)
+
+ -- Daniel Hahler <ubuntu@thequod.de>  Sun, 09 Mar 2008 17:42:01 +0100
+
+apt-file (2.0.8.2ubuntu3) hardy; urgency=low
+
+  * Improved "need to run apt-file update" experience (LP: #154180)
+    - debian/apt-file.postinst:
+      - Do not call apt-file update anymore directly
+      - install update-notifier hook
+    - debian/control: Depend on "menu" for su-to-root
+    - apt-file: test if the cache directory is empty for actions
+      search/find and show/list.
+  * apt-file: reverted removal of leading slash in pattern and implement
+    logic to match both without slash at the beginning and with slash
+    inside (LP: #181600). Apply the same logic to regexp patterns (-x).
+  * debian/rules:
+    - moved DH_COMPAT=3 to debian/compat (increased to 5)
+    - Fixed debian-rules-ignores-make-clean-error
+    - Dropped binary-arch target
+  * Fix typos/wording in README
+  * apt-file.conf: Add integrity check for fetched files (LP: #176753)
+  * apt-file: find_command: remove leading spaces and open parentheses
+    before looking for the command, so that the new defaults in
+    apt-file.conf work
+  * apt-file: print output from command after executing it, so that
+    errors and notes from there get to the user
+  * debian/apt-file.postrm: added DEBHELPER marker
+  * debian/control:
+    - Dropped Build-Depends-Indep: debhelper (>> 3.0.0)
+    - Build-Depends: debhelper (>= 5), cdbs
+    - Standards-Version: 3.7.3
+    - Recommend "file", which gets used optionally for the integrity check
+  * apt-file.bash_completion: filename/directory completion for "search",
+    patch taken from Debian bug #448358
+  * apt-file/do_grep: only search in all cache files once (LP: #174134)
+  * apt-file: fix display of warning in purge_cache, if the file cannot be
+    deleted
+  * Applied patches from Kevin Glynn in a lot of places, see Debian bug
+    #382312). Thanks!
+  * Support files in /etc/apt/sources.list.d/ (LP: #190602) (Closes: #353275)
+    Patches from Amos Shapira and Andrew Schulman.
+
+ -- Daniel Hahler <ubuntu@thequod.de>  Fri, 15 Feb 2008 00:18:52 +0100
+
+apt-file (2.0.8.2ubuntu2) gutsy; urgency=low
+
+  [Matti Lindell]
+  * debian/control: Change Maintainer to XSBC-Original-Maintainer
+  * Remove spurious files left from merge (LP: #119887)
+
+  [Emmet Hikory]
+  * Change manpage "list" description from dpkg -S to dpkg -L (LP: #107004)
+  * Add bash-completion for apt-file show (LP: #106997)
+  * Add apt-file.postinst to run apt-file update on install (LP: #74097)
+
+ -- Emmet Hikory <emmet.hikory@gmail.com>  Sun, 17 Jun 2007 08:13:23 +0900
+
+apt-file (2.0.8.2ubuntu1) feisty; urgency=low
+
+  * Re-merge from Debian unstable.
+  * Kept Ubuntu changes:
+    *apt-file (2.0.8ubuntu2) edgy; urgency=low
+      * Fix regexp handling (Closes Malone: #33485)
+      * Thanks to Chris Moore
+      * Fix man page issue (Closes Malone: #33483)
+      * Thanks again to Chris Moore 
+    *apt-file (2.0.8ubuntu1) edgy; urgency=low
+      * Fixed a typo in apt-file.conf
+      * Stephen Hermann
+ 
+ -- Barry deFreese <bddebian@comcast.net>  Wed,  6 Dec 2006 22:08:41 -0500
+
 apt-file (2.0.8.2) unstable; urgency=low
 
   * Non-maintainer upload.

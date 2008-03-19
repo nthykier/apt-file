@@ -1,5 +1,5 @@
 have apt-file &&
-_apt-file()
+_apt_file()
 {
 	local cur prev special i
 
@@ -8,7 +8,7 @@ _apt-file()
 	prev=${COMP_WORDS[COMP_CWORD-1]}
 
 	for (( i=0; i < ${#COMP_WORDS}-1; i++ )); do
-		if [[ ${COMP_WORDS[i]} == @(list) ]]; then
+		if [[ ${COMP_WORDS[i]} == @(list|search) ]]; then
 			special=${COMP_WORDS[i]}
 		fi
 	done
@@ -35,5 +35,5 @@ _apt-file()
 	return 0
 
 }
-complete -F _apt-file apt-file
+complete -F _apt_file apt-file
 
