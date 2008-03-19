@@ -11,7 +11,7 @@ Vcs-svn: svn://svn.debian.org/collab-maint/deb-maint/apt-file/trunk/
 Package: apt-file
 Architecture: all
 Depends: ${perl:Depends}, wget | curl, libconfig-file-perl, libapt-pkg-perl, menu
-Suggests: ssh, sudo
+Suggests: openssh-client, sudo
 Recommends: file
 Description: APT package searching utility -- command-line interface
  apt-file is a command line tool for searching packages for the APT

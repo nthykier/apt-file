@@ -60,7 +60,7 @@
 	<listitem>
 	  <para>
 	    Search in which package file is included. A list of all
-	    package containing the <option>pattern</option> pattern
+	    packages containing the <option>pattern</option> pattern
 	    is returned.
 	  </para>
 	</listitem>
@@ -258,8 +258,8 @@ Use <literal>cdrom-mount-point</literal> instead of
       proxies.
     </para>
     <para>
-      A string expension is done on several values. See <literal>string
-	expension</literal> section.
+      A string expansion is done on several values. See the <literal>string
+	expansion</literal> section.
     </para>
     <variablelist>
       <varlistentry>
@@ -274,7 +274,7 @@ Use <literal>cdrom-mount-point</literal> instead of
 	<term>http | ftp | ssh | rsh | file | cdrom</term>
 	<listitem>
 	  <para>
-	    Define are the commands used to fetch files.
+	    Defines the commands used to fetch files.
 	  </para>
 	</listitem>
       </varlistentry>
