@@ -393,7 +393,7 @@ sub get_options() {
     my %options = (
 		   "sources-list|s=s" => \$Conf->{sources_list},
 		   "cache|c=s" => \$Conf->{cache},
-		   "architecture|a=s" => \$Conf->{architecture},
+		   "architecture|a=s" => \$Conf->{arch},
 		   "cdrom-mount|d=s" => \$Conf->{cdrom_mount},
 		   "verbose|v" => \$Conf->{verbose},
 		   "ignore-case|i" => \$Conf->{ignore_case},

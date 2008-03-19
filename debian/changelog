@@ -22,8 +22,10 @@ apt-file (2.1.0) UNRELEASED; urgency=low
   * Documentation cleanups.
   * Remove ancient versioned-depends on essential package gzip.
   * Add missing debhelper compat file.
+  * Correct misspelled architecture variable name, makes architecture
+    selection work again. Thanks Enno Cramer (Closes: #364411).
 
- -- Thijs Kinkhorst <thijs@debian.org>  Wed, 19 Mar 2008 23:16:55 +0100
+ -- Thijs Kinkhorst <thijs@debian.org>  Wed, 19 Mar 2008 23:25:25 +0100
 
 apt-file (2.0.8.2ubuntu4) hardy; urgency=low
 
