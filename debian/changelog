@@ -15,6 +15,7 @@ apt-file (2.1.0) UNRELEASED; urgency=low
     - typo in apt-file.conf (Closes: #451840)
     Thanks to Daniel Hahler, Emmet Hikory, and Barry deFreese.
   * Remove cdbs build dependency.
+  * Add vcs header to debian/control.
 
  -- Stefan Fritsch <sf@debian.org>  Tue, 18 Mar 2008 22:44:46 +0100
 
