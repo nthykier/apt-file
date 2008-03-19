@@ -1,9 +1,10 @@
 apt-file (2.1.0) UNRELEASED; urgency=low
 
+  [ Stefan Fritsch ]
   * Hijack package. New maintainer.
   * Add Thijs as uploader.
   * Acknowledge NMU (closes: #397381). Thanks to Gunnar Wolf and Kevin Glynn.
-  * Import changes from Ubuntu. This fixes these bug:
+  * Import changes from Ubuntu. This fixes these bugs:
     - fails to read /etc/apt/sources.list.d/ (Closes: #353275)
     - manpage says dpkg -S when it means dpkg -L (Closes: #376828)
     - please apply more complete patch to fix output (Closes: #382312)
@@ -17,7 +18,12 @@ apt-file (2.1.0) UNRELEASED; urgency=low
   * Remove cdbs build dependency.
   * Add vcs header to debian/control.
 
- -- Stefan Fritsch <sf@debian.org>  Tue, 18 Mar 2008 22:44:46 +0100
+  [ Thijs Kinkhorst ]
+  * Documentation cleanups.
+  * Remove ancient versioned-depends on essential package gzip.
+  * Add missing debhelper compat file.
+
+ -- Thijs Kinkhorst <thijs@debian.org>  Wed, 19 Mar 2008 23:16:55 +0100
 
 apt-file (2.0.8.2ubuntu4) hardy; urgency=low
 
