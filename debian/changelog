@@ -17,6 +17,8 @@ apt-file (2.1.0) UNRELEASED; urgency=low
     Thanks to Daniel Hahler, Emmet Hikory, and Barry deFreese.
   * Fix misleading error message when cache dir does not exist
     (Closes: #456166).
+  * Set umask on apt-file update to ensure cache is always world readable
+    (Closes: #361878).
   * Remove cdbs build dependency.
   * Add vcs header to debian/control.
 

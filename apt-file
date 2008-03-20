@@ -204,6 +204,7 @@ sub parse_sources_list($) {
 }
 
 sub fetch_files ($) {
+    umask 0022;
     if (! -d $Conf->{cache}) {
         mkdir $Conf->{cache} or error "Can't create $Conf->{cache}";
     }
