@@ -447,13 +447,11 @@ sub main {
 			     $Conf->{sources_list} ?
 			     $Conf->{sources_list} :
 			     (
-			      $_config->{'Dir'} . $_config->{'Dir::Etc'} .
-			      $_config->{'Dir::Etc::sourcelist'},
-			      glob($_config->{'Dir'} . $_config->{'Dir::Etc'} .
-				   $_config->{'Dir::Etc::sourceparts'} .
+			      $_config->get_file('Dir::Etc::sourcelist'),
+			      glob($_config->get_dir('Dir::Etc::sourceparts') .
 				   '/*.list'))
     ];
-    $Conf->{cache} ||= $_config->{'Dir'} . $_config->{'Dir::Cache'} . 'apt-file';
+    $Conf->{cache} ||= $_config->get_dir('Dir::Cache') . 'apt-file';
     $Conf->{cache} =~ s/\/\s*$//;
     $Conf->{cdrom_mount} ||= $_config->{'Acquire::cdrom::Mount'} ||
 	"/cdrom";

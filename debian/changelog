@@ -22,6 +22,8 @@ apt-file (2.1.0) UNRELEASED; urgency=low
   * Don't show files repeatedly which are in the same package in several suites
     (Closes: #402228).
   * Allow bundling of short options (Closes: #384013).
+  * Correctly extract file and directory names from apt config
+    (Closes: #446621).
   * Remove cdbs build dependency.
   * Add vcs header to debian/control.
 
