@@ -26,8 +26,9 @@ apt-file (2.1.0) UNRELEASED; urgency=low
     selection work again. Thanks Enno Cramer (Closes: #364411).
   * Change suggestion from ssh to openssh-client (Closes: #375578).
   * More man page fixes, thanks Era Eriksson (Closes: #320322).
+  * Change section to admin, following override.
 
- -- Thijs Kinkhorst <thijs@debian.org>  Wed, 19 Mar 2008 23:42:26 +0100
+ -- Thijs Kinkhorst <thijs@debian.org>  Thu, 20 Mar 2008 10:02:16 +0100
 
 apt-file (2.0.8.2ubuntu4) hardy; urgency=low
 

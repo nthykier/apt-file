@@ -1,5 +1,5 @@
 Source: apt-file
-Section: base
+Section: admin
 Priority: optional
 Maintainer: Stefan Fritsch <sf@debian.org>
 Uploaders: Thijs Kinkhorst <thijs@debian.org>
