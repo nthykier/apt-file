@@ -245,9 +245,12 @@ sub print_winners ($$) {
 sub do_grep($$) {
     my ($data, $pattern) = @_;
     my $ret;
-    my ($pkgs, $fname, $in_header);
+    my ($pkgs, $fname);
     debug "regexp: $pattern";
     $|=1;
+    my $zcat = $Conf->{is_regexp}    ? "zcat" :
+	       $Conf->{ignore_case}  ? "zfgrep -i $Conf->{pattern}" :
+	       "zfgrep $Conf->{pattern}";
     my $regexp = eval { $Conf->{ignore_case} ? qr/$pattern/i : qr/$pattern/ };
     error($@) if $@;
     my %seen = ();
@@ -258,17 +261,16 @@ sub do_grep($$) {
         next if $seen{$file}++;
 	$file = quotemeta $file;
 	debug "Search in $file";
-        $in_header = 1;
-	open (ZCAT, "zcat $file |") ||
-	    warning "Can't zcat $file";
+	open (ZCAT, "$zcat $file |") ||
+	    warning "Can't $zcat $file";
 	while(<ZCAT>) {
-            if ($in_header) {
-                if (m/FILE\s+LOCATION/) {
-                    $in_header = 0;
-                }
-                next;
-            }
 	    next if ! (($fname, $pkgs) = /$regexp/o);
+
+	    # skip header lines
+	    # we can safely assume that the name of the top level directory
+	    # does not contain spaces
+	    next if ! m{^[^\s/]*/};
+
 	    debug_line ".";
 	    foreach (split /,/, $pkgs) {
                 # Put leading slash on file name
