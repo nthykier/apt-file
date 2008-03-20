@@ -5,10 +5,10 @@ apt-file (2.1.0) UNRELEASED; urgency=low
   * Add Thijs as uploader.
   * Acknowledge NMU (closes: #397381). Thanks to Gunnar Wolf and Kevin Glynn.
   * Import changes from Ubuntu. This fixes these bugs:
+    - Regular expression search with -x does not really work (Closes: #259446)
     - fails to read /etc/apt/sources.list.d/ (Closes: #353275)
     - manpage says dpkg -S when it means dpkg -L (Closes: #376828)
     - please apply more complete patch to fix output (Closes: #382312)
-    - apt-file list shows each file repeatedly (Closes: #402228)
     - silently fails when there are no file lists (Closes: #408309)
     - bash_completion: `_apt-file': not a valid identifier (Closes: #441041)
     - bash_completion does not complete filename after search command
