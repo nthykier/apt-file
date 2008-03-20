@@ -204,7 +204,9 @@ sub parse_sources_list($) {
 }
 
 sub fetch_files ($) {
-    mkdir $Conf->{cache} if ! -d $Conf->{cache};
+    if (! -d $Conf->{cache}) {
+        mkdir $Conf->{cache} or error "Can't create $Conf->{cache}";
+    }
     error "Can't write in $Conf->{cache}" if ! -w $Conf->{cache};
     foreach (@{(shift)}) {
 	debug $_->{cmd};

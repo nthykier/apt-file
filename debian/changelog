@@ -15,6 +15,8 @@ apt-file (2.1.0) UNRELEASED; urgency=low
       (Closes: #448358)
     - typo in apt-file.conf (Closes: #451840)
     Thanks to Daniel Hahler, Emmet Hikory, and Barry deFreese.
+  * Fix misleading error message when cache dir does not exist
+    (Closes: #456166).
   * Remove cdbs build dependency.
   * Add vcs header to debian/control.
 
