@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+#DEBHELPER#
+
+unud=/var/lib/update-notifier/user.d
+
+if /usr/share/apt-file/is-cache-empty; then
+	echo "You need to run 'sudo apt-file update' to update the cache."
+fi
+
+if [ -d $unud ]; then
+	cp -f /usr/share/apt-file/apt-file-update.update-notifier \
+	    "$unud/apt-file-update"
+	touch "$unud/apt-file-update"
+fi
+

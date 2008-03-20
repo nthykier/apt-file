@@ -1,0 +1,13 @@
+#!/bin/sh
+# This script checks if the cache directory is empty
+#
+# TODO: might exclude obsolete files from check, so it returns false/1 in case of upgrades.
+
+CACHE_DIR=/var/cache/apt/apt-file
+
+if [ -z "$(ls -A $CACHE_DIR)" ]; then
+	return 0
+fi
+
+# Cache is not empty
+return 1

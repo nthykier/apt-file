@@ -1,0 +1,8 @@
+Name: apt-file update needed
+Priority: Medium
+Command: "/usr/sbin/su-to-root -c /usr/share/apt-file/do-apt-file-update"
+Terminal: True
+DisplayIf: /usr/share/apt-file/is-cache-empty
+Description: You may need to update or create the apt-file cache.
+ Running this command likely needs an active internet connection.
+
