@@ -408,6 +408,7 @@ sub get_options() {
 		   "help|h" => \$Conf->{help},
 		   "version|V" => \$Conf->{version},
 		   );
+    Getopt::Long::Configure ("bundling");
     GetOptions(%options) || print_help 1;
 }
 
