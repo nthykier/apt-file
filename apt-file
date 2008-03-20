@@ -29,6 +29,7 @@ use Data::Dumper;
 use File::Basename;
 use AptPkg::Config '$_config';
 use constant VERSION => "2.1.0";
+use List::MoreUtils qw/uniq/;
 
 
 my $Conf;
@@ -66,7 +67,7 @@ sub unique($) {
 
 sub reverse_hash($) {
     my $hash = shift;
-    my $ret = ();
+    my $ret;
     foreach my $key (keys %$hash) {
 	foreach (@{$hash->{$key}}) {
 	    push @{$ret->{$_}}, $key;
@@ -231,7 +232,7 @@ sub print_winners ($$) {
     # Now print the winners
     if (!defined $Conf->{package_only}) {
 	foreach my $key (sort keys %$filtered_db) {
-	    foreach (sort @{$filtered_db->{$key}}) {
+	    foreach (uniq sort @{$filtered_db->{$key}}) {
 		print "$key: $_\n";
 	    }
 	}
