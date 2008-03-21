@@ -285,6 +285,16 @@ sub do_grep($$) {
     return reverse_hash($ret);
 }
 
+sub escape_parens {
+    my $pattern = shift;
+    # turn any capturing ( ... ) into non capturing (?: ... )
+    $pattern =~ s{ (?<! \\ )	# not preceded by a \ 
+		        \(	# (
+		   (?!  \? )	# not followed by a ?
+		 }{(?:}gx;
+    return $pattern;
+}
+
 sub grep_file($) {
     my $data = shift;
     my $pattern = $Conf->{pattern};
@@ -301,6 +311,7 @@ sub grep_file($) {
         else {
             $pattern = '.*?'.$pattern;
         }
+	$pattern = escape_parens($pattern);
     }
     elsif( substr($pattern,0,2) eq '\/' ) {
         # If pattern starts with /, match both ^pattern-without-slash
@@ -328,6 +339,7 @@ sub grep_package($) {
             $pkgpat = '\S*';
         }
         $pkgpat = substr($pkgpat,1);
+	$pkgpat = escape_parens($pkgpat);
     }
     else {
         $pkgpat = '\S*'.$Conf->{pattern};

@@ -33,6 +33,7 @@ apt-file (2.1.0) UNRELEASED; urgency=low
     - Use gunzip -l instead of file to check if a file is gzipped.
     - Fix misleading comments (Closes: #356790).
     - Remove chmod 644 since we now set umask correctly.
+  * Correctly handle parentheses in regexp searches (Closes: #467619).
   * Remove update-notifier hook file when package is purged.
   * Remove cdbs build dependency.
   * Add vcs header to debian/control.
