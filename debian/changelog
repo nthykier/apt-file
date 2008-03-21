@@ -28,6 +28,11 @@ apt-file (2.1.0) UNRELEASED; urgency=low
     do this, we need a different way to trim the header of Contents.gz than
     used in the patch for bug #382312 (Closes: #293942).
   * Pass 'set -x' to the shell when in verbose mode.
+  * Refactor apt-file.conf:
+    - Move common code blocks in apt-file.conf to separate variables.
+    - Use gunzip -l instead of file to check if a file is gzipped.
+    - Fix misleading comments (Closes: #356790).
+    - Remove chmod 644 since we now set umask correctly.
   * Remove update-notifier hook file when package is purged.
   * Remove cdbs build dependency.
   * Add vcs header to debian/control.
