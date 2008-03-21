@@ -212,7 +212,9 @@ sub fetch_files ($) {
     error "Can't write in $Conf->{cache}" if ! -w $Conf->{cache};
     foreach (@{(shift)}) {
 	debug $_->{cmd};
-	print qx|$_->{cmd}| if ! defined $Conf->{dummy};
+	my $setx = "";
+	$setx = "set -x;" if $Conf->{verbose};
+	print qx|$setx $_->{cmd}| if ! defined $Conf->{dummy};
     }
 }
 

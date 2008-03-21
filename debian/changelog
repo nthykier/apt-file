@@ -27,6 +27,7 @@ apt-file (2.1.0) UNRELEASED; urgency=low
   * Use zfgrep to speed up non-regex searches (Closes: #470488). To be able to
     do this, we need a different way to trim the header of Contents.gz than
     used in the patch for bug #382312 (Closes: #293942).
+  * Pass 'set -x' to the shell when in verbose mode.
   * Remove update-notifier hook file when package is purged.
   * Remove cdbs build dependency.
   * Add vcs header to debian/control.
