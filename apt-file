@@ -250,9 +250,11 @@ sub do_grep($$) {
     my ($pkgs, $fname);
     debug "regexp: $pattern";
     $|=1;
+    my $zgrep_pattern = $Conf->{pattern};
+    $zgrep_pattern =~ s{^\\/}{};
     my $zcat = $Conf->{is_regexp}    ? "zcat" :
-	       $Conf->{ignore_case}  ? "zfgrep -i $Conf->{pattern}" :
-	       "zfgrep $Conf->{pattern}";
+	       $Conf->{ignore_case}  ? "zfgrep -i $zgrep_pattern" :
+	       "zfgrep $zgrep_pattern";
     my $regexp = eval { $Conf->{ignore_case} ? qr/$pattern/i : qr/$pattern/ };
     error($@) if $@;
     my %seen = ();
@@ -262,7 +264,7 @@ sub do_grep($$) {
         # Skip already searched files:
         next if $seen{$file}++;
 	$file = quotemeta $file;
-	debug "Search in $file";
+	debug "Search in $file using $zcat";
 	open (ZCAT, "$zcat $file |") ||
 	    warning "Can't $zcat $file";
 	while(<ZCAT>) {
