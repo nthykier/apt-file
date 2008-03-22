@@ -316,12 +316,18 @@ sub grep_file($) {
 	$pattern = escape_parens($pattern);
     }
     elsif( substr($pattern,0,2) eq '\/' ) {
-        # If pattern starts with /, match both ^pattern-without-slash
-        # and ^.*pattern.
-        $pattern = substr($pattern,2).'|.*?'.$pattern;
+        if ($Conf->{fixed_strings}) {
+	    # remove leading /
+	    $pattern = substr($pattern,2);
+	}
+	else {
+            # If pattern starts with /, match both ^pattern-without-slash
+            # and ^.*pattern.
+            $pattern = substr($pattern,2).'|.*?'.$pattern;
+	}
     }
     else {
-        $pattern = '.*?'.$pattern;
+        $pattern = '.*?'.$pattern unless $Conf->{fixed_strings};
     }
     $pattern = '^('.$pattern.join "", (
 			    defined $Conf->{fixed_strings} ?
