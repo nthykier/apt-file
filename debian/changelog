@@ -48,8 +48,10 @@ apt-file (2.1.0) UNRELEASED; urgency=low
   * Change suggestion from ssh to openssh-client (Closes: #375578).
   * More man page fixes, thanks Era Eriksson (Closes: #320322).
   * Change section to admin, following override.
+  * Drop -N parameter from wget command since it's not allowed in
+    combination with -O according to the manual (Closes: #380736).
 
- -- Thijs Kinkhorst <thijs@debian.org>  Thu, 20 Mar 2008 10:02:16 +0100
+ -- Thijs Kinkhorst <thijs@debian.org>  Mon, 24 Mar 2008 10:07:09 +0100
 
 apt-file (2.0.8.2ubuntu4) hardy; urgency=low
 
