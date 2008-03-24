@@ -1,4 +1,4 @@
-apt-file (2.1.0) UNRELEASED; urgency=low
+apt-file (2.1.0) unstable; urgency=low
 
   [ Stefan Fritsch ]
   * Hijack package. New maintainer.
@@ -52,7 +52,7 @@ apt-file (2.1.0) UNRELEASED; urgency=low
   * Drop -N parameter from wget command since it's not allowed in
     combination with -O according to the manual (Closes: #380736).
 
- -- Thijs Kinkhorst <thijs@debian.org>  Mon, 24 Mar 2008 10:27:57 +0100
+ -- Thijs Kinkhorst <thijs@debian.org>  Mon, 24 Mar 2008 10:47:28 +0100
 
 apt-file (2.0.8.2ubuntu4) hardy; urgency=low
 
