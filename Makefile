@@ -35,4 +35,4 @@ man:
 	$(DOCBOOK2MAN) apt-file.fr.1.sgml
 
 clean:
-	rm -f *~ manpage.*
+	rm -f *~ manpage.* apt-file.1 apt-file.fr.1
