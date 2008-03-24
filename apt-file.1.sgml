@@ -36,7 +36,7 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para><command>apt-file</command> is a command line tool for
-      searching packages for the APT packaging system.</para>
+      searching files in packages for the APT package management system.</para>
     <para>Some actions are required to run the search:</para>
 
     <variablelist>
@@ -50,7 +50,8 @@
 	    <filename>/etc/apt/sources.list</filename>. This command
 	    attempts to fetch the
 	    <filename>Contents-&lt;ARCH&gt;.gz</filename> files from
-	    remote sources.
+	    remote sources. For downloading these uses either the curl or
+	    wget commands as specified in <filename>apt-file.conf</filename>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -59,7 +60,7 @@
 	<term>search</term>
 	<listitem>
 	  <para>
-	    Search in which package file is included. A list of all
+	    Search in which package a file is included. A list of all
 	    packages containing the <option>pattern</option> pattern
 	    is returned.
 	  </para>
@@ -101,7 +102,7 @@
 	<listitem>
 	  <para>
 	    remove all <filename>Contents-&lt;ARCH&gt;.gz</filename>
-	    files in cache directory.
+	    files from the cache directory.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -119,7 +120,7 @@
 	  <para>
 	    Sets the cache directory to
 	    <literal>cache-directory</literal> instead of its default
-	    value (<filename>/var/cache/apt</filename>) thus you can
+	    value (<filename>/var/cache/apt/apt-file</filename>) thus you can
 	    use <command>apt-file</command> even if you do not have
 	    administrator privileges.
 	  </para>
@@ -212,7 +213,7 @@ Use <literal>cdrom-mount-point</literal> instead of
 	</term>
 	<listitem>
 	  <para>
-	    Only display package name. Do not display file names.
+	    Only display package name; do not display file names.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -251,11 +252,8 @@ Use <literal>cdrom-mount-point</literal> instead of
   <refsect1>
     <title>CONFIGURATION FILE</title>
     <para>
-      The <command>apt-file</command> configuration file
-      (<filename>/etc/apt/apt-file.conf)</filename> changed from
-      version 1 to version 2. Now only fetch backends are defined in
-      the configuration file. Thus it is much easier to configure
-      proxies.
+      The <command>apt-file</command> configuration file can
+      be found in <filename>/etc/apt/apt-file.conf</filename>.
     </para>
     <para>
       A string expansion is done on several values. See the <literal>string
@@ -295,14 +293,14 @@ Use <literal>cdrom-mount-point</literal> instead of
 	<varlistentry>
 	  <term>&lt;host&gt;</term>
 	  <listitem>
-	    <para>replace with the hostname.</para>
+	    <para>replace with the hostname</para>
 	  </listitem>
 	</varlistentry>
 
 	<varlistentry>
 	  <term>&lt;port&gt;</term>
 	  <listitem>
-	    <para>replace with the port number.</para>
+	    <para>replace with the port number</para>
 	  </listitem>
 	</varlistentry>
 
@@ -404,7 +402,7 @@ Use <literal>cdrom-mount-point</literal> instead of
     <title>BUGS</title>
     <para>cdrom backend has not been tested.</para>
     <para>
-      Non-release line in sources.list is not handled by apt-file.
+      Non-release lines in sources.list are not handled by apt-file.
     </para>
   </refsect1>
   <refsect1>

@@ -40,18 +40,19 @@ apt-file (2.1.0) UNRELEASED; urgency=low
   * Add vcs header to debian/control.
 
   [ Thijs Kinkhorst ]
-  * Documentation cleanups.
   * Remove ancient versioned-depends on essential package gzip.
   * Add missing debhelper compat file.
   * Correct misspelled architecture variable name, makes architecture
     selection work again. Thanks Enno Cramer (Closes: #364411).
   * Change suggestion from ssh to openssh-client (Closes: #375578).
-  * More man page fixes, thanks Era Eriksson (Closes: #320322).
+  * Many documentation cleanups (thanks Era Eriksson for some,
+    Closes: #320322, #412133).
+  * Rebuild man page from sgml during package build.
   * Change section to admin, following override.
   * Drop -N parameter from wget command since it's not allowed in
     combination with -O according to the manual (Closes: #380736).
 
- -- Thijs Kinkhorst <thijs@debian.org>  Mon, 24 Mar 2008 10:07:09 +0100
+ -- Thijs Kinkhorst <thijs@debian.org>  Mon, 24 Mar 2008 10:27:57 +0100
 
 apt-file (2.0.8.2ubuntu4) hardy; urgency=low
 

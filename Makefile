@@ -13,7 +13,7 @@ ETCDIR=$(DESTDIR)/etc/apt
 MANDIR=$(DESTDIR)/usr/share/man/man1
 COMPDIR=$(DESTDIR)/etc/bash_completion.d
 
-all:
+all: man
 
 install:
 	$(INSTALL) -d -m 755 $(MANDIR)
@@ -32,6 +32,7 @@ uninstall:
 
 man:
 	$(DOCBOOK2MAN) apt-file.1.sgml
+	$(DOCBOOK2MAN) apt-file.fr.1.sgml
 
 clean:
 	rm -f *~ manpage.*
