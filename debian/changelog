@@ -1,6 +1,10 @@
 apt-file (2.1.1) UNRELEASED; urgency=low
 
+  [ Thijs Kinkhorst ]
   * Fix dashism (!) in is-cache-empty (Closes: #472592).
+
+  [ Stefan Fritsch ]
+  * With curl, use -f to abort on any error and not just on 404s.
 
  -- Thijs Kinkhorst <thijs@debian.org>  Tue, 25 Mar 2008 11:54:05 +0100
 
