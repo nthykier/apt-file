@@ -14,6 +14,7 @@ apt-file (2.1.1) UNRELEASED; urgency=low
   * Extract proxy information from apt config and set environment variables
     accordingly (closes: #350716).
   * Slightly increase speed of regexp searches.
+  * Use package version in 'apt-file --version' output.
 
  -- Thijs Kinkhorst <thijs@kinkhorst.com>  Fri, 04 Apr 2008 12:04:40 +0200
 

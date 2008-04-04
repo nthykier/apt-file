@@ -5,6 +5,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+VERSION=$(shell dpkg-parsechangelog |egrep ^Version: | cut -d ' ' -f 2)
+
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
@@ -36,6 +38,7 @@ install: build
 	dh_installdirs
 	# Add here commands to install the package into debian/apt-file.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/apt-file
+	perl -p -i -e 's/^use constant VERSION.*/use constant VERSION => "$(VERSION)";/' debian/apt-file/usr/bin/apt-file
 	install -m 644 debian/apt-file.update-notifier    debian/apt-file/usr/share/apt-file/apt-file-update.update-notifier
 	install -m 755 debian/apt-file.do-apt-file-update debian/apt-file/usr/share/apt-file/do-apt-file-update
 	install -m 755 debian/apt-file.is-cache-empty     debian/apt-file/usr/share/apt-file/is-cache-empty
