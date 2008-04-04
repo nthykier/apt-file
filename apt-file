@@ -93,6 +93,9 @@ sub find_command
 	my $cmd = $conf->{$key};
 	$cmd =~ s/^[( ]+//;
 	$cmd =~ s/ .*//;
+	if ( $cmd =~ m{^/} and -x $cmd ) {
+	    return $conf->{$key};
+	}
 	for my $path (split( /:/,$ENV{'PATH'}))
 	{
 	    return $conf->{$key} if -x ( $path.'/'.$cmd );
@@ -211,7 +214,7 @@ sub fetch_files ($) {
 	debug $_->{cmd};
 	my $setx = "";
 	$setx = "set -x;" if $Conf->{verbose};
-	print qx|$setx $_->{cmd}| if ! defined $Conf->{dummy};
+	system("$setx $_->{cmd}") if ! defined $Conf->{dummy};
     }
 }
 
