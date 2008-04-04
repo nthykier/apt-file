@@ -10,7 +10,9 @@ apt-file (2.1.1) UNRELEASED; urgency=low
   * With curl, use -f to abort on any error and not just on 404s.
   * Allow absolute paths for commands in apt-file.conf.
   * Do not reorder commands' STDOUT and STDERR.
-  * Make is-cache-empty ignore *tmp (closes: #474227)
+  * Make is-cache-empty ignore *tmp (closes: #474227).
+  * Extract proxy information from apt config and set environment variables
+    accordingly (closes: #350716).
 
  -- Thijs Kinkhorst <thijs@kinkhorst.com>  Fri, 04 Apr 2008 12:04:40 +0200
 

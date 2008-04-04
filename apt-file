@@ -193,7 +193,7 @@ sub parse_sources_list($) {
 		$cmd =~ s/<dest>/$dest/g;
 		my $hash;
 		foreach (qw/host port user passwd path dist pkg uri line
-			 dest cmd/) {
+			 dest cmd scheme/) {
 		    $hash->{$_} = eval "\$$_";
 		}
 		push @$ret, $hash;
@@ -211,6 +211,25 @@ sub fetch_files ($) {
     }
     error "Can't write in $Conf->{cache}" if ! -w $Conf->{cache};
     foreach (@{(shift)}) {
+	local %ENV = %ENV;
+	my $proxy = $_config->get("Acquire::$_->{scheme}::Proxy::$_->{host}") ||
+	    $_config->get("Acquire::$_->{scheme}::Proxy");
+	if ($proxy) {
+	    # wget expects lower case, curl expects upper case (except for http).
+	    # we just set/unset both
+	    delete $ENV{no_proxy};
+	    delete $ENV{NO_PROXY};
+	    delete $ENV{all_proxy};
+	    delete $ENV{ALL_PROXY};
+	    if ($proxy eq 'DIRECT') {
+		delete $ENV{lc("$_->{scheme}_proxy")};
+		delete $ENV{uc("$_->{scheme}_proxy")};
+	    }
+	    else {
+		$ENV{lc("$_->{scheme}_proxy")} = $proxy;
+		$ENV{uc("$_->{scheme}_proxy")} = $proxy;
+	    }
+	}
 	debug $_->{cmd};
 	my $setx = "";
 	$setx = "set -x;" if $Conf->{verbose};
