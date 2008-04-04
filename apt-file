@@ -276,6 +276,7 @@ sub do_grep($$) {
 	       "zfgrep $zgrep_pattern";
     my $regexp = eval { $Conf->{ignore_case} ? qr/$pattern/i : qr/$pattern/ };
     error($@) if $@;
+    my $quick_regexp = escape_parens($regexp);
     my %seen = ();
     foreach(@$data) {
 	my $file = "$Conf->{cache}/$_->{dest}";
@@ -287,6 +288,9 @@ sub do_grep($$) {
 	open (ZCAT, "$zcat $file |") ||
 	    warning "Can't $zcat $file";
 	while(<ZCAT>) {
+	    # faster, non-capturing search first
+	    next if ! /$quick_regexp/o;
+
 	    next if ! (($fname, $pkgs) = /$regexp/o);
 
 	    # skip header lines
