@@ -155,7 +155,7 @@ Use <literal>cdrom-mount-point</literal> instead of
 	  <option>--ignore-case | -i</option>
 	</term>
 	<listitem>
-	  <para>Do not expand <literal>pattern</literal>.</para>
+	  <para>Ignore case when searching for <literal>pattern</literal>.</para>
 	</listitem>
       </varlistentry>
 
@@ -165,7 +165,10 @@ Use <literal>cdrom-mount-point</literal> instead of
 	</term>
 	<listitem>
 	  <para>
-	    Treat <literal>pattern</literal> as a regular expression.
+	    Treat <literal>pattern</literal> as a (perl) regular expression. See
+	    <command>perlreref</command>(1) for details. Without this option,
+	    <literal>pattern</literal> is treated as a literal string to search
+	    for.
 	  </para>
 	</listitem>
       </varlistentry>
