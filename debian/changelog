@@ -1,4 +1,4 @@
-apt-file (2.1.1) UNRELEASED; urgency=low
+apt-file (2.1.1) unstable; urgency=low
 
   [ Thijs Kinkhorst ]
   * Fix dashism (!) in is-cache-empty (Closes: #472592).
@@ -20,7 +20,7 @@ apt-file (2.1.1) UNRELEASED; urgency=low
   * Handle debtorrent: urls in sources.list (thanks to Jö Fahlke,
     closes: #461315).
 
- -- Thijs Kinkhorst <thijs@kinkhorst.com>  Fri, 04 Apr 2008 12:04:40 +0200
+ -- Stefan Fritsch <sf@debian.org>  Sun, 06 Apr 2008 18:09:53 +0200
 
 apt-file (2.1.0) unstable; urgency=low
 
