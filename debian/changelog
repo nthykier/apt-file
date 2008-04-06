@@ -3,7 +3,7 @@ apt-file (2.1.1) UNRELEASED; urgency=low
   [ Thijs Kinkhorst ]
   * Fix dashism (!) in is-cache-empty (Closes: #472592).
   * Ship cache dir in package to prevent warnings while apt-file
-    has not yet been run.
+    has not yet been run (closes: #474545).
   * Add docbook build-depends for manpages.
 
   [ Stefan Fritsch ]
