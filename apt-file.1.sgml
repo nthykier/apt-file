@@ -192,6 +192,9 @@ Use <literal>cdrom-mount-point</literal> instead of
 	  Sets architecture to <literal>architecture</literal>. This
 	  option is useful if you search a package for a different
 	  architecture from the one installed on your system.
+	  It determines how the <literal>$ARCH</literal> variable
+	  in sources.list is expanded (but it does not influence
+	  the search in any other way).
 	  </para>
 	</listitem>
       </varlistentry>
