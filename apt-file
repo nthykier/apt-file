@@ -211,6 +211,10 @@ sub fetch_files ($) {
     }
     error "Can't write in $Conf->{cache}" if ! -w $Conf->{cache};
     foreach (@{(shift)}) {
+	if ($Conf->{"non_interactive"} && $Conf->{interactive}->{$_->{scheme}}) {
+	    debug "Ignoring interactive scheme $_->{scheme}";
+	    next;
+	}
 	local %ENV = %ENV;
 	my $proxy = $_config->get("Acquire::$_->{scheme}::Proxy::$_->{host}") ||
 	    $_config->get("Acquire::$_->{scheme}::Proxy");
@@ -231,9 +235,10 @@ sub fetch_files ($) {
 	    }
 	}
 	debug $_->{cmd};
-	my $setx = "";
-	$setx = "set -x;" if $Conf->{verbose};
-	system("$setx $_->{cmd}") if ! defined $Conf->{dummy};
+	my $cmd = $_->{cmd};
+	$cmd = "set -x; $cmd"       if $Conf->{verbose};
+	$cmd = "($cmd) < /dev/null" if $Conf->{non_interactive};
+	system($cmd) if ! defined $Conf->{dummy};
     }
 }
 
@@ -421,6 +426,8 @@ Configuration options:
     --cache		-c  <dir>	Cache directory
     --architecture	-a  <arch>	Use specific architecture
     --cdrom-mount	-d  <cdrom>	Use specific cdrom mountpoint
+    --non-interactive   -N		Skip schemes requiring user input
+    					(useful in cron jobs)
     --package-only	-l		Only display packages name
     --fixed-string	-F		Do not expand pattern
     --ignore-case	-i		Ignore case distinctions
@@ -452,6 +459,7 @@ sub get_options() {
 		   "dummy|y" => \$Conf->{dummy},
 		   "package-only|l" => \$Conf->{package_only},
 		   "fixed-string|F" => \$Conf->{fixed_strings},
+		   "non-interactive|N" => \$Conf->{non_interactive},
 		   "help|h" => \$Conf->{help},
 		   "version|V" => \$Conf->{version},
 		   );
@@ -486,6 +494,16 @@ sub main {
     if (defined $Conf->{version}) {
 	print_version;
 	exit 0;
+    }
+
+    my $interactive = $Conf->{interactive};
+    defined $interactive or $interactive = "cdrom rsh ssh";
+    $Conf->{interactive} = {};
+    foreach my $s (split /\s+/, $interactive) {
+    	$Conf->{interactive}{$s} = 1;
+	if (!$Conf->{$s}) {
+	    warn "interactive scheme $s does not exist\n";
+	}
     }
 
     $_config->init;

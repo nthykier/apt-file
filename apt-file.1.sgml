@@ -152,6 +152,20 @@ Use <literal>cdrom-mount-point</literal> instead of
 
       <varlistentry>
 	<term>
+	  <option>--non-interactive | -N</option>
+	</term>
+	<listitem>
+	  <para>
+	  Skip schemes that are listed in the <literal>interactive</literal> line in
+	  <filename>apt-file.conf</filename>.
+	  This is useful if you want to call 'apt-file update' in cron jobs and skip all
+	  schemes that may require user input. 
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
 	  <option>--ignore-case | -i</option>
 	</term>
 	<listitem>

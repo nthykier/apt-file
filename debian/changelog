@@ -1,3 +1,10 @@
+apt-file (2.1.2) UNRELEASED; urgency=low
+
+  * Add new option --non-interactive/-N to skip schemes that may require user
+    interaction during 'apt-file update'. This is useful for cron jobs.
+
+ -- Stefan Fritsch <sf@debian.org>  Fri, 11 Apr 2008 00:01:26 +0200
+
 apt-file (2.1.1) unstable; urgency=low
 
   [ Thijs Kinkhorst ]
