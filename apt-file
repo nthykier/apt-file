@@ -562,11 +562,8 @@ sub main {
 
 BEGIN {
     $Version = VERSION;
-    main();
 }
 
-END {
-
-}
+main();
 
 __END__
