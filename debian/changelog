@@ -3,6 +3,9 @@ apt-file (2.1.2) UNRELEASED; urgency=low
   * Add new option --non-interactive/-N to skip schemes that may require user
     interaction during 'apt-file update'. This is useful for cron jobs.
   * Change BEGIN block to make 'perl -c' work.
+  * Accept 'false' as an alias for 'DIRECT' in apt's proxy configuration
+    (closes: #476961) and ignore case. Also print the selected proxy
+    in verbose mode.
 
  -- Stefan Fritsch <sf@debian.org>  Fri, 11 Apr 2008 00:01:26 +0200
 

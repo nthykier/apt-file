@@ -225,11 +225,13 @@ sub fetch_files ($) {
 	    delete $ENV{NO_PROXY};
 	    delete $ENV{all_proxy};
 	    delete $ENV{ALL_PROXY};
-	    if ($proxy eq 'DIRECT') {
+	    if ( $proxy =~ /^(?:DIRECT|false)$/i ) {
+	        debug "not using proxy";
 		delete $ENV{lc("$_->{scheme}_proxy")};
 		delete $ENV{uc("$_->{scheme}_proxy")};
 	    }
 	    else {
+	        debug "using proxy: $proxy";
 		$ENV{lc("$_->{scheme}_proxy")} = $proxy;
 		$ENV{uc("$_->{scheme}_proxy")} = $proxy;
 	    }
