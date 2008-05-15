@@ -6,6 +6,7 @@ apt-file (2.1.2) UNRELEASED; urgency=low
   * Accept 'false' as an alias for 'DIRECT' in apt's proxy configuration
     (closes: #476961) and ignore case. Also print the selected proxy
     in verbose mode.
+  * Run perltidy on the source code.
 
  -- Stefan Fritsch <sf@debian.org>  Fri, 11 Apr 2008 00:01:26 +0200
 
