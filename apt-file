@@ -340,6 +340,12 @@ sub escape_parens {
 sub grep_file($) {
     my $data    = shift;
     my $pattern = $Conf->{pattern};
+
+    # If pattern starts with /, we need to match both ^pattern-without-slash
+    # (which is put in $pattern) and ^.*pattern (put in $pattern2).
+    # Later, they will be or'ed together.
+    my $pattern2;
+
     if ( $Conf->{is_regexp} ) {
         if ( substr( $pattern, 0, 1 ) eq '^' ) {
 
@@ -350,12 +356,14 @@ sub grep_file($) {
         elsif ( substr( $pattern, 0, 1 ) eq '/' ) {
 
             # same logic as below, but the "/" is not escaped here
-            $pattern = substr( $pattern, 1 ) . '|.*?' . $pattern;
+            $pattern  = substr( $pattern, 1 );
+            $pattern2 = '.*?' . $pattern;
         }
         else {
             $pattern = '.*?' . $pattern;
         }
-        $pattern = escape_parens($pattern);
+        $pattern  = escape_parens($pattern);
+        $pattern2 = escape_parens($pattern2);
     }
     elsif ( substr( $pattern, 0, 2 ) eq '\/' ) {
         if ( $Conf->{fixed_strings} ) {
@@ -367,14 +375,22 @@ sub grep_file($) {
 
             # If pattern starts with /, match both ^pattern-without-slash
             # and ^.*pattern.
-            $pattern = substr( $pattern, 2 ) . '|.*?' . $pattern;
+            $pattern  = substr( $pattern, 2 );
+            $pattern2 = '.*?' . $pattern;
         }
     }
     else {
         $pattern = '.*?' . $pattern unless $Conf->{fixed_strings};
     }
-    $pattern = '^(' . $pattern . join "",
-        ( defined $Conf->{fixed_strings} ? ")" : '[^\s]*)', '\s+(\S+)\s*$', );
+
+    if ( ! defined $Conf->{fixed_strings} ) {
+        $pattern  .= '[^\s]*';
+        $pattern2 .= '[^\s]*' if defined $pattern2;
+    }
+
+    $pattern = "$pattern|$pattern2" if defined $pattern2;
+    $pattern = '^(' . $pattern . ')\s+(\S+)\s*$';
+
     my $ret = do_grep $data, $pattern;
     print_winners $ret, 1;
 }
