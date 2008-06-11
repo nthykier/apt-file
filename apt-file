@@ -218,7 +218,8 @@ sub fetch_files ($) {
             next;
         }
         local %ENV = %ENV;
-        my $proxy = $_config->get("Acquire::$_->{scheme}::Proxy::$_->{host}")
+        my $proxy = defined $_->{host}
+            && $_config->get("Acquire::$_->{scheme}::Proxy::$_->{host}")
             || $_config->get("Acquire::$_->{scheme}::Proxy");
         if ($proxy) {
 

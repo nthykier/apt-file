@@ -1,3 +1,9 @@
+apt-file (2.1.4) UNRELEASED; urgency=low
+
+  * Fix perl warning during apt-file update (closes: #484292).
+
+ -- Stefan Fritsch <sf@debian.org>  Wed, 11 Jun 2008 20:05:32 +0200
+
 apt-file (2.1.3) unstable; urgency=low
 
   [ Thijs Kinkhorst ]
