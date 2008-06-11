@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+RRED=../diffindex-rred
+RC=0
+
+for t in [0-9]*.in ; do 
+	n=${t%.in}
+	echo -n Test $n:
+	if ! $RRED $n.diff* < $t > $n.out ; then
+		echo FAILED
+		RC=1
+	elif ! cmp $n.wanted $n.out ; then
+		echo FAILED "(unexpexted output)"
+		RC=1
+	else
+		echo PASS
+		rm $n.out
+	fi
+done
+
+for t in F*.in ; do 
+	n=${t%.in}
+	echo -n Test $n:
+	if $RRED $n.diff* < $t > $n.out 2> $n.stderr; then
+		echo FAILED "(returned 0 but should have exited with error)"
+		RC=1
+	elif [ ! -s $n.stderr ]; then
+		echo FAILED "(should have given some error message)"
+	else
+		echo PASS
+		rm $n.out $n.stderr
+	fi
+done

@@ -1,0 +1,156 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Temp qw/tmpnam/;
+
+my @patches;
+my $line;
+my $filename;
+my $input_fh;
+my $pid;
+
+if ( !scalar @ARGV or $ARGV[0] eq '-h' or $ARGV[0] eq '--help' ) {
+    print << "EOF";
+usage:
+$0 <diff1> [ <diff2> [...] ]
+
+Input will be taken from stdin and written to stdout.
+The files diff1 ... need to be ed style diffs from 'diff --ed'.
+*.gz, *.bz2, and *.lzo patches are decompressed automatically
+EOF
+    exit 1 if !scalar @ARGV;
+    exit 0;
+}
+
+# create filter chain to process more than one patch at once
+while (1) {
+
+    # take the last patch
+    $filename = pop @ARGV;
+    if ( scalar @ARGV > 0 ) {
+
+        # fork and let the child deal with the rest
+        # use the child's STDOUT as our input
+        $pid = open( $input_fh, "-|" );
+        if ( !defined $pid ) {
+            die "Could not fork\n";
+        }
+        if ( $pid > 0 ) {
+
+            # parent
+            last;
+        }
+    }
+    else {
+
+        # no more patches, open STDIN
+        open( $input_fh, "<-" );
+        last;
+    }
+}
+
+if ( $filename =~ m{\.gz$} ) {
+    $filename = "gunzip -c $filename |";
+}
+elsif ( $filename =~ m{\.bz2$} ) {
+    $filename = "bunzip2 -c $filename |";
+}
+elsif ( $filename =~ m{\.lzo$} ) {
+    $filename = "lzop -dc $filename |";
+}
+else {
+    $filename = "<$filename";
+}
+open( my $fh_patch, $filename ) or die "Could not open '$filename'\n";
+
+# reverse order of hunks and merge 'a' and 's/.//' with the preceeding hunks
+while ( defined( $line = <$fh_patch> ) ) {
+    my $lines;
+    chomp $line;
+    my $num;
+    if ( $line =~ /^(\d+)((?:,\d+)?)(d)$/ ) {
+        unshift @patches, [ $3, $1, $2 ];
+    }
+    elsif ( $line =~ /^(\d+)((?:,\d+)?)([ac])$/ ) {
+        my $lines = "";
+        while ( defined( $line = <$fh_patch> ) and $line ne ".\n" ) {
+            $lines .= $line;
+        }
+        unshift @patches, [ $3, $1, $2, $lines ];
+    }
+    elsif ( $line eq 's/.//' ) {
+        my $lines_ref = \$patches[0]->[3];
+        if ( !defined $$lines_ref ) {
+            die "Invalid format:$.:$line:Not preceeded by add or change\n";
+        }
+        if ( $$lines_ref !~ s{\.\.\n$}{.\n} ) {
+            print $$lines_ref;
+            die "Invalid format:$.:$line:Not preceeded by '..'\n";
+        }
+    }
+    elsif ( $line eq 'a' ) {
+        my $lines_ref = \$patches[0]->[3];
+        if ( !defined $$lines_ref ) {
+            die "Invalid format:$.:$line:Not preceeded by add or change\n";
+        }
+        my $lines = "";
+        while ( defined( $line = <$fh_patch> ) and $line ne ".\n" ) {
+            $lines .= $line;
+        }
+        $$lines_ref = $$lines_ref . $lines;
+    }
+    else {
+        die "Invalid format:$.:$line\n";
+    }
+    if ( $num and $num < $1 ) {
+        die "Not in reverse order:$.:$line\n$num\n";
+    }
+    else {
+        $num = $1;
+    }
+}
+close($fh_patch) or die "Error reading patch";
+
+open( my $output_fh, ">-" );
+
+my $cur = 1;
+foreach my $p (@patches) {
+    my ( $op, $l1, $l2 ) = @{$p};
+    if ( $op eq 'a' ) {
+        die "invalid format: $l1$l2$op\n" if $l2;
+        $l1++;
+    }
+    else {
+        $l2 = substr( $l2, 1 ) if $l2;
+    }
+
+    while ( $cur < $l1 ) {
+        $line = <$input_fh>;
+        if ( !defined $line ) {
+            die "end of input while at: @{$p}\n";
+        }
+        print $output_fh $line;
+        $cur++;
+    }
+    if ( $op eq 'd' || $op eq 'c' ) {
+        $l2 ||= $l1;
+        while ( $cur <= $l2 ) {
+            $line = <$input_fh>;
+            if ( !defined $line ) {
+                die "end of input while at: @{$p}\n";
+            }
+            $cur++;
+        }
+    }
+    if ( $op eq 'a' || $op eq 'c' ) {
+        print $output_fh $p->[3];
+    }
+}
+while ( defined( $line = <$input_fh> ) ) {
+    print $output_fh $line;
+}
+
+close($input_fh) or die "ERROR: child exited with error.\n";
+
+# our style is roughly "perltidy -pbp"
+# vim:sts=4:sw=4:expandtab

@@ -34,5 +34,8 @@ man:
 	$(DOCBOOK2MAN) apt-file.1.sgml
 	$(DOCBOOK2MAN) apt-file.fr.1.sgml
 
+test:
+	cd tests; ./runtests
+
 clean:
 	rm -f *~ manpage.* apt-file.1 apt-file.fr.1
