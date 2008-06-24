@@ -1,6 +1,7 @@
 apt-file (2.1.4) UNRELEASED; urgency=low
 
   * Fix perl warning during apt-file update (closes: #484292).
+  * Fix perl warning in some regexp searches (closes: #487856).
 
  -- Stefan Fritsch <sf@debian.org>  Wed, 11 Jun 2008 20:05:32 +0200
 

@@ -364,7 +364,7 @@ sub grep_file($) {
             $pattern = '.*?' . $pattern;
         }
         $pattern  = escape_parens($pattern);
-        $pattern2 = escape_parens($pattern2);
+        $pattern2 = escape_parens($pattern2) if defined $pattern2;
     }
     elsif ( substr( $pattern, 0, 2 ) eq '\/' ) {
         if ( $Conf->{fixed_strings} ) {
