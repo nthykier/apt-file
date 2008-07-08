@@ -10,7 +10,7 @@ fi
 unud=/var/lib/update-notifier/user.d
 
 if /usr/share/apt-file/is-cache-empty; then
-	echo "You need to run 'sudo apt-file update' to update the cache."
+	echo "You need to run 'apt-file update' as root to update the cache."
 fi
 
 if [ -d $unud ]; then
