@@ -496,7 +496,7 @@ sub get_options() {
 
 sub dir_is_empty {
     my ($path) = @_;
-    opendir DIR, $path;
+    opendir DIR, $path or die "Cannot read cache directory $path: $!\n";
     while ( my $entry = readdir DIR ) {
         next if ( $entry =~ /^\.\.?$/ );
         closedir DIR;
