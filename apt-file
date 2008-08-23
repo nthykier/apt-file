@@ -357,8 +357,8 @@ sub grep_file($) {
         elsif ( substr( $pattern, 0, 1 ) eq '/' ) {
 
             # same logic as below, but the "/" is not escaped here
-            $pattern  = substr( $pattern, 1 );
             $pattern2 = '.*?' . $pattern;
+            $pattern  = substr( $pattern, 1 );
         }
         else {
             $pattern = '.*?' . $pattern;
@@ -376,8 +376,8 @@ sub grep_file($) {
 
             # If pattern starts with /, match both ^pattern-without-slash
             # and ^.*pattern.
-            $pattern  = substr( $pattern, 2 );
             $pattern2 = '.*?' . $pattern;
+            $pattern  = substr( $pattern, 2 );
         }
     }
     else {
