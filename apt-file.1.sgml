@@ -62,7 +62,8 @@
 	  <para>
 	    Search in which package a file is included. A list of all
 	    packages containing the <option>pattern</option> pattern
-	    is returned.
+	    is returned. If <option>pattern</option> starts with a slash,
+	    the slash is stripped off before searching.
 	  </para>
 	</listitem>
       </varlistentry>
