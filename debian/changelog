@@ -1,7 +1,12 @@
 apt-file (2.1.5) UNRELEASED; urgency=low
 
+  [ Thijs Kinkhorst ]
   * Document that we strip any slash as the first character of
     a pattern (closes: #483624).
+
+  [ Stefan Fritsch ]
+  * Fix wrong permissions for cache directory created by old versions
+    (closes: #495519).
 
  -- Thijs Kinkhorst <thijs@debian.org>  Sat, 23 Aug 2008 11:09:50 +0200
 
