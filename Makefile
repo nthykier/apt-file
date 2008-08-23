@@ -35,7 +35,8 @@ man:
 	$(DOCBOOK2MAN) apt-file.fr.1.sgml
 
 test:
-	cd tests; ./runtests
+	make -C tests-apt-file test
 
 clean:
 	rm -f *~ manpage.* apt-file.1 apt-file.fr.1
+	make -C tests-apt-file clean

@@ -19,7 +19,7 @@ build-stamp:
 
 	# Add here commands to compile the package.
 	$(MAKE)
-#	$(MAKE) test
+	$(MAKE) test
 	#/usr/bin/docbook-to-man debian/apt-file.sgml > apt-file.1
 	touch build-stamp
 

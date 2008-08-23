@@ -1,3 +1,9 @@
+apt-file (2.1.6) UNRELEASED; urgency=low
+
+  * Add some tests and run them during build.
+
+ -- Stefan Fritsch <sf@debian.org>  Sat, 23 Aug 2008 21:01:04 +0200
+
 apt-file (2.1.5) unstable; urgency=low
 
   * Fix wrong permissions for cache directory created by old versions

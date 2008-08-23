@@ -1,0 +1,103 @@
+#!/usr/bin/perl -w
+
+use strict;
+use POSIX qw/WIFEXITED WEXITSTATUS/;
+use File::Temp qw/tempdir /;
+
+my @tests = glob("t/*.test");
+my $fail = 0;
+my $pass = 0;
+
+my $tmpdir = tempdir(CLEANUP => 1) or die "could not create tempdir";
+
+if (!scalar @ARGV) {
+	die "apt-file command not given";
+}
+
+foreach my $t (sort @tests) {
+	$t =~ m{/([^/]*).test$};
+	my $name = $1;
+	my $vars = readvars($t);
+	my $this_fail;
+	if (!defined $vars) {
+		$fail++;
+		next;
+	}
+	
+	if (!defined $vars->{args}) {
+		warn "'args' not defined in $t\n";
+		$fail++;
+		next; 
+	}
+	
+	$vars->{rc} = 0 if ! defined $vars->{rc};
+	
+	my $cmd = "@ARGV $vars->{args}";
+	system("$cmd > $tmpdir/$name.out 2> $tmpdir/$name.err");
+	if (!WIFEXITED($?)) {
+		warn "FAIL: $name: Error executing $cmd\n";
+		$this_fail = 1;
+		next;
+	}
+	
+	if (WEXITSTATUS($?) != $vars->{rc}) {
+		print "FAIL: $name: RC expected $vars->{rc}, got " .
+			WEXITSTATUS($?) . "\n";
+		$this_fail = 1;
+	}
+
+	
+	if (-s "$tmpdir/$name.err" && ! $vars->{stderr} ) {
+		print "FAIL: $name: Unexpected output on stderr:\n";
+		system("cat $tmpdir/$name.err");
+		$this_fail = 1;
+	}
+	
+	my $expected = "t/$name.out";
+	if (system("diff -u $expected $tmpdir/$name.out") != 0) {
+		print "FAIL: $name: Expected and actual output differ\n";
+		$this_fail = 1;
+	}
+	
+	if ($this_fail) {
+		$fail++;
+		print "Test $name tests for bug #$vars->{bug}\n" if $vars->{bug};
+	}
+	else
+	{
+		print "PASS: $name\n";
+		$pass++;
+	}
+}
+
+my $total = $pass + $fail;
+print "Tests passed: $pass/$total\n" if $pass;
+print "Tests failed: $fail/$total\n" if $fail;
+exit(1) if ($fail);
+exit(0);
+
+
+sub readvars {
+	my $file = shift;
+	my %vars;
+	
+	my $fh;
+	if (!open ($fh, "<", $file)) {
+		warn "Could not open $file\n";
+		return;
+	}
+	while (defined (my $line = <$fh>)) {
+		chomp $line;
+		$line =~ s/^\s+//;
+		$line =~ /^#/ and next;
+		$line =~ /^$/ and next;
+		if ($line =~ /^([^=]+)=(.*)$/) {
+			$vars{$1}=$2;
+		}
+		else {
+			warn "Invalid syntax in $file:$.\n";
+			return;
+		}
+	}
+	return \%vars;
+}

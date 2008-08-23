@@ -1,0 +1,2 @@
+args=search --regexp '(etc/perl|usr/lib/perl5)/Template.pm'
+bug=467619

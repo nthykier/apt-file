@@ -1,0 +1,2 @@
+deb http://site1/debian sid main
+deb http://site1/debian lenny main
