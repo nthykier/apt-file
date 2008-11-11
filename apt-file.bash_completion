@@ -1,33 +1,34 @@
 have apt-file &&
 _apt_file()
 {
-	local cur prev special i
+	local cur prev
 
 	COMPREPLY=()
 	cur=${COMP_WORDS[COMP_CWORD]}
 	prev=${COMP_WORDS[COMP_CWORD-1]}
 
-	for (( i=0; i < ${#COMP_WORDS}-1; i++ )); do
-		if [[ ${COMP_WORDS[i]} == @(list|search) ]]; then
-			special=${COMP_WORDS[i]}
-		fi
-	done
-
-	if [ -n "$special" ]; then
-            COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) )
-            return 0
-        fi
+	case "$prev" in
+	list | show)
+	    COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) );
+	    return 0
+	    ;;
+	search | find)
+	    _filedir
+	    return 0
+	    ;;
+	esac;
 
 	if [[ "$cur" == -* ]]; then
 
-		COMPREPLY=( $( compgen -W '-c -v -V -a -s -l -F -y -H \
+		COMPREPLY=( $( compgen -W '-c -v -V -a -s -l -F -y -H -N -d \
 				--cache --verbose --version --architecture \
 				--sources-list --package-only --fixed-string \
+				--architecture --cdrom-mount --non-interactive \
 				--dummy --help' -- $cur ) )
 	else
 
-		COMPREPLY=( $( compgen -W 'update search list \
-                                show purge' -- $cur ) )
+		COMPREPLY=( $( compgen -W 'update search list find \
+	                        show purge' -- $cur ) )
 
 	fi
 
@@ -35,5 +36,5 @@ _apt_file()
 	return 0
 
 }
-complete -F _apt_file apt-file
+complete -f -F _apt_file apt-file
 

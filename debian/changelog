@@ -4,6 +4,7 @@ apt-file (2.1.6) UNRELEASED; urgency=low
   * Use ~/.cache/apt-file as cache directory if called as non-root user,
     but fall back to the old /var/cache/apt/apt-file. This allows to use
     'apt-file update' as non-root (closes: #443728).
+  * Update bash completion (closes: #502655).
 
  -- Stefan Fritsch <sf@debian.org>  Sat, 23 Aug 2008 21:01:04 +0200
 
