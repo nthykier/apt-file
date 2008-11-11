@@ -132,10 +132,13 @@ my $cur = 1;
 foreach my $p (@patches) {
     my ( $op, $l1, $l2 ) = @{$p};
     if ( $op eq 'a' ) {
+        # 'a' can only have one line number
         die "invalid format: $l1$l2$op\n" if $l2;
+
         $l1++;
     }
     else {
+        # remove comma
         $l2 = substr( $l2, 1 ) if $l2;
     }
 
