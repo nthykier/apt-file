@@ -24,6 +24,7 @@ use Config::File "read_config_file";
 use Getopt::Long qw/:config no_ignore_case/;
 use Data::Dumper;
 use File::Basename;
+use File::Path;
 use AptPkg::Config '$_config';
 use constant VERSION => "2.1.0";
 use List::MoreUtils qw/uniq/;
@@ -207,7 +208,10 @@ sub parse_sources_list($) {
 sub fetch_files ($) {
     umask 0022;
     if ( !-d $Conf->{cache} ) {
-        mkdir $Conf->{cache} or error "Can't create $Conf->{cache}";
+        eval { mkpath([$Conf->{cache}]) };
+        if ($@) {
+            error "Can't create $Conf->{cache}: $@";
+        }
     }
     error "Can't write in $Conf->{cache}" if !-w $Conf->{cache};
     foreach ( @{ (shift) } ) {
@@ -541,8 +545,6 @@ sub main {
             glob( $_config->get_dir('Dir::Etc::sourceparts') . '/*.list' )
         )
     ];
-    $Conf->{cache} ||= $_config->get_dir('Dir::Cache') . 'apt-file';
-    $Conf->{cache} =~ s/\/\s*$//;
     $Conf->{cdrom_mount} ||= $_config->{'Acquire::cdrom::Mount'}
         || "/cdrom";
 
@@ -575,15 +577,45 @@ sub main {
             && !defined $Conf->{help};
     print_help( $Conf->{help} - 1 ) if defined $Conf->{help};
 
+    my $sys_cache = $_config->get_dir('Dir::Cache') . 'apt-file';
+    $sys_cache =~ s{/\s*$}{};
+
+    my $is_search;
+    $is_search = 1 if $Conf->{action} =~ m/search|find|list|show/;
+
+    if (!$Conf->{cache}) {
+        if ( $> == 0) {
+            $Conf->{cache} = $sys_cache;
+        }
+        else {
+            # use cache in $HOME if run as non-root
+            my $user_cache;
+
+            if ( exists $ENV{XDG_CACHE_HOME} ) {
+                $user_cache = "$ENV{XDG_CACHE_HOME}/apt-file";
+            }
+            else {
+                $user_cache = "$ENV{HOME}/.cache/apt-file";
+            }
+
+            if ( $is_search
+                && ( ! -d $user_cache || dir_is_empty($user_cache) ) )
+            {
+                $Conf->{cache} = $sys_cache;
+            }
+            else {
+                $Conf->{cache} = $user_cache;
+            }
+        }
+    }
+    debug "Using cache directory $Conf->{cache}";
+
     my $sources = parse_sources_list $Conf->{sources_list};
     error "No valid sources in @{$Conf->{sources_list}}" if !defined $sources;
 
-    if ( $Conf->{action} =~ m/search|find|list|show/
-        && dir_is_empty( $Conf->{cache} ) )
-    {
+    if ( $is_search && dir_is_empty( $Conf->{cache} ) ) {
         undef $!;    # unset "Bad file descriptor" error from dir_is_empty
-        error
-            "The cache directory is empty. You need to run 'apt-file update' first.";
+        error "The cache directory is empty. You need to run 'apt-file update' first.";
     }
 
     $actions->{ $Conf->{action} }->($sources);

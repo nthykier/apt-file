@@ -118,11 +118,11 @@
 	</term>
 	<listitem>
 	  <para>
-	    Sets the cache directory to
-	    <literal>cache-directory</literal> instead of its default
-	    value (<filename>/var/cache/apt/apt-file</filename>) thus you can
-	    use <command>apt-file</command> even if you do not have
-	    administrator privileges.
+	    Sets the cache directory to <filename>cache-directory</filename>
+	    instead of its default. If executed as non-root user, the default
+	    is <filename>$HOME/.cache/apt-file</filename> with fall-back to
+	    <filename>/var/cache/apt/apt-file</filename>. The latter is also
+	    the default if apt-file is called as root.
 	  </para>
 	</listitem>
       </varlistentry>
