@@ -513,7 +513,8 @@ sub dir_is_empty {
 sub main {
     my $conf_file;
     map { $conf_file = $_ if -f $_ } (
-        "/etc/apt/apt-file.conf", "$ENV{HOME}/.apt-file.conf", $ENV{APT_FILE_CONFIG}
+        "/etc/apt/apt-file.conf", "$ENV{HOME}/.apt-file.conf",
+        $ENV{APT_FILE_CONFIG} || ""
     );
 
     error "No config file found\n" if !defined $conf_file;
