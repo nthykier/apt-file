@@ -1,6 +1,5 @@
-apt-file (2.1.6) UNRELEASED; urgency=low
+apt-file (2.1.6) unstable; urgency=low
 
-  * Add some tests and run them during build.
   * Use ~/.cache/apt-file as cache directory if called as non-root user,
     but fall back to the old /var/cache/apt/apt-file. This allows to use
     'apt-file update' as non-root (closes: #443728).
@@ -8,8 +7,9 @@ apt-file (2.1.6) UNRELEASED; urgency=low
     allow to choose the config file with the APT_FILE_CONFIG environment
     variable. 
   * Update bash completion (closes: #502655).
+  * Add some tests and run them during build.
 
- -- Stefan Fritsch <sf@debian.org>  Sat, 23 Aug 2008 21:01:04 +0200
+ -- Stefan Fritsch <sf@debian.org>  Wed, 12 Nov 2008 17:04:10 +0100
 
 apt-file (2.1.5) unstable; urgency=low
 
