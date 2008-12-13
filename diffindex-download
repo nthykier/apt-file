@@ -23,13 +23,14 @@ use File::Copy;
 use Getopt::Std;
 
 my %opts;
-getopts( 'n:qh', \%opts );
+getopts( 'n:qhd', \%opts ) or usage(3);
 
 usage(0) if $opts{h};
 usage(1) if scalar @ARGV != 2;
 
 my $verbose     = defined $opts{q} ? !$opts{q} : -t STDIN;
 my $max_patches = defined $opts{n} ? $opts{n}  : 5;
+my $debug       = $opts{d};
 
 my $rred       = "diffindex-rred";
 my %decompress = (
@@ -98,8 +99,12 @@ eval {
         }
     }
 
-    info("Downloading Index:\n");
-    download( "$baseurl.diff/Index", $newindexfile );
+    info("Downloading Index $baseurl.diff/Index:\n");
+    download( "$baseurl.diff/Index", $newindexfile, $oldindexfile );
+    if ( ! -e $newindexfile ) {
+        info("Index is up-to-date.\n");
+        exit 0;
+    }
     $newindex = parse_index($newindexfile);
 
     if ( $current_sum eq $newindex->{Current}->{sum} ) {
@@ -152,12 +157,17 @@ if ($@) {
 exit 0;
 ########################## END of main #######################################
 
-# args: url, filename [, url, filename [, ...]]
+# args: url, filename [, url, filename [, ...]] [, oldfile]
 # (we want to be able to download multpile files with http keepalive)
+# download only if remote is newer than oldfile
 sub download {
+    my $oldfile;
+    $oldfile = pop(@_) if scalar @_ % 2;
     my %urls    = @_;
     my $command = "curl -l -L -f";
-    $command .= $verbose ? "" : " -sS";
+    $command .= " -sS" if $oldfile || !$verbose;
+    $command .= " -z $oldfile" if ($oldfile && -e $oldfile);
+
     foreach my $url ( keys %urls ) {
         $command .= " " . quotemeta($url) . " -o " . quotemeta( $urls{$url} );
     }
@@ -168,7 +178,7 @@ sub download {
 
 sub download_full {
 
-    info("Downloading complete file\n");
+    info("Downloading complete file $url\n");
     download( $url, "${target}_new" );
     if ( $url_algo ne $algo ) {
         system_or_die(
@@ -250,6 +260,7 @@ sub parse_index {
 sub system_or_die {
     my ( $command, $msg ) = @_;
 
+    debug("Executing '$command'\n");
     system($command);
     if ( WIFEXITED($?) ) {
         if ( WEXITSTATUS($?) != 0 ) {
@@ -270,11 +281,15 @@ sub info {
     print @_ if $verbose;
 }
 
+sub debug {
+    print @_ if $debug;
+}
+
 sub usage {
     my $rv = shift;
     print << "EOF";
 Usage:
-  $0 [-n <max number of diffs>] [-q] <URL> <filename>
+  $0 [-n <max number of diffs>] [-q] [-d] <URL> <filename>
 EOF
     exit $rv;
 }
