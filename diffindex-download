@@ -24,7 +24,7 @@ use Getopt::Std;
 
 $Getopt::Std::STANDARD_HELP_VERSION=1;
 my %opts;
-getopts( 'n:qhd', \%opts ) or usage(3);
+getopts( 'n:qhdi', \%opts ) or usage(3);
 
 usage(0) if $opts{h};
 usage(1) if scalar @ARGV != 2;
@@ -179,6 +179,11 @@ sub download {
 
 sub download_full {
 
+    if ( url_not_found($url) ) {
+        info("Ignoring source without Contents File:\n  $url\n");
+        return;
+    }
+
     info("Downloading complete file $url\n");
     download( $url, "${target}_new" );
     if ( $url_algo ne $algo ) {
@@ -193,6 +198,24 @@ sub download_full {
         move( "${target}_new", $target );
     }
     unlink $oldindexfile if -e $oldindexfile;
+}
+
+sub url_not_found {
+    my $url = shift;
+
+    my $cmd     = 'curl -L -s -I ' . quotemeta($url);
+    my $headers = qx{$cmd};
+    debug("'$cmd' ($?):\n$headers");
+
+    if ( WIFEXITED($?) && WEXITSTATUS($?) == 19 ) {
+
+        # FTP file not found
+        return 1;
+    }
+    if ( $headers =~ m{^HTTP/1.. 404}m ) {
+        return 1;
+    }
+    return 0;
 }
 
 sub parse_index {
@@ -290,11 +313,12 @@ sub usage {
     my $rv = shift;
     print << "EOF";
 Usage:
-  $0 [-n <max number of diffs>] [-q] [-d] <URL> <filename>
+  $0 [-n <max number of diffs>] [-i] [-q] [-d] <URL> <filename>
 
   -n <num>  don't download more than num patches, download whole file instead
             (use large num with slow network / fast CPU and small num with
             fast network / slow CPU)
+  -i        don't exit with errror if URL does not exist
   -q        be quiet
   -d        print additional debug messages
 
