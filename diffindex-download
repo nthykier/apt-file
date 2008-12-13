@@ -22,6 +22,7 @@ use POSIX qw{WIFEXITED WEXITSTATUS WTERMSIG};
 use File::Copy;
 use Getopt::Std;
 
+$Getopt::Std::STANDARD_HELP_VERSION=1;
 my %opts;
 getopts( 'n:qhd', \%opts ) or usage(3);
 
@@ -290,8 +291,19 @@ sub usage {
     print << "EOF";
 Usage:
   $0 [-n <max number of diffs>] [-q] [-d] <URL> <filename>
+
+  -n <num>  don't download more than num patches, download whole file instead
+            (use large num with slow network / fast CPU and small num with
+            fast network / slow CPU)
+  -q        be quiet
+  -d        print additional debug messages
+
 EOF
     exit $rv;
+}
+
+sub HELP_MESSAGE {
+    usage(0);
 }
 
 # our style is roughly "perltidy -pbp"
