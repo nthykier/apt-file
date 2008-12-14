@@ -1,7 +1,12 @@
 apt-file (2.1.7) UNRELEASED; urgency=low
 
+  [ Thijs Kinkhorst ]
   * Tests require wget or curl during build-time, add it as a
     build-depends. Thanks James Westby (closes: #506554).
+
+  [ Stefan Fritsch ]
+  * Make 'apt-file purge' remove old content files even if the sources.list
+    line has been removed in the meantime (closes: #507092).
 
  -- Thijs Kinkhorst <thijs@debian.org>  Tue, 25 Nov 2008 20:40:01 +0100
 

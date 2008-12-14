@@ -429,11 +429,11 @@ sub grep_package($) {
 
 sub purge_cache($) {
     my $data = shift;
-    foreach (@$data) {
-        debug "Purging $Conf->{cache}/$_->{dest}";
+    foreach (glob("$Conf->{cache}/*_Contents-*")) {
+        debug "Purging $_";
         next if defined $Conf->{dummy};
-        next if ( unlink "$Conf->{cache}/$_->{dest}" ) > 0;
-        warning "Can't remove $Conf->{cache}/$_->{dest}";
+        next if ( unlink $_ ) > 0;
+        warning "Can't remove $_";
     }
 }
 
