@@ -101,7 +101,7 @@
 	<term>purge</term>
 	<listitem>
 	  <para>
-	    remove all <filename>Contents-&lt;ARCH&gt;.gz</filename>
+	    remove all <filename>Contents-*</filename>
 	    files from the cache directory.
 	  </para>
 	</listitem>
@@ -391,6 +391,12 @@ Use <literal>cdrom-mount-point</literal> instead of
 	<term><filename>/etc/apt/sources.list</filename></term>
 	<listitem>
 	  <para>Locations to fetch package contents from.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><filename>/etc/apt/sources.list.d/</filename></term>
+	<listitem>
+	  <para>Directory with additional sources.list snippets</para>
 	</listitem>
       </varlistentry>
       <varlistentry>
