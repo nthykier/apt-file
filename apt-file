@@ -167,8 +167,14 @@ sub parse_sources_list($) {
                     next;
                 }
                 $dist = $_;
-                $cmd = find_command( $Conf, $scheme );
-                die "Could not find suitable command for $scheme" unless $cmd;
+                if ( !$Conf->{is_search} ) {
+                    $cmd = find_command( $Conf, $scheme );
+                    die "Could not find suitable command for $scheme"
+                        unless $cmd;
+                }
+                else {
+                    $cmd = "";
+                }
                 $dest = $Conf->{destination};
                 my $cache = $Conf->{cache};
                 my $arch  = $Conf->{arch};
@@ -581,8 +587,7 @@ sub main {
     my $sys_cache = $_config->get_dir('Dir::Cache') . 'apt-file';
     $sys_cache =~ s{/\s*$}{};
 
-    my $is_search;
-    $is_search = 1 if $Conf->{action} =~ m/search|find|list|show/;
+    $Conf->{is_search} = 1 if $Conf->{action} =~ m/search|find|list|show/;
 
     if (!$Conf->{cache}) {
         if ( $> == 0) {
@@ -599,7 +604,7 @@ sub main {
                 $user_cache = "$ENV{HOME}/.cache/apt-file";
             }
 
-            if ( $is_search
+            if ( $Conf->{is_search}
                 && ( ! -d $user_cache || dir_is_empty($user_cache) ) )
             {
                 $Conf->{cache} = $sys_cache;
@@ -614,7 +619,7 @@ sub main {
     my $sources = parse_sources_list $Conf->{sources_list};
     error "No valid sources in @{$Conf->{sources_list}}" if !defined $sources;
 
-    if ( $is_search && dir_is_empty( $Conf->{cache} ) ) {
+    if ( $Conf->{is_search} && dir_is_empty( $Conf->{cache} ) ) {
         undef $!;    # unset "Bad file descriptor" error from dir_is_empty
         error "The cache directory is empty. You need to run 'apt-file update' first.";
     }
