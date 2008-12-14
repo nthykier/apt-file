@@ -524,7 +524,6 @@ sub main {
     );
 
     error "No config file found\n" if !defined $conf_file;
-    debug "Using $conf_file";
 
     $Conf = read_config_file $conf_file;
     get_options();
