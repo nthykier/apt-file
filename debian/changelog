@@ -1,12 +1,17 @@
-apt-file (2.1.7) UNRELEASED; urgency=low
+apt-file (2.2.0) UNRELEASED; urgency=low
 
-  [ Stefan Fritsch ]
+  * Ship 'diffindex-download' and 'diffindex-rred' for downloading patches
+    instead of the full Contents files. Use this for http and ftp in default
+    config file (closes: #373589).
+  * diffindex-download uses curl with progress meter enabled by default
+    (can be changed in apt-file.conf). Closes: #381613
+    Therefore always depend on curl and remove dependency on wget.
   * Make 'apt-file purge' remove old content files even if the sources.list
     line has been removed in the meantime (closes: #507092).
   * Make tests not require wget or curl during build-time. Thanks James Westby
     (closes: #506554).
 
- -- Thijs Kinkhorst <thijs@debian.org>  Tue, 25 Nov 2008 20:40:01 +0100
+ -- Stefan Fritsch <sf@debian.org>  Mon, 05 Jan 2009 18:46:56 +0100
 
 apt-file (2.1.6) unstable; urgency=low
 
