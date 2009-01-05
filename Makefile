@@ -20,6 +20,8 @@ install:
 	$(INSTALL) -m 644 apt-file.1 $(MANDIR)
 	$(INSTALL) -d -m 755 $(BINDIR)
 	$(INSTALL) -m 755 apt-file $(BINDIR)
+	$(INSTALL) -m 755 diffindex-download $(BINDIR)
+	$(INSTALL) -m 755 diffindex-rred $(BINDIR)
 	$(INSTALL) -d -m 755 $(ETCDIR)
 	$(INSTALL) -m 644 apt-file.conf $(ETCDIR)
 	$(INSTALL) -d -m 755 $(COMPDIR)
@@ -36,7 +38,9 @@ man:
 
 test:
 	make -C tests-apt-file test
+	make -C tests-diffindex test
 
 clean:
 	rm -f *~ manpage.* apt-file.1 apt-file.fr.1
 	make -C tests-apt-file clean
+	make -C tests-diffindex clean
