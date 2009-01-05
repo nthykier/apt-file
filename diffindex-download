@@ -30,7 +30,7 @@ usage(0) if $opts{h};
 usage(1) if scalar @ARGV != 2;
 
 my $verbose     = defined $opts{q} ? !$opts{q} : -t STDIN;
-my $max_patches = defined $opts{n} ? $opts{n}  : 5;
+my $max_patches = defined $opts{n} ? $opts{n}  : 50;
 my $debug       = $opts{d};
 
 my $rred       = "diffindex-rred";
