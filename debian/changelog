@@ -6,6 +6,8 @@ apt-file (2.2.0) UNRELEASED; urgency=low
   * diffindex-download uses curl with progress meter enabled by default
     (can be changed in apt-file.conf). Closes: #381613
     Therefore always depend on curl and remove dependency on wget.
+  * diffindex-download prints some error messages if no connection is possible
+    (closes: #357031).
   * Make 'apt-file purge' remove old content files even if the sources.list
     line has been removed in the meantime (closes: #507092).
   * Make tests not require wget or curl during build-time. Thanks James Westby
