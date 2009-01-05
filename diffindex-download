@@ -137,7 +137,8 @@ eval {
     @args = map { "$tmpdir/" . quotemeta($_) . ".gz" } @patches;
     system_or_die(
         "$decompress{$algo} $target | $rred @args | $compress{$algo} > ${target}_new",
-        "Failed to apply patches with $rred"
+        "Failed to apply patches with $rred",
+        [ "${target}_new", $oldindexfile ]
     );
 
     move( "${target}_new", $target );
@@ -174,7 +175,9 @@ sub download {
     }
 
     system_or_die( $command,
-        "Download of " . join( " ", keys %urls ) . " failed" );
+        "Download of " . join( " ", keys %urls ) . " failed",
+        [ values %urls ]
+    );
 }
 
 sub download_full {
@@ -189,7 +192,8 @@ sub download_full {
     if ( $url_algo ne $algo ) {
         system_or_die(
             "$decompress{$url_algo} ${target}_new | $compress{$algo} > ${target}_new2",
-            "Recompression from '$url_algo' to '$algo' failed"
+            "Recompression from '$url_algo' to '$algo' failed",
+            [ "${target}_new", "${target}_new2" ]
         );
         move( "${target}_new2", $target );
         unlink "${target}_new";
@@ -281,14 +285,17 @@ sub parse_index {
     return $data;
 }
 
+# call system($command)
+# On failure: print $msg, call code or unlink files in $cleanup, then die
 sub system_or_die {
-    my ( $command, $msg ) = @_;
+    my ( $command, $msg, $cleanup ) = @_;
 
     debug("Executing '$command'\n");
     system($command);
     if ( WIFEXITED($?) ) {
         if ( WEXITSTATUS($?) != 0 ) {
-            warn "$msg\n";
+            warn "$msg\n" if $msg;
+            cleanup($cleanup);
             die "Command exited with code " . WEXITSTATUS($?) . "\n";
         }
         else {
@@ -296,8 +303,28 @@ sub system_or_die {
         }
     }
     else {
-        warn "$msg\n";
+        warn "$msg\n" if $msg;
+        cleanup($cleanup);
         die "Command died with signal " . WTERMSIG($?) . "\n";
+    }
+}
+
+sub cleanup {
+    my $clean = shift;
+
+    $clean || return;
+
+    if (ref($clean) eq 'ARRAY') {
+        unlink(@{$clean});
+    }
+    elsif (ref($clean) eq 'CODE') {
+        eval { $clean->(); };
+    }
+    elsif (ref($clean) eq '') {
+        unlink($clean);
+    }
+    else {
+        die 'invalid argument in cleanup';
     }
 }
 
