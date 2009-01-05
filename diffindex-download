@@ -81,6 +81,9 @@ my $current_sum;
 # try using the diffs to download the new file
 # if something goes wrong we throw an exception and download the full file
 eval {
+    if (!$max_patches) {
+        die "Patch download disabled.\n";
+    }
     eval {
 
         # try to get sha1sum from old Index file
