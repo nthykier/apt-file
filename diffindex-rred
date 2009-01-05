@@ -18,12 +18,6 @@
 use strict;
 use File::Temp qw/tmpnam/;
 
-my @patches;
-my $line;
-my $filename;
-my $input_fh;
-my $pid;
-
 if ( !scalar @ARGV or $ARGV[0] eq '-h' or $ARGV[0] eq '--help' ) {
     print << "EOF";
 usage:
@@ -37,138 +31,266 @@ EOF
     exit 0;
 }
 
-# create filter chain to process more than one patch at once
-while (1) {
+my $patches;
+my $filename;
 
-    # take the last patch
-    $filename = pop @ARGV;
-    if ( scalar @ARGV > 0 ) {
-
-        # fork and let the child deal with the rest
-        # use the child's STDOUT as our input
-        $pid = open( $input_fh, "-|" );
-        if ( !defined $pid ) {
-            die "Could not fork\n";
-        }
-        if ( $pid > 0 ) {
-
-            # parent
-            last;
-        }
+foreach my $filename (@ARGV) {
+    if ( $filename =~ m{\.gz$} ) {
+        $filename = "gunzip -c $filename |";
+    }
+    elsif ( $filename =~ m{\.bz2$} ) {
+        $filename = "bunzip2 -c $filename |";
+    }
+    elsif ( $filename =~ m{\.lzo$} ) {
+        $filename = "lzop -dc $filename |";
     }
     else {
-
-        # no more patches, open STDIN
-        open( $input_fh, "<-" );
-        last;
+        $filename = "<$filename";
     }
+    $patches = merge_patches(read_patch($filename), $patches);
 }
 
-if ( $filename =~ m{\.gz$} ) {
-    $filename = "gunzip -c $filename |";
-}
-elsif ( $filename =~ m{\.bz2$} ) {
-    $filename = "bunzip2 -c $filename |";
-}
-elsif ( $filename =~ m{\.lzo$} ) {
-    $filename = "lzop -dc $filename |";
-}
-else {
-    $filename = "<$filename";
-}
-open( my $fh_patch, $filename ) or die "Could not open '$filename'\n";
-
-# reverse order of hunks and merge 'a' and 's/.//' with the preceeding hunks
-while ( defined( $line = <$fh_patch> ) ) {
-    my $lines;
-    chomp $line;
-    my $num;
-    if ( $line =~ /^(\d+)((?:,\d+)?)(d)$/ ) {
-        unshift @patches, [ $3, $1, $2 ];
-    }
-    elsif ( $line =~ /^(\d+)((?:,\d+)?)([ac])$/ ) {
-        my $lines = "";
-        while ( defined( $line = <$fh_patch> ) and $line ne ".\n" ) {
-            $lines .= $line;
-        }
-        unshift @patches, [ $3, $1, $2, $lines ];
-    }
-    elsif ( $line eq 's/.//' ) {
-        my $lines_ref = \$patches[0]->[3];
-        if ( !defined $$lines_ref ) {
-            die "Invalid format:$.:$line:Not preceeded by add or change\n";
-        }
-        if ( $$lines_ref !~ s{\.\.\n$}{.\n} ) {
-            print $$lines_ref;
-            die "Invalid format:$.:$line:Not preceeded by '..'\n";
-        }
-    }
-    elsif ( $line eq 'a' ) {
-        my $lines_ref = \$patches[0]->[3];
-        if ( !defined $$lines_ref ) {
-            die "Invalid format:$.:$line:Not preceeded by add or change\n";
-        }
-        my $lines = "";
-        while ( defined( $line = <$fh_patch> ) and $line ne ".\n" ) {
-            $lines .= $line;
-        }
-        $$lines_ref = $$lines_ref . $lines;
-    }
-    else {
-        die "Invalid format:$.:$line\n";
-    }
-    if ( $num and $num < $1 ) {
-        die "Not in reverse order:$.:$line\n$num\n";
-    }
-    else {
-        $num = $1;
-    }
-}
-close($fh_patch) or die "Error reading patch";
-
-open( my $output_fh, ">-" );
 
 my $cur = 1;
-foreach my $p (@patches) {
-    my ( $op, $l1, $l2 ) = @{$p};
-    if ( $op eq 'a' ) {
-        # 'a' can only have one line number
-        die "invalid format: $l1$l2$op\n" if $l2;
-
-        $l1++;
-    }
-    else {
-        # remove comma
-        $l2 = substr( $l2, 1 ) if $l2;
-    }
-
-    while ( $cur < $l1 ) {
-        $line = <$input_fh>;
-        if ( !defined $line ) {
-            die "end of input while at: @{$p}\n";
-        }
-        print $output_fh $line;
-        $cur++;
-    }
-    if ( $op eq 'd' || $op eq 'c' ) {
-        $l2 ||= $l1;
-        while ( $cur <= $l2 ) {
-            $line = <$input_fh>;
+my $p;
+while (defined ($p = $patches->() )) {
+    my ( $op, $lines, $lines_ref ) = @{$p};
+    if ( $op eq 'D' ) {
+        die "Invalid number in D: $lines" unless $lines > 0;
+        while ($lines-- > 0) {
+            my $line = <STDIN>;
             if ( !defined $line ) {
                 die "end of input while at: @{$p}\n";
             }
-            $cur++;
         }
     }
-    if ( $op eq 'a' || $op eq 'c' ) {
-        print $output_fh $p->[3];
+    elsif ($op eq 'I') {
+        print @{$lines_ref};
+    }
+    elsif ($op eq 'C') {
+        die "Invalid number in C: $lines" unless $lines > 0;
+        while ($lines-- > 0) {
+            my $line = <STDIN>;
+            if ( !defined $line ) {
+                die "end of input while at: @{$p}\n";
+            }
+            print $line;
+        }
     }
 }
-while ( defined( $line = <$input_fh> ) ) {
-    print $output_fh $line;
+# copy rest of file
+my $line;
+while ( defined( $line = <STDIN> ) ) {
+    print $line;
 }
 
-close($input_fh) or die "ERROR: child exited with error.\n";
+
+# Reads a diff --ed style patch file
+# Returns iterator function over patch hunks
+# - in reverse order
+# - converted into simple operations: _C_opy, _I_nsert, _D_elete
+# Each hunk is an array consisting of
+# - operation
+# - number of lines
+# - ref to array of lines (only for insert)
+sub read_patch {
+    my $filename = shift;
+
+    open( my $fh_patch, $filename ) or die "Could not open '$filename'\n";
+
+    my $line;
+    my @hunks;
+
+    # current position in the file
+    my $num;
+
+    while ( defined( $line = <$fh_patch> ) ) {
+        chomp $line;
+        my ($op, $n, $m);
+        if ( $line =~ /^(\d+)(a)$/ ) {
+            # Na: add lines after line N
+            $n = $1;
+            $op = $2;
+            $m = $n;
+            $n++;
+        }
+        elsif ( $line =~ /^(\d+)([cd])$/ ) {
+            # Nd: remove line N
+            # Nc: remove line N, then insert after line N-1
+            $n = $1;
+            $op = $2;
+            $m = $n;
+        }
+        elsif ( $line =~ /^(\d+),(\d+)([cd])$/ ) {
+            # N,Md: remove lines N to M
+            # N,Mc: remove lines N to M, then insert after line M-1
+            $n = $1;
+            $m = $2;
+            $op = $3;
+        }
+        elsif ( $line eq 's/.//' ) {
+            # replace inserted ".." line by "."
+            my $lines_ref = $hunks[0]->[2];
+            if ( ref($lines_ref) ne 'ARRAY') {
+                die "Invalid format:$filename:$.:$line:Not preceeded by add or change\n";
+            }
+            if ( $lines_ref->[-1] ne "..\n" ) {
+                die "Invalid format:$filename:$.:$line:Not preceeded by '..'\n";
+            }
+            else {
+                $lines_ref->[-1] = ".\n";
+            }
+        }
+        elsif ( $line eq 'a' ) {
+            # insert some more lines after the 's/.//' replacement
+            my $lines_ref = $hunks[0]->[2];
+            if ( ref($lines_ref) ne 'ARRAY' ) {
+                die "Invalid format:$filename:$.:$line:Not preceeded by add or change\n";
+            }
+            while ( defined( $line = <$fh_patch> ) and $line ne ".\n" ) {
+                push @$lines_ref, $line;
+                $hunks[0]->[1]++;
+            }
+        }
+        else {
+            die "Invalid format:$filename:$.:$line\n";
+        }
+
+        if (!defined $op) {
+            # we are merging with the last op
+            next;
+        }
+
+        if ( $num ) {
+            if ( $num < $n || $num < $m ) {
+                die "Not in reverse order:$filename:$.:$line\n$num\n";
+            }
+            my $copy = $num - $m - 1;
+            unshift @hunks, [ 'C', $copy ] if $copy; 
+        }
+        $num = $n;
+
+        if ($op eq 'd' || $op eq 'c') {
+            unshift @hunks, [ 'D', $m - $n + 1];
+        }
+        if ($op eq 'a' || $op eq 'c') {
+            my @lines;
+            while ( defined( $line = <$fh_patch> ) and $line ne ".\n" ) {
+                push @lines, $line;
+            }
+            unshift @hunks, [ 'I', scalar @lines, \@lines ];
+        }
+    }
+    if (defined $num && $num > 1) {
+        # copy the rest of the file, i.e. the beginning since we are operating
+        # in reverse order
+        unshift @hunks, [ 'C', $num - 1];
+    }
+
+    #print STDERR "@$_\n" foreach (@hunks);
+    #print STDERR "\n";
+
+    close($fh_patch) or die "Error reading patch";
+    return sub { shift @hunks };
+}
+
+# merges two patches
+# in1 is applied first, then in2
+# returns iterator function over merged patch hunks
+sub merge_patches {
+    my ($in1, $in2) = @_;
+
+    return $in1 unless $in2;
+    return $in2 unless $in1;
+
+    my $cur1 = $in1->();
+    my $cur2 = $in2->();
+
+    return sub {
+        my $ret;
+        while (1) {
+
+        #print STDERR "in:cur1: @$cur1\n" if $cur1;
+        #print STDERR "in:cur2: @$cur2\n" if $cur2;
+            if (!defined $cur1) {
+                $ret = $cur2;
+                $cur2 = $in2->();
+                last;
+            }
+            if (!defined $cur2) {
+                $ret = $cur1;
+                $cur1 = $in1->();
+                last;
+            }
+
+            if ($cur1->[0] eq 'I') {
+                $ret = $cur1;
+                $cur1 = $in1->();
+                last;
+            }
+            elsif ($cur2->[0] eq 'D') {
+                $ret = $cur2;
+                $cur2 = $in2->();
+                last;
+            }
+            elsif ($cur1->[1] >= $cur2->[1]) {
+                if ($cur2->[0] eq 'C') {
+                   $ret = [ $cur1->[0], $cur2->[1] ];
+                }
+                elsif ($cur1->[0] eq 'D') {
+                    # cur2 was 'I'; discard it
+                    $cur1->[1] -= $cur2->[1];
+                    $cur1 = $in1->() unless $cur1->[1] > 0;
+                    $cur2 = $in2->();
+                    next;
+                }
+                else {
+                    # cur2 is 'I', cur1 is 'C'
+                    $ret = $cur2;
+                }
+                $cur1->[1] -= $cur2->[1];
+                $cur2 = $in2->();
+                $cur1 = $in1->() unless $cur1->[1] > 0;
+                last;
+            }
+            else {
+                # cur1 is smaller than cur2
+                if ($cur1->[0] eq 'D') {
+                    if ($cur2->[0] eq 'I') {
+                        my $n = $cur1->[1];
+                        my $list_ref = $cur2->[2];
+                        $cur2->[2] = [@{$list_ref}[$n .. $#{$list_ref}]];
+                        $cur2->[1] -= $n;
+                        $cur1 = $in1->();
+                        next;
+                    }
+                    else {
+                        $ret = $cur1;
+                        $cur2->[1] -= $cur1->[1];
+                        $cur1 = $in1->();
+                        last;
+                    }
+                }
+                else {
+                    # cur1 is 'C'
+                    my $n = $cur1->[1];
+                    $ret = [ $cur2->[0], $n];
+                    if ($cur2->[0] eq 'I') {
+                        my $list_ref = $cur2->[2];
+                        push @$ret, [@{$list_ref}[0 .. $n -1]];
+                        $cur2->[2] = [@{$list_ref}[$n .. $#{$list_ref}]]
+                    }
+                    $cur2->[1] -= $n;
+                    $cur1 = $in1->();
+                    last;
+                }
+            }
+        }
+        #print STDERR "out:ret: @$ret\n" if $ret;
+        return $ret;
+    };
+}
+
 
 # our style is roughly "perltidy -pbp"
 # vim:sts=4:sw=4:expandtab
