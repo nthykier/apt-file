@@ -1,0 +1,117 @@
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN">
+<refentry>
+  <refentryinfo>
+    <address>
+      <email>sf@debian.org</email>
+    </address>
+    <author>
+      <firstname>Stefan</firstname>
+      <surname>Fritsch</surname>
+    </author>
+    <date>January 2008</date>
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>diffindex-download</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>diffindex-download</refname>
+    <refpurpose>
+      Download utility for Debian Contents files
+    </refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>diffindex-download</command>
+      <arg><option>options</option></arg>
+      <arg choice="Req">URL</arg>
+      <arg choice="Req">filename</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para><command>diffindex-download</command> is a command line tool for
+      downloading Contents files. It uses APT's diff/Index format patches when
+      available to avoid downloading the full file.
+      <command>diffindex-download</command> is used by
+      <command>apt-file</command>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <option>-n</option> <literal>number</literal>
+	</term>
+	<listitem>
+	  <para>
+	    If more than <literal>number</literal> patches would be necessary,
+            download the whole file. Specifying 0 to always download the whole
+            file is possible.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-i</option>
+	</term>
+	<listitem>
+	  <para>
+	    Don't exit with errror if the URL does not exist. This is useful
+            as some archives don't provide Contents files.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-q</option>
+	</term>
+	<listitem>
+	  <para>
+            Be quiet.
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-d</option>
+	</term>
+	<listitem>
+	  <para>
+	  Print additional debug info.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-h</option>
+	</term>
+	<listitem>
+	  <para>Display a short help screen.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <command>apt-file</command>(1), <command>diffindex-rred</command>(1)
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+      <command>diffindex-download</command> was written by Stefan Fritsch
+      <email>sf@debian.org</email>.
+    </para>
+  </refsect1>
+</refentry>

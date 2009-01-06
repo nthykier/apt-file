@@ -1,0 +1,64 @@
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN">
+<refentry>
+  <refentryinfo>
+    <address>
+      <email>sf@debian.org</email>
+    </address>
+    <author>
+      <firstname>Stefan</firstname>
+      <surname>Fritsch</surname>
+    </author>
+    <date>January 2008</date>
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>diffindex-rred</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>diffindex-rred</refname>
+    <refpurpose>
+      Restricted restricted ed
+    </refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>diffindex-rred</command>
+      <arg choice="Req" rep="Repeat">diff1</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para><command>diffindex-rred</command> is a command line tool for
+      applying <command>diff --ed</command> style patches, as used in APT's
+      diff/Index format. It can efficiently apply several patches in one run
+      and does not need to read the whole source file into memory.
+    </para>
+    <para>
+      The source file is taken from stdin. The patched file is written to
+      stdout. Compressed patch files are decompressed automatically if
+      they have the proper .gz, .bz2, or .lzo extension.
+    </para>
+    <para>
+      <command>diffindex-rred</command> is used by
+      <command>diffindex-download</command>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <command>apt-file</command>(1), <command>diffindex-download</command>(1)
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+      <command>diffindex-rred</command> was written by Stefan Fritsch
+      <email>sf@debian.org</email>.
+    </para>
+  </refsect1>
+
+</refentry>

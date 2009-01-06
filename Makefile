@@ -18,6 +18,8 @@ all: man
 install:
 	$(INSTALL) -d -m 755 $(MANDIR)
 	$(INSTALL) -m 644 apt-file.1 $(MANDIR)
+	$(INSTALL) -m 644 diffindex-download.1 $(MANDIR)
+	$(INSTALL) -m 644 diffindex-rred.1 $(MANDIR)
 	$(INSTALL) -d -m 755 $(BINDIR)
 	$(INSTALL) -m 755 apt-file $(BINDIR)
 	$(INSTALL) -m 755 diffindex-download $(BINDIR)
@@ -34,6 +36,8 @@ uninstall:
 
 man:
 	$(DOCBOOK2MAN) apt-file.1.sgml
+	$(DOCBOOK2MAN) diffindex-download.1.sgml
+	$(DOCBOOK2MAN) diffindex-rred.1.sgml
 	$(DOCBOOK2MAN) apt-file.fr.1.sgml
 
 test:
@@ -41,6 +45,6 @@ test:
 	make -C tests-diffindex test
 
 clean:
-	rm -f *~ manpage.* apt-file.1 apt-file.fr.1
+	rm -f *~ manpage.* apt-file.1 apt-file.fr.1 diffindex-download.1 diffindex-rred.1
 	make -C tests-apt-file clean
 	make -C tests-diffindex clean
