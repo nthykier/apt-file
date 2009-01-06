@@ -1,4 +1,4 @@
-apt-file (2.2.0) UNRELEASED; urgency=low
+apt-file (2.2.0) unstable; urgency=low
 
   * Ship 'diffindex-download' and 'diffindex-rred' for downloading patches
     instead of the full Contents files. Use this for http and ftp in default
@@ -13,7 +13,7 @@ apt-file (2.2.0) UNRELEASED; urgency=low
   * Make tests not require wget or curl during build-time. Thanks James Westby
     (closes: #506554).
 
- -- Stefan Fritsch <sf@debian.org>  Mon, 05 Jan 2009 18:46:56 +0100
+ -- Stefan Fritsch <sf@debian.org>  Tue, 06 Jan 2009 16:59:04 +0100
 
 apt-file (2.1.6) unstable; urgency=low
 
