@@ -1,8 +1,8 @@
-apt-file (2.2.1) UNRELEASED; urgency=low
+apt-file (2.2.1) unstable; urgency=low
 
   * Fix ftp download (closes: #511672).
 
- -- Stefan Fritsch <sf@debian.org>  Tue, 13 Jan 2009 20:59:41 +0100
+ -- Stefan Fritsch <sf@debian.org>  Tue, 13 Jan 2009 21:04:33 +0100
 
 apt-file (2.2.0) unstable; urgency=low
 
