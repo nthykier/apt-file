@@ -169,7 +169,7 @@ sub download {
     my $oldfile;
     $oldfile = pop(@_) if scalar @_ % 2;
     my %urls    = @_;
-    my $command = "curl -l -L -f";
+    my $command = "curl -L -f";
     $command .= " -sS" if $oldfile || !$verbose;
     $command .= " -z $oldfile" if ($oldfile && -e $oldfile);
 

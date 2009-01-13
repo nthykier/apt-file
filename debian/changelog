@@ -1,3 +1,9 @@
+apt-file (2.2.1) UNRELEASED; urgency=low
+
+  * Fix ftp download (closes: #511672).
+
+ -- Stefan Fritsch <sf@debian.org>  Tue, 13 Jan 2009 20:59:41 +0100
+
 apt-file (2.2.0) unstable; urgency=low
 
   * Ship 'diffindex-download' and 'diffindex-rred' for downloading patches
