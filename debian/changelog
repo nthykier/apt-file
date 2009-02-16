@@ -1,4 +1,4 @@
-apt-file (2.2.2) UNRELEASED; urgency=low
+apt-file (2.2.2) unstable; urgency=low
 
   * diffindex-download improvements for the case when diff/Index is not available
     (LP: #316155):
@@ -6,7 +6,7 @@ apt-file (2.2.2) UNRELEASED; urgency=low
     - don't calculate the sha1sum of the old file, it's futile anyway
     - don't redownload the full file if it has not changed
 
- -- Stefan Fritsch <sf@debian.org>  Mon, 16 Feb 2009 22:38:19 +0100
+ -- Stefan Fritsch <sf@debian.org>  Mon, 16 Feb 2009 22:46:33 +0100
 
 apt-file (2.2.1) unstable; urgency=low
 
