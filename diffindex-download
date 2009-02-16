@@ -84,6 +84,18 @@ eval {
     if (!$max_patches) {
         die "Patch download disabled.\n";
     }
+
+    my $index_url = "$baseurl.diff/Index";
+    info("Downloading Index $index_url:\n");
+    if (url_not_found($index_url)) {
+        die "No Index available.\n";
+    }
+    download( $index_url, $newindexfile, $oldindexfile );
+    if ( ! -e $newindexfile ) {
+        info("Index is up-to-date.\n");
+        exit 0;
+    }
+
     eval {
 
         # try to get sha1sum from old Index file
@@ -103,12 +115,6 @@ eval {
         }
     }
 
-    info("Downloading Index $baseurl.diff/Index:\n");
-    download( "$baseurl.diff/Index", $newindexfile, $oldindexfile );
-    if ( ! -e $newindexfile ) {
-        info("Index is up-to-date.\n");
-        exit 0;
-    }
     $newindex = parse_index($newindexfile);
 
     if ( $current_sum eq $newindex->{Current}->{sum} ) {
@@ -150,7 +156,7 @@ eval {
 if ($@) {
 
     # something went wrong, download full file
-    warn "$@\n" if $verbose;
+    warn "$@" if $verbose;
     if ( $@ =~ /signal 2/ ) {
 
         # exit if CTRL-C was pressed
@@ -191,7 +197,11 @@ sub download_full {
     }
 
     info("Downloading complete file $url\n");
-    download( $url, "${target}_new" );
+    download( $url, "${target}_new", $target );
+    if (! -e "${target}_new") {
+        info("File is up-to-date.\n");
+        exit(0);
+    }
     if ( $url_algo ne $algo ) {
         system_or_die(
             "$decompress{$url_algo} ${target}_new | $compress{$algo} > ${target}_new2",
