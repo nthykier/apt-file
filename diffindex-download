@@ -24,14 +24,20 @@ use Getopt::Std;
 
 $Getopt::Std::STANDARD_HELP_VERSION=1;
 my %opts;
-getopts( 'n:qhdi', \%opts ) or usage(3);
+getopts( 'n:qvhdi', \%opts ) or usage(3);
 
 usage(0) if $opts{h};
 usage(1) if scalar @ARGV != 2;
 
-my $verbose     = defined $opts{q} ? !$opts{q} : -t STDIN;
 my $max_patches = defined $opts{n} ? $opts{n}  : 50;
 my $debug       = $opts{d};
+my $verbose     = -t STDOUT;
+if ($opts{q} ) {
+	$verbose = 0;
+}
+if ($opts{v}) {
+	$verbose = 1;
+}
 
 my $rred       = "diffindex-rred";
 my %decompress = (
@@ -90,7 +96,11 @@ eval {
     if (url_not_found($index_url)) {
         die "No Index available.\n";
     }
-    download( $index_url, $newindexfile, $oldindexfile );
+    {
+        # don't make curl print the progress bar for the index
+        my $verbose;
+        download( $index_url, $newindexfile, $oldindexfile );
+    }
     if ( ! -e $newindexfile ) {
         info("Index is up-to-date.\n");
         exit 0;
@@ -176,7 +186,7 @@ sub download {
     $oldfile = pop(@_) if scalar @_ % 2;
     my %urls    = @_;
     my $command = "curl -L -f";
-    $command .= " -sS" if $oldfile || !$verbose;
+    $command .= " -sS" if !$verbose;
     $command .= " -z $oldfile" if ($oldfile && -e $oldfile);
 
     foreach my $url ( keys %urls ) {

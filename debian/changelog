@@ -1,6 +1,9 @@
 apt-file (2.2.3) UNRELEASED; urgency=low
 
   * Fix perl warning when $HOME is not set (closes: #527303)
+  * Make diffindex-download check if stdout is a terminal instead of stdin,
+    to determine if it should be quiet. This fixes 'apt-file -N' disabling
+    the download progress report (closes: #526393)
 
  -- Stefan Fritsch <sf@debian.org>  Fri, 24 Jul 2009 16:27:07 +0200
 

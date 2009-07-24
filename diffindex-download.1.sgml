@@ -75,7 +75,17 @@
 	</term>
 	<listitem>
 	  <para>
-            Be quiet.
+            Be quiet (opposite of -v). The default if stdout is not a terminal.
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-v</option>
+	</term>
+	<listitem>
+	  <para>
+            Be verbose (opposite of -q). The default if stdout is a terminal.
 	</listitem>
       </varlistentry>
 
