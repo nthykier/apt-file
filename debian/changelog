@@ -1,3 +1,9 @@
+apt-file (2.2.3) UNRELEASED; urgency=low
+
+  * Fix perl warning when $HOME is not set (closes: #527303)
+
+ -- Stefan Fritsch <sf@debian.org>  Fri, 24 Jul 2009 16:27:07 +0200
+
 apt-file (2.2.2) unstable; urgency=low
 
   * diffindex-download improvements for the case when diff/Index is not available

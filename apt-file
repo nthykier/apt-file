@@ -518,10 +518,16 @@ sub dir_is_empty {
 
 sub main {
     my $conf_file;
-    map { $conf_file = $_ if -f $_ } (
-        "/etc/apt/apt-file.conf", "$ENV{HOME}/.apt-file.conf",
-        $ENV{APT_FILE_CONFIG} || ""
-    );
+    if (exists $ENV{APT_FILE_CONFIG} && -f $ENV{APT_FILE_CONFIG}) {
+	$conf_file = $ENV{APT_FILE_CONFIG};
+    }
+    elsif (exists $ENV{HOME} && -f "$ENV{HOME}/.apt-file.conf") {
+        $conf_file = "$ENV{HOME}/.apt-file.conf";
+    }
+    elsif (-f "/etc/apt/apt-file.conf") {
+        $conf_file = "/etc/apt/apt-file.conf";
+    }
+
 
     error "No config file found\n" if !defined $conf_file;
 
@@ -599,8 +605,11 @@ sub main {
             if ( exists $ENV{XDG_CACHE_HOME} ) {
                 $user_cache = "$ENV{XDG_CACHE_HOME}/apt-file";
             }
-            else {
+            elsif (exists $ENV{HOME}) {
                 $user_cache = "$ENV{HOME}/.cache/apt-file";
+            }
+            else {
+                $user_cache = $sys_cache;
             }
 
             if ( $Conf->{is_search}
