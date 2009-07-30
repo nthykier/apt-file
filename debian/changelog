@@ -1,7 +1,7 @@
 apt-file (2.3.0) UNRELEASED; urgency=low
 
   * Add initial version of rapt-file, which queries dde.debian.org and does
-    not rely on the downloaded file lists.
+    not rely on the downloaded file lists (closes: #518764).
   * Add Enrico to Uploaders.
   * Fix perl warning when $HOME is not set (closes: #527303)
   * Make diffindex-download check if stdout is a terminal instead of stdin,
