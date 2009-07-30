@@ -1,5 +1,8 @@
-apt-file (2.2.3) UNRELEASED; urgency=low
+apt-file (2.3.0) UNRELEASED; urgency=low
 
+  * Add initial version of rapt-file, which queries dde.debian.org and does
+    not rely on the downloaded file lists.
+  * Add Enrico to Uploaders.
   * Fix perl warning when $HOME is not set (closes: #527303)
   * Make diffindex-download check if stdout is a terminal instead of stdin,
     to determine if it should be quiet. This fixes 'apt-file -N' disabling

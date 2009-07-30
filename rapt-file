@@ -1,0 +1,147 @@
+#!/usr/bin/python
+
+VERSION="0.1"
+
+import sys, subprocess, os, os.path
+import cPickle as pickle
+from urllib2 import urlopen
+
+def unpickle(inputfd):
+    unp = pickle.Unpickler(inputfd)
+    unp.find_global = None
+    while True:
+        try:
+            yield unp.load()
+        except EOFError:
+            break
+
+def get_architecture(opts):
+    if opts.arch:
+        return opts.arch
+    else:
+        return subprocess.Popen(["dpkg-architecture", "-qDEB_HOST_ARCH"], stdout=subprocess.PIPE).communicate()[0].strip()
+
+DIST_WHITELIST = set(["sid", "squeeze", "lenny", "etch"])
+DIST_ALIASES = {
+        "unstable": "sid",
+        "testing": "squeeze",
+        "stable": "lenny",
+        "oldstable": "etch",
+}
+
+def get_dists(opts):
+    if opts.sources:
+        infiles = [opts.sources]
+    else:
+        infiles = ["/etc/apt/sources.list"]
+        sld = "/etc/apt/sources.list.d"
+        if os.path.isdir(sld):
+            for f in os.listdir(sld):
+                infiles.append(os.path.join(sld, f))
+    dists = set()
+    for f in infiles:
+        for line in open(f):
+            line = line.strip()
+            if not line or line[0] == "#": continue
+            line = line.split()
+            if len(line) < 4: continue
+            dist = line[2].split("/")[0]
+            dist = DIST_ALIASES.get(dist, dist)
+            if dist in DIST_WHITELIST:
+                dists.add(dist)
+    return sorted(dists)
+
+
+
+
+import optparse
+
+class Parser(optparse.OptionParser):
+    def __init__(self, *args, **kwargs):
+        optparse.OptionParser.__init__(self, *args, **kwargs)
+
+    def print_help(self, out=sys.stdout):
+        optparse.OptionParser.print_help(self, out)
+        print >>out
+        print >>out, "Action:"
+        print >>out, "  update                     Fetch Contents files from apt-sources (ignored)"
+        print >>out, "  search|find  <pattern>     Search files in packages"
+        print >>out, "  list|show    <pattern>     List files in packages"
+        print >>out, "  purge                      Remove cache files (ignored)"
+
+    def error(self, msg):
+        sys.stderr.write("%s: error: %s\n\n" % (self.get_prog_name(), msg))
+        self.print_help(sys.stderr)
+        sys.exit(2)
+
+parser = Parser(usage="usage: %prog [options] action [pattern]",
+                version="%prog "+ VERSION,
+                description="Search files in packages")
+
+parser.add_option("-s", "--sources-list", metavar="FILE", dest="sources", help="sources.list location")
+parser.add_option("-a", "--architecture", dest="arch", help="Use specific architecture")
+parser.add_option("-l", "--package-only", dest="pkgonly", action="store_true", help="Only display package names")
+parser.add_option("-v", "--verbose", action="store_true", help="run in verbose mode")
+
+parser.add_option("-c", "--cache", dest="dir", help="Cache directory (ignored)")
+parser.add_option("-d", "--cdrom-mount", dest="cdrom", help="Use specific cdrom mountpoint (ignored)")
+parser.add_option("-N", "--non-interactive", action="store_true", help="Skip schemes requiring user input (useful in cron jobs) (ignored)")
+parser.add_option("-x", "--regexp", action="store_true", help="pattern is a regular expression (ignored)")
+parser.add_option("-y", "--dummy", action="store_true", help="run in dummy mode (no action) (ignored)");
+parser.add_option("-i", "--ignore-case", action="store_true", help="Ignore case distinctions (ignored)")
+parser.add_option("-F", "--fixed-string", action="store_true", help="Do not expand pattern (ignored)")
+
+(options, args) = parser.parse_args()
+
+action = args and args.pop(0) or None
+
+# Skip ignored actions
+if action in ("update", "purge"):
+    sys.exit(0)
+elif action in ("search", "find"):
+    pattern = args.pop(0)
+    arch = get_architecture(options)
+    dists = get_dists(options)
+    pkgs = set()
+    for dist in dists:
+        url = "http://dde.debian.net/dde/q/aptfile/byfile/%s-%s/%s?t=pickle" % (dist, arch, pattern)
+        if options.verbose: print >>sys.stderr, "Querying %s..." % url
+        for res in unpickle(urlopen(url)):
+            for pkg in res:
+                pkgs.add(pkg)
+    if options.pkgonly:
+        for pkg in sorted(pkgs):
+            print pkg
+    else:
+        import warnings
+        # Yes, apt, thanks, I know, the api isn't stable, thank you so very much
+        #warnings.simplefilter('ignore', FutureWarning)
+        warnings.filterwarnings("ignore","apt API not stable yet")
+        import apt
+        warnings.resetwarnings()
+        cache = apt.Cache()
+        for pkg in sorted(pkgs):
+            p = cache[pkg]
+            print pkg, "-", p.summary
+    sys.exit(0)
+elif action in ("list", "show"):
+    pattern = args.pop(0)
+    arch = get_architecture(options)
+    dists = get_dists(options)
+    files = set()
+    for dist in dists:
+        url = "http://dde.debian.net/dde/q/aptfile/bypackage/%s-%s/%s?t=pickle" % (dist, arch, pattern)
+        if options.verbose: print >>sys.stderr, "Querying %s..." % url
+        for res in unpickle(urlopen(url)):
+            for f in res[0]:
+                files.add(f)
+    for f in sorted(files):
+        print f
+    sys.exit(0)
+elif action is None:
+    parser.print_help()
+    sys.exit(0)
+else:
+    parser.error("Action '%s' is not valid" % action)
+
+
