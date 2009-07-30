@@ -5,6 +5,13 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	TEST_TARGET =
+else
+	TEST_TARGET = test
+endif
+
+
 VERSION=$(shell dpkg-parsechangelog |egrep ^Version: | cut -d ' ' -f 2)
 
 configure: configure-stamp
@@ -18,8 +25,7 @@ build-stamp:
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE)
-	$(MAKE) test
+	$(MAKE) all $(TEST_TARGET)
 	#/usr/bin/docbook-to-man debian/apt-file.sgml > apt-file.1
 	touch build-stamp
 
