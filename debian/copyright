@@ -1,7 +1,8 @@
 This package was debianized by Sebastien J. Gross <sjg@debian.org> on
 Sat, 13 Oct 2001 21:36:47 +0200.
 
-Author(s): Sebastien J. Gross <sjg@debian.org>
+Authors: Sebastien J. Gross <sjg@debian.org>
+         Enrico Zini <enrico@debian.org> (for rapt-file)
 
 Copyright:
 
