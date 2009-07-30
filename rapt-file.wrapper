@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ -x /usr/bin/python ] ; then
+	exec /usr/share/apt-file/rapt-file "$@"
+else
+	echo You need to install python to use rapt-file >&2
+	exit 1
+fi
