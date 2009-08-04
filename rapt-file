@@ -139,8 +139,11 @@ elif action in ("search", "find"):
         warnings.resetwarnings()
         cache = apt.Cache()
         for pkg in sorted(pkgs):
+            if not pkg in cache: continue
             p = cache[pkg]
-            print pkg, "-", p.summary
+            v = p.candidate
+            if not v: continue
+            print pkg, "-", v.summary
     sys.exit(0)
 elif action in ("list", "show"):
     pattern = args.pop(0)
