@@ -1,3 +1,9 @@
+apt-file (2.3.1) UNRELEASED; urgency=low
+
+  * Note in manpage that directories are not found (closes: #557181).
+
+ -- Thijs Kinkhorst <thijs@debian.org>  Sat, 21 Nov 2009 16:59:23 +0100
+
 apt-file (2.3.0) unstable; urgency=low
 
   * Add initial version of rapt-file, which does not rely on the downloaded

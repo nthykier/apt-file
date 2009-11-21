@@ -64,6 +64,9 @@
 	    packages containing the <option>pattern</option> pattern
 	    is returned.
 	  </para>
+	  <para>
+	    apt-file will only search for filenames, not directory names.
+	    This is due to the format of the Contents files it searches.
 	</listitem>
       </varlistentry>
 
