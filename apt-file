@@ -358,21 +358,27 @@ sub grep_file($) {
     my $pattern2;
 
     if ( $Conf->{is_regexp} ) {
-        if ( substr( $pattern, 0, 1 ) eq '^' ) {
-
-            # Pattern is anchored, so we're just not prefixing it with .*
-            # and remove ^ and slash
-            $pattern =~ s/^\^\/?//;
+        if ( $pattern !~ s{(\$|\\[zZ])$}{} ) {
+            # Not anchored at the end:
+            $pattern = $pattern . '\S*';
         }
-        elsif ( substr( $pattern, 0, 1 ) eq '/' ) {
 
-            # same logic as below, but the "/" is not escaped here
-            $pattern2 = '.*?' . $pattern;
-            $pattern  = substr( $pattern, 1 );
+        if ( $pattern =~ s{^(\^|\\A)/?}{} ) {
+            # If pattern is anchored at the start, we're just not prefixing it
+            # with .* after having removed ^ and /
         }
         else {
-            $pattern = '.*?' . $pattern;
+            if ( $pattern =~ m{^(/\\A)} ) {
+
+                # same logic as below, but the "/" is not escaped here
+                $pattern2 = '.*?' . $pattern;
+                $pattern  = substr( $pattern, 1 );
+            }
+            else {
+                $pattern = '.*?' . $pattern;
+            }
         }
+
         $pattern  = escape_parens($pattern);
         $pattern2 = escape_parens($pattern2) if defined $pattern2;
     }
@@ -394,7 +400,7 @@ sub grep_file($) {
         $pattern = '.*?' . $pattern unless $Conf->{fixed_strings};
     }
 
-    if ( ! defined $Conf->{fixed_strings} ) {
+    if ( ! defined $Conf->{fixed_strings} && ! defined $Conf->{is_regexp} ) {
         $pattern  .= '[^\s]*';
         $pattern2 .= '[^\s]*' if defined $pattern2;
     }
@@ -409,14 +415,19 @@ sub grep_file($) {
 sub grep_package($) {
     my $data = shift;
 
-    # Strip leading^ / trailing $ if regexp
     my $pkgpat = $Conf->{pattern};
     if ( $Conf->{is_regexp} ) {
-        if ( !substr( $pkgpat, 0, 1 ) eq "^" ) {
-            $pkgpat = '\S*';
+        if ( $pkgpat !~ s{^(\^|\\A)}{} ) {
+            $pkgpat = '\S*' . $pkgpat;
         }
-        $pkgpat = substr( $pkgpat, 1 );
+
+        if ( $pkgpat !~ s{(\$|\\[zZ])$}{} ) {
+            $pkgpat = $pkgpat . '\S*';
+        }
         $pkgpat = escape_parens($pkgpat);
+    }
+    elsif ($Conf->{fixed_strings}) {
+        $pkgpat = $Conf->{pattern};
     }
     else {
         $pkgpat = '\S*' . $Conf->{pattern};
@@ -427,7 +438,8 @@ sub grep_package($) {
     my $pattern = join "",
         (
         '^\s*(.*?)\s+', '(\S*/', $pkgpat,
-        defined $Conf->{fixed_strings} ? '(,\S*|)' : '\S*', ')\s*$',
+        defined $Conf->{fixed_strings} || defined $Conf->{regexp} ?
+            '(,\S*|)' : '\S*', ')\s*$',
         );
     my $ret = do_grep $data, $pattern;
     print_winners $ret, 0;
@@ -519,7 +531,7 @@ sub dir_is_empty {
 sub main {
     my $conf_file;
     if (exists $ENV{APT_FILE_CONFIG} && -f $ENV{APT_FILE_CONFIG}) {
-	$conf_file = $ENV{APT_FILE_CONFIG};
+        $conf_file = $ENV{APT_FILE_CONFIG};
     }
     elsif (exists $ENV{HOME} && -f "$ENV{HOME}/.apt-file.conf") {
         $conf_file = "$ENV{HOME}/.apt-file.conf";
@@ -565,10 +577,6 @@ sub main {
     if ( defined $Conf->{pattern} ) {
         $Conf->{pattern} = quotemeta( $Conf->{pattern} )
             unless $Conf->{is_regexp};
-        if ( $Conf->{is_regexp} and $Conf->{pattern} =~ /(\\[zZ]|\$)$/ ) {
-            $Conf->{pattern} =~ s/(\\[zZ]|\$)$//;
-            $Conf->{fixed_strings} = 1;
-        }
     }
     undef $!;
 

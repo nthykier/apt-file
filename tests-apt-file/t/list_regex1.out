@@ -1,0 +1,2 @@
+bash-debug: /usr/debug/bin/bash
+bash-minimal: /bin/bash-minimal

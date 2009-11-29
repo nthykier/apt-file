@@ -1,0 +1,2 @@
+args=list -F ash
+bug=557719

@@ -1,6 +1,10 @@
 apt-file (2.3.1) UNRELEASED; urgency=low
 
+  [ Thijs Kinkhorst ]
   * Note in manpage that directories are not found (closes: #557181).
+
+  [ Stefan Fritsch ]
+  * Rework anchoring logic for package and regexp searches (closes: #557719).
 
  -- Thijs Kinkhorst <thijs@debian.org>  Sat, 21 Nov 2009 16:59:23 +0100
 

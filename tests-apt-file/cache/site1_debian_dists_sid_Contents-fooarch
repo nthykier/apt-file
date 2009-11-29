@@ -31,6 +31,7 @@ particular file, you can use `dpkg --search <filename>':
 
 FILE                                                    LOCATION
 bin/afio						utils/afio
+bin/ash							shells/ash
 bin/bash						shells/bash
 bin/bash-minimal					shells/bash-minimal
 bin/bash-static						shells/bash-static
@@ -38,3 +39,4 @@ usr/debug/bin/bash					shells/bash-debug
 usr/lib/uml/modules/2.6.24/kernel/fs/fat/fat.ko		misc/user-mode-linux
 usr/lib/uml/modules/2.6.24/kernel/fs/vfat/vfat.ko	misc/user-mode-linux
 usr/lib/perl5/Template.pm				perl/libtemplate-perl
+usr/bin/mp3gain						audio/mp3gain
