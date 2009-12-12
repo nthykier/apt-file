@@ -117,17 +117,28 @@ sub parse_sources_list($) {
         debug "reading sources file $file";
         open( SOURCE, "< $file" ) || error "Can't open $file";
         while (<SOURCE>) {
-            next if /^\s*(?:$|\#|(?:deb-|rpm-))/xo;
+            next if /^\s*(?:$
+                           |[#]
+                           |deb-
+                           |rpm-
+			 )
+                    /xo;
             chomp;
             my $line = $_;
             debug "got \'$line\'";
-            $line =~ s/([^\/])\#.*$/$1/o;
-            $line =~ s/^(\S+\s+)\[\S+\]/$1/o;
-            $line =~ s/\s+/ /go;
-            $line =~ s/^\s+//o;
+            $line =~ s{([^/])\#.*$}{$1}o;
+            $line =~ s{^(\S+\s+)\[\S+\]}{$1}o;
+            $line =~ s{\s+}{ }go;
+            $line =~ s{^\s+}{}o;
 
             # CDROM entry
-            if ( @tmp = $line =~ m/^([^\[]*)\[([^\]]*)\](.*)$/o ) {
+            if ( @tmp = $line =~ m/^([^\[]*)
+                                    \[
+                                        ([^\]]*)
+                                    \]
+                                    (.*)$
+                                  /xo )
+            {
                 $tmp[1] =~ s/ /_/g;
                 $line = $tmp[0] . '[' . $tmp[1] . ']' . $tmp[2];
             }
@@ -137,7 +148,7 @@ sub parse_sources_list($) {
             debug "kept \'$line\'";
 
             my ( $pkg, $uri, $dist, @extra ) = split /\s+/, $line;
-            $uri =~ s/\/+$//;
+            $uri =~ s{/+$}{};
             my ( $scheme, $user, $passwd, $host, $port, $path, $query,
                 $fragment )
                 = $uri =~ m|^
@@ -158,7 +169,7 @@ sub parse_sources_list($) {
             my $fetch = [];
 
             foreach (@extra) {
-                push @$fetch, m/(.*?)\/(?:.*)/o ? "$dist/$1" : "$dist";
+                push @$fetch, m{(.*?)/(?:.*)}o ? "$dist/$1" : "$dist";
             }
 
             foreach ( @{ ( unique $fetch) } ) {
@@ -193,7 +204,7 @@ sub parse_sources_list($) {
                              }gsex;
                     } ( $cmd, $dest );
                 }
-                $dest =~ s/(\/|_)+/_/go;
+                $dest =~ s{(/|_)+}{_}go;
                 $cmd  =~ s/<dest>/$dest/g;
                 my $hash;
                 foreach (
