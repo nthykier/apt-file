@@ -11,7 +11,8 @@ Vcs-svn: svn://svn.debian.org/collab-maint/deb-maint/apt-file/trunk/
 Package: apt-file
 Architecture: all
 Depends: ${perl:Depends}, curl, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl
-Recommends: menu, python
+Recommends: python
+Suggests: menu
 Suggests: openssh-client, sudo
 Description: search for files within Debian packages (command-line interface)
  apt-file is a command line tool for searching files contained in packages
