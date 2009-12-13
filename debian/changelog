@@ -1,6 +1,8 @@
 apt-file (2.3.2) UNRELEASED; urgency=low
 
   * Downgrade 'Recommends: menu' to 'Suggests: menu' (closes: #543353).
+  * Update postinst message to mention the possibility to run 'apt-file
+    update' as non-root (closes: #540905).
 
  -- Stefan Fritsch <sf@debian.org>  Sun, 13 Dec 2009 11:22:02 +0100
 
