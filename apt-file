@@ -229,7 +229,13 @@ sub fetch_files ($) {
         if ($@) {
             error "Can't create $Conf->{cache}: $@";
         }
+        if ($Conf->{is_user_cache}) {
+            print "apt-file is now using the user's cache directory.\n",
+                  "If you want to switch back to the system-wide cache ",
+                  "directory,\n run 'apt-file purge'\n";
+        }
     }
+
     error "Can't write in $Conf->{cache}" if !-w $Conf->{cache};
     foreach ( @{ (shift) } ) {
         if (   $Conf->{"non_interactive"}
@@ -464,6 +470,9 @@ sub purge_cache($) {
         next if ( unlink $_ ) > 0;
         warning "Can't remove $_";
     }
+    if ($Conf->{is_user_cache}) {
+        rmdir($Conf->{cache});
+    }
 }
 
 sub print_version {
@@ -635,9 +644,11 @@ sub main {
                 && ( ! -d $user_cache || dir_is_empty($user_cache) ) )
             {
                 $Conf->{cache} = $sys_cache;
+                $Conf->{is_user_cache} = 0;
             }
             else {
                 $Conf->{cache} = $user_cache;
+                $Conf->{is_user_cache} = 1;
             }
         }
     }

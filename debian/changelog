@@ -8,6 +8,8 @@ apt-file (2.3.2) UNRELEASED; urgency=low
     the sources.list file (closes: #552986).
   * Make the update-notifier hook also look into the user's cache before
     asking to update (closes: #534191).
+  * When creating a cache in the user's home dir, print a message how to
+    switch back to the system wide cache directory (closes: #541327).
 
  -- Stefan Fritsch <sf@debian.org>  Sun, 13 Dec 2009 11:22:02 +0100
 

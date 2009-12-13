@@ -439,6 +439,10 @@ Use <literal>cdrom-mount-point</literal> instead of
      display search results from all components, even if not all components
      are included in the sources.list file.
     </para>
+    <para>
+     When a new line has been added to the sources.list and apt-file update has
+     not been run, apt-file does not print a warning message.
+    </para>
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>
