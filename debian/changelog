@@ -1,4 +1,4 @@
-apt-file (2.3.2) UNRELEASED; urgency=low
+apt-file (2.3.2) unstable; urgency=low
 
   * Downgrade 'Recommends: menu' to 'Suggests: menu' (closes: #543353).
   * Update postinst message to mention the possibility to run 'apt-file
@@ -11,7 +11,7 @@ apt-file (2.3.2) UNRELEASED; urgency=low
   * When creating a cache in the user's home dir, print a message how to
     switch back to the system wide cache directory (closes: #541327).
 
- -- Stefan Fritsch <sf@debian.org>  Sun, 13 Dec 2009 11:22:02 +0100
+ -- Stefan Fritsch <sf@debian.org>  Sun, 13 Dec 2009 12:48:19 +0100
 
 apt-file (2.3.1) unstable; urgency=low
 
