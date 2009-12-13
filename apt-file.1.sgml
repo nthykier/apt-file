@@ -433,6 +433,12 @@ Use <literal>cdrom-mount-point</literal> instead of
     <para>
       Non-release lines in sources.list are not handled by apt-file.
     </para>
+    <para>
+     There is only one Contents file per distributions that contains all
+     components (i.e. main, contrib, and non-free). Threrefore, apt-file will
+     display search results from all components, even if not all components
+     are included in the sources.list file.
+    </para>
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>
