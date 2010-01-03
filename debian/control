@@ -10,7 +10,8 @@ Vcs-svn: svn://svn.debian.org/collab-maint/deb-maint/apt-file/trunk/
 
 Package: apt-file
 Architecture: all
-Depends: ${perl:Depends}, curl, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl
+Depends: ${perl:Depends}, ${misc:Depends},
+ curl, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl
 Recommends: python
 Suggests: openssh-client, sudo, menu
 Description: search for files within Debian packages (command-line interface)
