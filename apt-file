@@ -385,7 +385,7 @@ sub grep_file($) {
             # with .* after having removed ^ and /
         }
         else {
-            if ( $pattern =~ m{^(/\\A)} ) {
+            if ( $pattern =~ m{^/} ) {
 
                 # same logic as below, but the "/" is not escaped here
                 $pattern2 = '.*?' . $pattern;

@@ -1,0 +1,2 @@
+args=search -x '/bin'
+bug=563688

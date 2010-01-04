@@ -1,3 +1,10 @@
+apt-file (2.3.3) UNRELEASED; urgency=low
+
+  * Fix search for unanchored regex with leading slash (bug introduced in
+    2.3.1, closes: #563688).
+
+ -- Stefan Fritsch <sf@debian.org>  Mon, 04 Jan 2010 23:53:43 +0100
+
 apt-file (2.3.2) unstable; urgency=low
 
   * Downgrade 'Recommends: menu' to 'Suggests: menu' (closes: #543353).
