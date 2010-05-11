@@ -185,7 +185,7 @@ sub download {
     my $oldfile;
     $oldfile = pop(@_) if scalar @_ % 2;
     my %urls    = @_;
-    my $command = "curl -L -f";
+    my $command = "curl -L -f -g";
     $command .= " -sS" if !$verbose;
     $command .= " -z $oldfile" if ($oldfile && -e $oldfile);
 
@@ -230,7 +230,7 @@ sub download_full {
 sub url_not_found {
     my $url = shift;
 
-    my $cmd     = 'curl -L -s -I ' . quotemeta($url);
+    my $cmd     = 'curl -L -s -I -g ' . quotemeta($url);
     my $headers = qx{$cmd};
     debug("'$cmd' ($?):\n$headers");
 
