@@ -1,10 +1,11 @@
-apt-file (2.3.5) UNRELEASED; urgency=low
+apt-file (2.3.4) unstable; urgency=low
 
   * Fix diffindex-download not allowing IPv6 literall addresses in URLs.
     Closes: #581191
   * Fix bashism in cdrom section of apt-file.conf. Closes: #579050
+  * Bump Standards-Version (no changes).
 
- -- Stefan Fritsch <sf@debian.org>  Tue, 11 May 2010 23:35:33 +0200
+ -- Stefan Fritsch <sf@debian.org>  Wed, 12 May 2010 00:06:38 +0200
 
 apt-file (2.3.3) unstable; urgency=low
 
