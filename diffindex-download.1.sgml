@@ -59,6 +59,32 @@
 
       <varlistentry>
 	<term>
+	  <option>-k</option>
+	</term>
+	<listitem>
+	  <para>
+	    Don't verify the peer certificate when using https.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-c</option> <literal>cacert</literal>
+	</term>
+	<listitem>
+	  <para>
+	    If <literal>cacert</literal> is a directory: Use
+	    <literal>cacert</literal> as CA certificate path. Otherwise use
+	    <literal>cacert</literal> as CA certificate bundle. See the
+	    <literal>--capath</literal> and <literal>--cacert</literal>
+	    options in the <command>curl</command>(1) man page.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
 	  <option>-i</option>
 	</term>
 	<listitem>
@@ -114,7 +140,8 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <command>apt-file</command>(1), <command>diffindex-rred</command>(1)
+      <command>apt-file</command>(1), <command>diffindex-rred</command>(1),
+      <command>curl</command>(1)
     </para>
   </refsect1>
   <refsect1>
