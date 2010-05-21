@@ -38,9 +38,18 @@ sub error($) {
     exit 1;
 }
 
+sub errorx($) {
+    print STDERR "E: ", shift, "\n";
+    exit 1;
+}
+
 sub warning($) {
     print STDERR "W: ", shift, $! ? ": $!" : "", "\n";
     undef $!;
+}
+
+sub warningx($) {
+    print STDERR "W: ", shift, "\n";
 }
 
 sub debug($;$) {
@@ -174,7 +183,7 @@ sub parse_sources_list($) {
 
             foreach ( @{ ( unique $fetch) } ) {
                 if ( !defined $Conf->{"${scheme}"} ) {
-                    warning "Don't know how to handle $scheme";
+                    warningx "Don't know how to handle $scheme";
                     next;
                 }
                 $dist = $_;
@@ -561,7 +570,7 @@ sub main {
     }
 
 
-    error "No config file found\n" if !defined $conf_file;
+    errorx "No config file found\n" if !defined $conf_file;
 
     $Conf = read_config_file $conf_file;
     get_options();
@@ -655,11 +664,10 @@ sub main {
     debug "Using cache directory $Conf->{cache}";
 
     my $sources = parse_sources_list $Conf->{sources_list};
-    error "No valid sources in @{$Conf->{sources_list}}" if !defined $sources;
+    errorx "No valid sources in @{$Conf->{sources_list}}" if !defined $sources;
 
     if ( $Conf->{is_search} && dir_is_empty( $Conf->{cache} ) ) {
-        undef $!;    # unset "Bad file descriptor" error from dir_is_empty
-        error "The cache directory is empty. You need to run 'apt-file update' first.";
+        errorx "The cache directory is empty. You need to run 'apt-file update' first.";
     }
 
     $actions->{ $Conf->{action} }->($sources);

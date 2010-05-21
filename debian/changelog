@@ -1,3 +1,12 @@
+apt-file (2.3.5) UNRELEASED; urgency=low
+
+  * Add options to diffindex-download to set CA certificates and to
+    disable certificate verification.
+  * Don't append an OS error string to an error or warning message if the
+    message has nothing to do with the last OS operation.
+
+ -- Stefan Fritsch <sf@debian.org>  Fri, 21 May 2010 20:40:41 +0200
+
 apt-file (2.3.4) unstable; urgency=low
 
   * Fix diffindex-download not allowing IPv6 literall addresses in URLs.

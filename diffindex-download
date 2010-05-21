@@ -24,7 +24,7 @@ use Getopt::Std;
 
 $Getopt::Std::STANDARD_HELP_VERSION=1;
 my %opts;
-getopts( 'n:qvhdi', \%opts ) or usage(3);
+getopts( 'n:qvhdikc:', \%opts ) or usage(3);
 
 usage(0) if $opts{h};
 usage(1) if scalar @ARGV != 2;
@@ -37,6 +37,25 @@ if ($opts{q} ) {
 }
 if ($opts{v}) {
 	$verbose = 1;
+}
+
+# handle ssl certificates
+my $curl_opts = '';
+if ($opts{k}) {
+    if ($opts{c}) {
+        usage(1);
+    }
+    else {
+        $curl_opts .= ' -k';
+    }
+}
+elsif ($opts{c}) {
+    if (-d $opts{c}) {
+        $curl_opts .= " --capath $opts{c}";
+    }
+    elsif (-f $opts{c}) {
+        $curl_opts .= " --cacert $opts{c}";
+    }
 }
 
 my $rred       = "diffindex-rred";
@@ -185,7 +204,7 @@ sub download {
     my $oldfile;
     $oldfile = pop(@_) if scalar @_ % 2;
     my %urls    = @_;
-    my $command = "curl -L -f -g";
+    my $command = "curl -L -f -g $curl_opts";
     $command .= " -sS" if !$verbose;
     $command .= " -z $oldfile" if ($oldfile && -e $oldfile);
 
@@ -230,7 +249,7 @@ sub download_full {
 sub url_not_found {
     my $url = shift;
 
-    my $cmd     = 'curl -L -s -I -g ' . quotemeta($url);
+    my $cmd     = "curl -L -s -I -g $curl_opts" . quotemeta($url);
     my $headers = qx{$cmd};
     debug("'$cmd' ($?):\n$headers");
 
@@ -363,7 +382,7 @@ sub usage {
     my $rv = shift;
     print << "EOF";
 Usage:
-  $0 [-n <max number of diffs>] [-i] [-q] [-d] <URL> <filename>
+  $0 [-n <max number of diffs>] [-i] [-q] [-d] [-k|-c cacerts] <URL> <filename>
 
   -n <num>  don't download more than num patches, download whole file instead
             (use large num with slow network / fast CPU and small num with
@@ -371,7 +390,9 @@ Usage:
   -i        don't exit with errror if URL does not exist
   -q        be quiet
   -d        print additional debug messages
-
+  -k        with https: do not verify peer certificate
+  -c <file> use file as CA certificate bundle (see --cacert in curl man page)
+  -c <dir>  use dir as CA certificate directory (see --capath in curl man page)
 EOF
     exit $rv;
 }
