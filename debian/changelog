@@ -1,4 +1,4 @@
-apt-file (2.4.1) UNRELEASED; urgency=low
+apt-file (2.4.0) UNRELEASED; urgency=low
 
   * Add -f option to read many patterns from a file or from stdin.
   * Add -D option to search for file conflicts with a given .deb
@@ -8,6 +8,7 @@ apt-file (2.4.1) UNRELEASED; urgency=low
     disable certificate verification.
   * Don't use su-to-root in update-notifier anymore and drop Suggests: menu.
     LP: #508089
+  * Abort 'apt-file update' if the user pressed Control-C. LP: #499039
   * Don't append an OS error string to an error or warning message if the
     message has nothing to do with the last OS operation.
   * Convert to source format 3.0 (native).

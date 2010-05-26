@@ -29,6 +29,7 @@ use File::Temp;
 use AptPkg::Config '$_config';
 use constant VERSION => "2.1.0";
 use List::MoreUtils qw/uniq/;
+use POSIX qw/WIFSIGNALED WTERMSIG/;
 
 my $Conf;
 my $Version;
@@ -281,7 +282,12 @@ sub fetch_files ($) {
         my $cmd = $_->{cmd};
         $cmd = "set -x; $cmd"       if $Conf->{verbose};
         $cmd = "($cmd) < /dev/null" if $Conf->{non_interactive};
-        system($cmd) if !defined $Conf->{dummy};
+        if (!defined $Conf->{dummy}) {
+            system($cmd);
+            if (WIFSIGNALED($?)) {
+                error("Update aborted by signal " .WTERMSIG($?));
+            }
+        }
     }
 }
 
