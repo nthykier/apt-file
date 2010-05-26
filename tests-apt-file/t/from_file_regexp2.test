@@ -1,1 +1,1 @@
-args=-x -f t/from_file_regexp2.in search
+args=-x -f search t/from_file_regexp2.in

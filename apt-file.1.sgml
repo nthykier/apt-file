@@ -31,6 +31,20 @@
       <arg>action</arg>
       <arg>pattern</arg>
     </cmdsynopsis>
+    <cmdsynopsis>
+      <command>apt-file</command>
+      <option> -f</option>
+      <arg><option>options</option></arg>
+      <option> search</option>
+      <arg>file ...</arg>
+    </cmdsynopsis>
+    <cmdsynopsis>
+      <command>apt-file</command>
+      <option> -D</option>
+      <arg><option>options</option></arg>
+      <option> search</option>
+      <arg>binary-packet.deb ...</arg>
+    </cmdsynopsis>
   </refsynopsisdiv>
 
   <refsect1>
@@ -243,13 +257,25 @@ Use <literal>cdrom-mount-point</literal> instead of
 
       <varlistentry>
 	<term>
-	  <option>--from-file | -f</option> file
+	  <option>--from-file | -f</option>
 	</term>
 	<listitem>
 	  <para>
-	    Read patterns from the given file, one per line.
+	    Read patterns from the given file(s), one per line.
 	    Use <option>-f -<option> for stdin.
 	    This is much faster than invoking apt-file many times.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <option>--from-deb | -D</option>
+	</term>
+	<listitem>
+	  <para>
+	    Use contents of the given .deb archives(s) as patterns.
+	    Useful for searching for file conflicts with other packages.
+	    Implies <option>-F</option>.
 	  </para>
 	</listitem>
       </varlistentry>

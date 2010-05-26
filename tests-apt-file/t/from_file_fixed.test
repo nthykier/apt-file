@@ -1,1 +1,1 @@
-args=-F -f t/from_file_fixed.in search
+args=-F -f search t/from_file_fixed.in

@@ -523,14 +523,18 @@ sub print_help {
     print <<"EOF";
 
 apt-file [options] action [pattern]
+apt-file [options] -f action <file>
+apt-file [options] -D action <debfile>
 
 Configuration options:
     --sources-list     -s  <file>       sources.list location
     --cache            -c  <dir>        Cache directory
     --architecture     -a  <arch>       Use specific architecture
     --cdrom-mount      -d  <cdrom>      Use specific cdrom mountpoint
-    --from-file        -f  <file>       Read patterns from file, one per line
-                                        (use '-f -' for stdin)
+    --from-file        -f               Read patterns from file(s), one per line
+                                        (use '-' for stdin)
+    --from-deb         -D               Use file list of .deb package(s) as
+                                        patterns; implies -F
     --non-interactive  -N               Skip schemes requiring user input
                                         (useful in cron jobs)
     --package-only     -l               Only display packages name
@@ -563,7 +567,8 @@ sub get_options() {
         "dummy|y"           => \$Conf->{dummy},
         "package-only|l"    => \$Conf->{package_only},
         "fixed-string|F"    => \$Conf->{fixed_strings},
-        "from-file|f=s"     => \$Conf->{from_file},
+        "from-file|f"       => \$Conf->{from_file},
+        "from-deb|D"        => \$Conf->{from_deb},
         "non-interactive|N" => \$Conf->{non_interactive},
         "help|h"            => \$Conf->{help},
         "version|V"         => \$Conf->{version},
@@ -629,13 +634,40 @@ sub main {
         || "/cdrom";
 
     $Conf->{action} = shift @ARGV || "none";
-    if ($Conf->{from_file}) {
+    if ($Conf->{from_file} || $Conf->{from_deb}) {
         use Regexp::Assemble;
         my $ra = Regexp::Assemble->new;
-        open(my $fh, "<$Conf->{from_file}")
-            or error("Can't open $Conf->{from_file}");
-        my @list = <$fh>;
-        close($fh);
+        my @list;
+        if ($Conf->{from_deb}) {
+            $Conf->{from_file} = 1;
+            $Conf->{fixed_strings} = 1;
+            $Conf->{is_regexp} = 0;
+
+            debug("this is a .deb file, calling dpkg-deb to get contents");
+            my @content;
+            foreach my $deb (@ARGV) {
+                push @content, qx{dpkg-deb -c \Q$deb};
+                if ($? != 0) {
+                    error("Couldn't get contents from $deb");
+                }
+            }
+            foreach my $line (@content) {
+                next if $line =~ m{/$};  # skip dirs
+                my @fields = split(/\s+/, $line);
+                my $filename = $fields[5];
+                $filename =~ s{^\.}{};
+                push @list, "$filename\n";
+            }
+        }
+        else {
+            # normal text files
+            foreach my $file (@ARGV) {
+                open(my $fh, "<$file")
+                    or error("Can't open $file");
+                push @list, <$fh>;
+                close($fh);
+            }
+        }
         if ($Conf->{is_regexp}) {
             foreach my $line (@list) {
                 chomp $line;

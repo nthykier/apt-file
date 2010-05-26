@@ -1,1 +1,1 @@
-args=-f t/from_file_normal.in search
+args=-f search t/from_file_normal.in
