@@ -1,0 +1,2 @@
+user-mode-linux: /usr/lib/uml/modules/2.6.24/kernel/fs/fat/fat.ko
+user-mode-linux: /usr/lib/uml/modules/2.6.24/kernel/fs/vfat/vfat.ko

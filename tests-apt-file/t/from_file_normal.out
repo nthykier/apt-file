@@ -1,0 +1,5 @@
+bash: /bin/bash
+bash-debug: /usr/debug/bin/bash
+bash-minimal: /bin/bash-minimal
+bash-static: /bin/bash-static
+user-mode-linux: /usr/lib/uml/modules/2.6.24/kernel/fs/vfat/vfat.ko

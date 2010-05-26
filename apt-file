@@ -25,6 +25,7 @@ use Getopt::Long qw/:config no_ignore_case/;
 use Data::Dumper;
 use File::Basename;
 use File::Path;
+use File::Temp;
 use AptPkg::Config '$_config';
 use constant VERSION => "2.1.0";
 use List::MoreUtils qw/uniq/;
@@ -317,12 +318,21 @@ sub do_grep($$) {
     my ( $pkgs, $fname );
     debug "regexp: $pattern";
     $| = 1;
-    my $zgrep_pattern = $Conf->{pattern};
-    $zgrep_pattern =~ s{^\\/}{};
-    my $zcat
-        = $Conf->{is_regexp}   ? "zcat"
-        : $Conf->{ignore_case} ? "zfgrep -i $zgrep_pattern"
-        :                        "zfgrep $zgrep_pattern";
+    my $zcat;
+    if ($Conf->{is_regexp}) {
+        $zcat = 'zcat';
+    }
+    else {
+        my $ignore_case = $Conf->{ignore_case} ? "-i" : "";
+        if ($Conf->{from_file}) {
+            $zcat = "zfgrep $ignore_case -f $Conf->{zgrep_tmpfile}";
+        }
+        else {
+            my $zgrep_pattern = $Conf->{pattern};
+            $zgrep_pattern =~ s{^\\/}{};
+            $zcat = "zfgrep $ignore_case $zgrep_pattern";
+        }
+    }
     my $regexp = eval { $Conf->{ignore_case} ? qr/$pattern/i : qr/$pattern/ };
     error($@) if $@;
     my $quick_regexp = escape_parens($regexp);
@@ -374,6 +384,40 @@ sub escape_parens {
     return $pattern;
 }
 
+sub fix_regexp {
+    my $pattern = shift;
+    
+    # If pattern starts with /, we need to match both ^pattern-without-slash
+    # (which is put in $pattern) and ^.*pattern (put in $pattern2).
+    # Later, they will be or'ed together.
+    my $pattern2;
+    if ( $pattern !~ s{(\$|\\[zZ])$}{} ) {
+        # Not anchored at the end:
+        $pattern = $pattern . '\S*';
+    }
+
+    if ( $pattern =~ s{^(\^|\\A)/?}{} ) {
+        # If pattern is anchored at the start, we're just not prefixing it
+        # with .* after having removed ^ and /
+    }
+    else {
+        if ( $pattern =~ m{^/} ) {
+
+            # same logic as below, but the "/" is not escaped here
+            $pattern2 = '.*?' . $pattern;
+            $pattern  = substr( $pattern, 1 );
+        }
+        else {
+            $pattern = '.*?' . $pattern;
+        }
+    }
+
+    $pattern  = escape_parens($pattern);
+    $pattern2 = escape_parens($pattern2) if defined $pattern2;
+
+    return ($pattern, $pattern2);
+}
+
 sub grep_file($) {
     my $data    = shift;
     my $pattern = $Conf->{pattern};
@@ -384,29 +428,9 @@ sub grep_file($) {
     my $pattern2;
 
     if ( $Conf->{is_regexp} ) {
-        if ( $pattern !~ s{(\$|\\[zZ])$}{} ) {
-            # Not anchored at the end:
-            $pattern = $pattern . '\S*';
+        if (!$Conf->{from_file}) {
+            ($pattern, $pattern2) = fix_regexp($pattern);
         }
-
-        if ( $pattern =~ s{^(\^|\\A)/?}{} ) {
-            # If pattern is anchored at the start, we're just not prefixing it
-            # with .* after having removed ^ and /
-        }
-        else {
-            if ( $pattern =~ m{^/} ) {
-
-                # same logic as below, but the "/" is not escaped here
-                $pattern2 = '.*?' . $pattern;
-                $pattern  = substr( $pattern, 1 );
-            }
-            else {
-                $pattern = '.*?' . $pattern;
-            }
-        }
-
-        $pattern  = escape_parens($pattern);
-        $pattern2 = escape_parens($pattern2) if defined $pattern2;
     }
     elsif ( substr( $pattern, 0, 2 ) eq '\/' ) {
         if ( $Conf->{fixed_strings} ) {
@@ -505,6 +529,8 @@ Configuration options:
     --cache            -c  <dir>        Cache directory
     --architecture     -a  <arch>       Use specific architecture
     --cdrom-mount      -d  <cdrom>      Use specific cdrom mountpoint
+    --from-file        -f  <file>       Read patterns from file, one per line
+                                        (use '-f -' for stdin)
     --non-interactive  -N               Skip schemes requiring user input
                                         (useful in cron jobs)
     --package-only     -l               Only display packages name
@@ -537,6 +563,7 @@ sub get_options() {
         "dummy|y"           => \$Conf->{dummy},
         "package-only|l"    => \$Conf->{package_only},
         "fixed-string|F"    => \$Conf->{fixed_strings},
+        "from-file|f=s"     => \$Conf->{from_file},
         "non-interactive|N" => \$Conf->{non_interactive},
         "help|h"            => \$Conf->{help},
         "version|V"         => \$Conf->{version},
@@ -602,10 +629,42 @@ sub main {
         || "/cdrom";
 
     $Conf->{action} = shift @ARGV || "none";
-    $Conf->{pattern} = shift @ARGV;
-    if ( defined $Conf->{pattern} ) {
-        $Conf->{pattern} = quotemeta( $Conf->{pattern} )
-            unless $Conf->{is_regexp};
+    if ($Conf->{from_file}) {
+        use Regexp::Assemble;
+        my $ra = Regexp::Assemble->new;
+        open(my $fh, "<$Conf->{from_file}")
+            or error("Can't open $Conf->{from_file}");
+        my @list = <$fh>;
+        close($fh);
+        if ($Conf->{is_regexp}) {
+            foreach my $line (@list) {
+                chomp $line;
+                my ($p1, $p2) = fix_regexp($line);
+                $ra->add($p1);
+                $ra->add($p2) if defined $p2;
+            }
+        }
+        else {
+            # create tmpfile for zgrep with patterns that have leading slash removed
+            my @zgrep_list = @list;
+            map { s{^/}{} } @zgrep_list;
+            my $tmpfile = File::Temp->new();
+            print $tmpfile @zgrep_list;
+            $tmpfile->flush();
+            $Conf->{zgrep_tmpfile} = $tmpfile;
+
+            # create actual search pattern
+            @list = map {quotemeta} @list;
+            $ra->add(@list);
+        }
+        $Conf->{pattern} = $ra->as_string(indent => 0);
+    }
+    else {
+        $Conf->{pattern} = shift @ARGV;
+        if ( defined $Conf->{pattern} ) {
+            $Conf->{pattern} = quotemeta( $Conf->{pattern} )
+                unless $Conf->{is_regexp};
+        }
     }
     undef $!;
 

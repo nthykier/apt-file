@@ -1,12 +1,13 @@
-apt-file (2.3.5) UNRELEASED; urgency=low
+apt-file (2.3.6) UNRELEASED; urgency=low
 
+  * Add -f option to read many patterns from a file or from stdin.
   * Add https support to default apt-file.conf. Closes: #582254.
   * Add options to diffindex-download to set CA certificates and to
     disable certificate verification.
   * Don't append an OS error string to an error or warning message if the
     message has nothing to do with the last OS operation.
 
- -- Stefan Fritsch <sf@debian.org>  Fri, 21 May 2010 20:40:41 +0200
+ -- Stefan Fritsch <sf@debian.org>  Wed, 26 May 2010 21:19:47 +0200
 
 apt-file (2.3.4) unstable; urgency=low
 

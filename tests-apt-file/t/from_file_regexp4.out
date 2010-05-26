@@ -1,0 +1,4 @@
+ash: /bin/ash
+bash: /bin/bash
+bash-debug: /usr/debug/bin/bash
+bash-minimal: /bin/bash-minimal

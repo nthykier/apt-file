@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Stefan Fritsch <sf@debian.org>
 Uploaders: Thijs Kinkhorst <thijs@debian.org>, Enrico Zini <enrico@debian.org>
-Build-Depends: debhelper (>= 5), docbook, docbook-utils, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl
+Build-Depends: debhelper (>= 5), docbook, docbook-utils, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl, libregexp-assemble-perl, libfile-temp-perl
 Standards-Version: 3.8.4
 Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/apt-file/trunk/
 Vcs-svn: svn://svn.debian.org/collab-maint/deb-maint/apt-file/trunk/
@@ -11,7 +11,8 @@ Vcs-svn: svn://svn.debian.org/collab-maint/deb-maint/apt-file/trunk/
 Package: apt-file
 Architecture: all
 Depends: ${perl:Depends}, ${misc:Depends},
- curl, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl
+ curl, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl,
+ libregexp-assemble-perl, libfile-temp-perl
 Recommends: python
 Suggests: openssh-client, sudo, menu
 Description: search for files within Debian packages (command-line interface)

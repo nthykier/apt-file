@@ -243,6 +243,18 @@ Use <literal>cdrom-mount-point</literal> instead of
 
       <varlistentry>
 	<term>
+	  <option>--from-file | -f</option> file
+	</term>
+	<listitem>
+	  <para>
+	    Read patterns from the given file, one per line.
+	    Use <option>-f -<option> for stdin.
+	    This is much faster than invoking apt-file many times.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
 	  <option>--fixed-string | -F</option>
 	</term>
 	<listitem>

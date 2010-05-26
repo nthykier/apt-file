@@ -1,0 +1,3 @@
+/bin/(ba|a)sh$
+^/bin/bash-minimal$
+^/bin/mp3gain$

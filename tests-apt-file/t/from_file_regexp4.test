@@ -1,0 +1,1 @@
+args=-x -f t/from_file_regexp4.in search
