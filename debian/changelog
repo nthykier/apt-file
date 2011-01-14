@@ -1,3 +1,9 @@
+apt-file (2.4.1) UNRELEASED; urgency=low
+
+  * Recommend python-apt for rapt-file. Closes: #609571
+
+ -- Stefan Fritsch <sf@debian.org>  Fri, 14 Jan 2011 14:28:02 +0100
+
 apt-file (2.4.0) unstable; urgency=low
 
   * Add -f option to read many patterns from a file or from stdin.
