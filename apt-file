@@ -318,6 +318,25 @@ sub print_winners ($$) {
     exit 0;
 }
 
+sub find_newest
+{
+    my $name = shift;
+
+    my @candidates = ("$Conf->{cache}/$name");
+    push @candidates, "$Conf->{user_cache}/$name" if $Conf->{user_cache};
+    my $file;
+    my $mtime = 0;
+    while (my $next = shift @candidates) {
+        next unless -f $next;
+        my $next_mtime = (stat($next))[9];
+        if ($next_mtime > $mtime) {
+            $file = $next;
+            $mtime = $next_mtime;
+        }
+    }
+    return $file;
+}
+
 sub do_grep($$) {
     my ( $data, $pattern ) = @_;
     my $ret;
@@ -345,8 +364,7 @@ sub do_grep($$) {
     my %seen         = ();
 
     foreach (@$data) {
-        my $file = "$Conf->{cache}/$_->{dest}";
-        next if ( !-f $file );
+        my $file = find_newest($_->{dest}) or next;
 
         # Skip already searched files:
         next if $seen{$file}++;
@@ -723,36 +741,29 @@ sub main {
             && !defined $Conf->{help};
     print_help( $Conf->{help} - 1 ) if defined $Conf->{help};
 
-    my $sys_cache = $_config->get_dir('Dir::Cache') . 'apt-file';
-    $sys_cache =~ s{/\s*$}{};
-
     $Conf->{is_search} = 1 if $Conf->{action} =~ m/search|find|list|show/;
 
     if (!$Conf->{cache}) {
-        if ( $> == 0) {
-            $Conf->{cache} = $sys_cache;
-        }
-        else {
-            # use cache in $HOME if run as non-root
+        my $sys_cache = $_config->get_dir('Dir::Cache') . 'apt-file';
+        $sys_cache =~ s{/\s*$}{};
+        $Conf->{cache} = $sys_cache;
+
+        if ( $> != 0) {
             my $user_cache;
 
+            # consider cache in $HOME if run as non-root
             if ( exists $ENV{XDG_CACHE_HOME} ) {
                 $user_cache = "$ENV{XDG_CACHE_HOME}/apt-file";
             }
             elsif (exists $ENV{HOME}) {
                 $user_cache = "$ENV{HOME}/.cache/apt-file";
             }
-            else {
-                $user_cache = $sys_cache;
-            }
-
-            if ( $Conf->{is_search}
-                && ( ! -d $user_cache || dir_is_empty($user_cache) ) )
-            {
-                $Conf->{cache} = $sys_cache;
-                $Conf->{is_user_cache} = 0;
+            if ($Conf->{is_search}) {
+                # for search, consider both caches
+                $Conf->{user_cache} = $user_cache;
             }
             else {
+                # for fetch/purge, only consider the user cache
                 $Conf->{cache} = $user_cache;
                 $Conf->{is_user_cache} = 1;
             }
