@@ -3,6 +3,7 @@ apt-file (2.4.1) UNRELEASED; urgency=low
   * Recommend python-apt for rapt-file. Closes: #609571
   * If both the per-user cache and the system cache contain data, use the
     newer one. Closes: #609810
+  * Bump standards-version (no changes)
 
  -- Stefan Fritsch <sf@debian.org>  Fri, 14 Jan 2011 22:56:30 +0100
 

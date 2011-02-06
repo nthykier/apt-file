@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Stefan Fritsch <sf@debian.org>
 Uploaders: Thijs Kinkhorst <thijs@debian.org>, Enrico Zini <enrico@debian.org>
 Build-Depends: debhelper (>= 5), docbook, docbook-utils, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl, libregexp-assemble-perl, libfile-temp-perl
-Standards-Version: 3.8.4
+Standards-Version: 3.9.1
 Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/apt-file/trunk/
 Vcs-svn: svn://svn.debian.org/collab-maint/deb-maint/apt-file/trunk/
 
