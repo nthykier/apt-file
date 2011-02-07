@@ -1,8 +1,8 @@
-apt-file (2.4.2) UNRELEASED; urgency=low
+apt-file (2.4.2) unstable; urgency=low
 
   * Correct empty cache detection logic. Closes: #612347
 
- -- Stefan Fritsch <sf@debian.org>  Tue, 08 Feb 2011 00:09:17 +0100
+ -- Stefan Fritsch <sf@debian.org>  Tue, 08 Feb 2011 00:15:17 +0100
 
 apt-file (2.4.1) unstable; urgency=low
 
