@@ -603,6 +603,8 @@ sub get_options() {
 
 sub dir_is_empty {
     my ($path) = @_;
+    defined $path or return 1;
+    -d $path or return 1;
     opendir DIR, $path or die "Cannot read cache directory $path: $!\n";
     while ( my $entry = readdir DIR ) {
         next if ( $entry =~ /^\.\.?$/ );
@@ -774,8 +776,9 @@ sub main {
     my $sources = parse_sources_list $Conf->{sources_list};
     errorx "No valid sources in @{$Conf->{sources_list}}" if !defined $sources;
 
-    if ( $Conf->{is_search} && dir_is_empty( $Conf->{cache} ) ) {
-        errorx "The cache directory is empty. You need to run 'apt-file update' first.";
+    if ( $Conf->{is_search} && dir_is_empty( $Conf->{cache} ) &&
+         dir_is_empty( $Conf->{user_cache} ) ) {
+        errorx "The cache is empty. You need to run 'apt-file update' first.";
     }
 
     $actions->{ $Conf->{action} }->($sources);
