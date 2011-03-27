@@ -2,7 +2,10 @@ apt-file (2.4.3) unstable; urgency=low
 
   * rapt-file: Update python-apt detection code to cope with changed
     python module installation paths, thanks Jakub Wilk (Closes: #619414).
-  * rapt-file: Ignore files not ending in .list in sources.list.d (Closes: #607861).
+  * rapt-file: Ignore files not ending in .list in sources.list.d
+    (Closes: #607861).
+  * rapt-file: Recommend dpkg-dev because we use dpkg-architecture
+    (Closes: #613006).
 
  -- Thijs Kinkhorst <thijs@debian.org>  Sun, 27 Mar 2011 14:47:45 +0200
 
