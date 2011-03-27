@@ -1,9 +1,10 @@
 apt-file (2.4.3) unstable; urgency=low
 
-  * Update rapt-file python-apt detection code to cope with changed
+  * rapt-file: Update python-apt detection code to cope with changed
     python module installation paths, thanks Jakub Wilk (Closes: #619414).
+  * rapt-file: Ignore files not ending in .list in sources.list.d (Closes: #607861).
 
- -- Thijs Kinkhorst <thijs@debian.org>  Sun, 27 Mar 2011 12:00:35 +0200
+ -- Thijs Kinkhorst <thijs@debian.org>  Sun, 27 Mar 2011 14:47:45 +0200
 
 apt-file (2.4.2) unstable; urgency=low
 

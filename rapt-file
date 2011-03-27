@@ -55,7 +55,8 @@ def get_dists(opts):
         sld = "/etc/apt/sources.list.d"
         if os.path.isdir(sld):
             for f in os.listdir(sld):
-                infiles.append(os.path.join(sld, f))
+                if f.endswith(".list"):
+                    infiles.append(os.path.join(sld, f))
     dists = set()
     for f in infiles:
         for line in open(f):
