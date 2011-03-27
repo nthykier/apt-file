@@ -1,5 +1,8 @@
-apt-file (2.4.3) unstable; urgency=low
+apt-file (2.5.0) unstable; urgency=low
 
+  * apt-file: Include compontent in Contents file search paths so we
+    use ftp-master's new Contents files locations. This may break
+    compatibility with older suites that do not have this configuration.
   * rapt-file: Update python-apt detection code to cope with changed
     python module installation paths, thanks Jakub Wilk (Closes: #619414).
   * rapt-file: Ignore files not ending in .list in sources.list.d
@@ -7,7 +10,7 @@ apt-file (2.4.3) unstable; urgency=low
   * rapt-file: Recommend dpkg-dev because we use dpkg-architecture
     (Closes: #613006).
 
- -- Thijs Kinkhorst <thijs@debian.org>  Sun, 27 Mar 2011 14:47:45 +0200
+ -- Thijs Kinkhorst <thijs@debian.org>  Sun, 27 Mar 2011 14:57:28 +0200
 
 apt-file (2.4.2) unstable; urgency=low
 
