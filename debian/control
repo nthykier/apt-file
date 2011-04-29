@@ -19,3 +19,5 @@ Description: search for files within Debian packages (command-line interface)
  apt-file is a command line tool for searching files contained in packages
  for the APT packaging system. You can search in which package a file is
  included or list the contents of a package without installing or fetching it.
+ If you would prefer not to download the large files used by apt-file you can
+ run rapt-file, which calls a remote server to do the searches.

@@ -3,6 +3,7 @@ apt-file (2.5.0) unstable; urgency=low
   [ Paul Wise ]
   * rapt-file: Drop python-apt wrapper shell script, detect the lack of a
     python apt module in the rapt-file python code (Closes: #619414).
+  * mention rapt-file in the package description (Closes: #623632)
 
   [ Thijs Kinkhorst ]
   * apt-file: Include compontent in Contents file search paths so we
