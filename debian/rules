@@ -49,8 +49,7 @@ install: build
 	install -m 644 debian/apt-file.update-notifier    debian/apt-file/usr/share/apt-file/apt-file-update.update-notifier
 	install -m 755 debian/apt-file.do-apt-file-update debian/apt-file/usr/share/apt-file/do-apt-file-update
 	install -m 755 debian/apt-file.is-cache-empty     debian/apt-file/usr/share/apt-file/is-cache-empty
-	install -m 755 rapt-file			  debian/apt-file/usr/share/apt-file/rapt-file
-	install -m 755 rapt-file.wrapper		  debian/apt-file/usr/bin/rapt-file
+	install -m 755 rapt-file			  debian/apt-file/usr/bin/rapt-file
 
 
 # Build architecture-independent files here.

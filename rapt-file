@@ -136,7 +136,11 @@ elif action in ("search", "find"):
         # Yes, apt, thanks, I know, the api isn't stable, thank you so very much
         #warnings.simplefilter('ignore', FutureWarning)
         warnings.filterwarnings("ignore","apt API not stable yet")
-        import apt
+        try:
+            import apt
+        except ImportError:
+            sys.stderr.write("%s: error: %s\n\n" % (self.get_prog_name(), "please install the python apt module"))
+            sys.exit(2)
         warnings.resetwarnings()
         cache = apt.Cache()
         for pkg in sorted(pkgs):

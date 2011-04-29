@@ -1,8 +1,0 @@
-#!/bin/sh
-
-if [ -n "$(ls /usr/lib/python2.*/*-packages/apt/__init__.py 2> /dev/null)" ] ; then
-	exec /usr/share/apt-file/rapt-file "$@"
-else
-	echo You need to install python-apt to use rapt-file >&2
-	exit 1
-fi
