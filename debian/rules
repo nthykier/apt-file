@@ -14,13 +14,9 @@ endif
 
 VERSION=$(shell dpkg-parsechangelog |egrep ^Version: | cut -d ' ' -f 2)
 
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	# Add here commands to configure the package.
-	touch configure-stamp
-
-build: configure-stamp build-stamp
+build: build-arch build-indep
+build-arch: build-stamp
+build-indep: build-stamp
 build-stamp:
 	dh_testdir
 
@@ -32,7 +28,7 @@ build-stamp:
 clean::
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp configure-stamp
+	rm -f build-stamp 
 
 	# Add here commands to clean up after the build process.
 	[ ! -f Makefile ] || $(MAKE) clean
@@ -41,7 +37,7 @@ clean::
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	dh_installdirs
 	# Add here commands to install the package into debian/apt-file.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/apt-file
@@ -71,4 +67,4 @@ binary-indep: build install
 	dh_builddeb
 
 binary: binary-indep
-.PHONY: build clean binary-indep binary-arch binary install configure
+.PHONY: build clean binary-indep binary-arch binary install 
