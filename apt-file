@@ -557,7 +557,6 @@ Configuration options:
     --verbose          -v               run in verbose mode
     --dummy            -y               run in dummy mode (no action)
     --help             -h               Show this help.
-    --version          -V               Show version number
 
 Action:
     update                              Fetch Contents files from apt-sources.
@@ -584,7 +583,6 @@ sub get_options() {
         "from-deb|D"        => \$Conf->{from_deb},
         "non-interactive|N" => \$Conf->{non_interactive},
         "help|h"            => \$Conf->{help},
-        "version|V"         => \$Conf->{version},
     );
     Getopt::Long::Configure("bundling");
     GetOptions(%options) || print_help 1;
