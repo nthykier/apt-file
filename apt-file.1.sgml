@@ -206,15 +206,6 @@ Use <literal>cdrom-mount-point</literal> instead of
 
       <varlistentry>
 	<term>
-	  <option>--version | -V</option>
-	</term>
-	<listitem>
-	  <para>Show version number.</para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
 	  <option>--architecture | -a</option>
 	  architecture
 	</term>
