@@ -7,4 +7,4 @@ if [ "purge" = "$1" ]; then
 	rm -f /var/lib/update-notifier/user.d/apt-file-update
 fi;
 
-##DEBHELPER##
+#DEBHELPER#
