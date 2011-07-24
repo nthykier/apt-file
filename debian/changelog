@@ -13,8 +13,9 @@ apt-file (2.5.0) unstable; urgency=low
     (Closes: #607861).
   * rapt-file: Recommend dpkg-dev because we use dpkg-architecture
     (Closes: #613006).
+  * Correct scp invocation in apt-file.conf (Closes: #624290).
 
- -- Thijs Kinkhorst <thijs@debian.org>  Sun, 27 Mar 2011 14:57:28 +0200
+ -- Thijs Kinkhorst <thijs@debian.org>  Sun, 24 Jul 2011 17:42:57 +0200
 
 apt-file (2.4.2) unstable; urgency=low
 
