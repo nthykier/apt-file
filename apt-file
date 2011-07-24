@@ -27,12 +27,10 @@ use File::Basename;
 use File::Path;
 use File::Temp;
 use AptPkg::Config '$_config';
-use constant VERSION => "2.1.0";
 use List::MoreUtils qw/uniq/;
 use POSIX qw/WIFSIGNALED WTERMSIG/;
 
 my $Conf;
-my $Version;
 
 sub error($) {
     print STDERR "E: ", shift, $! ? ": $!" : "", "\n";
@@ -532,18 +530,9 @@ sub purge_cache($) {
     }
 }
 
-sub print_version {
-    print <<EOF;
-apt-file version $Version
-(c) 2002 Sebastien J. Gross <sjg\@debian.org>
-
-EOF
-}
-
 sub print_help {
     my $err_code = shift || 0;
 
-    print_version;
     print <<"EOF";
 
 apt-file [options] action [pattern]
@@ -632,10 +621,6 @@ sub main {
 
     $Conf = read_config_file $conf_file;
     get_options();
-    if ( defined $Conf->{version} ) {
-        print_version;
-        exit 0;
-    }
 
     my $interactive = $Conf->{interactive};
     defined $interactive or $interactive = "cdrom rsh ssh";
@@ -782,10 +767,6 @@ sub main {
     }
 
     $actions->{ $Conf->{action} }->($sources);
-}
-
-BEGIN {
-    $Version = VERSION;
 }
 
 main();
