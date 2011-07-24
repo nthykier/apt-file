@@ -8,7 +8,8 @@ apt-file (2.5.0) unstable; urgency=low
   [ Thijs Kinkhorst ]
   * apt-file: Include compontent in Contents file search paths so we
     use ftp-master's new Contents files locations. This may break
-    compatibility with older suites that do not have this configuration.
+    compatibility with older suites that do not have this configuration
+    (Closes: #624734).
   * rapt-file: Ignore files not ending in .list in sources.list.d
     (Closes: #607861).
   * rapt-file: Recommend dpkg-dev because we use dpkg-architecture
