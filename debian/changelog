@@ -1,3 +1,10 @@
+apt-file (2.5.1) UNRELEASED; urgency=low
+
+  * Japanese translation of update-notifier text by Hideki Yamane
+    (closes: #641199).
+
+ -- Thijs Kinkhorst <thijs@debian.org>  Mon, 19 Sep 2011 21:29:55 +0200
+
 apt-file (2.5.0) unstable; urgency=low
 
   [ Paul Wise ]
