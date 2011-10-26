@@ -353,7 +353,7 @@ sub do_grep($$) {
         else {
             my $zgrep_pattern = $Conf->{pattern};
             $zgrep_pattern =~ s{^\\/}{};
-            $zcat = "zfgrep $ignore_case $zgrep_pattern";
+            $zcat = "zfgrep $ignore_case -- $zgrep_pattern";
         }
     }
     my $regexp = eval { $Conf->{ignore_case} ? qr/$pattern/i : qr/$pattern/ };
@@ -557,6 +557,8 @@ Configuration options:
     --verbose          -v               run in verbose mode
     --dummy            -y               run in dummy mode (no action)
     --help             -h               Show this help.
+                       --               End of options (neccessary if pattern
+                                        starts with a '-')
 
 Action:
     update                              Fetch Contents files from apt-sources.
