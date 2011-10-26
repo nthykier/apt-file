@@ -346,6 +346,8 @@ sub do_grep($$) {
         $zcat = 'zcat';
     }
     else {
+        delete $ENV{$_} foreach qw{GREP_OPTIONS GREP_COLOR POSIXLY_CORRECT
+                                   GREP_COLORS};
         my $ignore_case = $Conf->{ignore_case} ? "-i" : "";
         if ($Conf->{from_file}) {
             $zcat = "zfgrep $ignore_case -f $Conf->{zgrep_tmpfile}";

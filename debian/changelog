@@ -2,6 +2,8 @@ apt-file (2.5.1) UNRELEASED; urgency=low
 
   * Fix searching for patterns that start with a '-'. This still requires
     specifying '--' before the pattern (closes: #631438, LP: #801336)
+  * Unset env variables that may influence the behaviour of grep
+    (closes: #617183).
   * Japanese translation of update-notifier text by Hideki Yamane
     (closes: #641199).
 
