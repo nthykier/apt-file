@@ -1,11 +1,16 @@
 apt-file (2.5.1) UNRELEASED; urgency=low
 
+  [ Thijs Kinkhorst ]
   * Fix searching for patterns that start with a '-'. This still requires
     specifying '--' before the pattern (closes: #631438, LP: #801336)
   * Unset env variables that may influence the behaviour of grep
     (closes: #617183).
   * Japanese translation of update-notifier text by Hideki Yamane
     (closes: #641199).
+
+  [ Enrico Zini ]
+  * rapt-file: Updated distribution names, now it works on wheezy
+  * rapt-file: deal with missing /etc/apt/sources.list. Closes: #636564
 
  -- Thijs Kinkhorst <thijs@debian.org>  Mon, 19 Sep 2011 21:29:55 +0200
 
