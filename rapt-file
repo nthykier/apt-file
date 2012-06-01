@@ -51,7 +51,9 @@ def get_dists(opts):
     if opts.sources:
         infiles = [opts.sources]
     else:
-        infiles = ["/etc/apt/sources.list"]
+        infiles = []
+        if os.path.exists("/etc/apt/sources.list"):
+            infiles.append("/etc/apt/sources.list")
         sld = "/etc/apt/sources.list.d"
         if os.path.isdir(sld):
             for f in os.listdir(sld):
