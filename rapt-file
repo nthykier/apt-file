@@ -39,12 +39,12 @@ def get_architecture(opts):
     else:
         return subprocess.Popen(["dpkg-architecture", "-qDEB_HOST_ARCH"], stdout=subprocess.PIPE).communicate()[0].strip()
 
-DIST_WHITELIST = set(["sid", "squeeze", "lenny", "etch"])
+DIST_WHITELIST = set(["sid", "squeeze", "lenny", "wheezy"])
 DIST_ALIASES = {
         "unstable": "sid",
-        "testing": "squeeze",
-        "stable": "lenny",
-        "oldstable": "etch",
+        "testing": "wheezy",
+        "stable": "squeeze",
+        "oldstable": "lenny",
 }
 
 def get_dists(opts):
