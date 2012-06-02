@@ -52,37 +52,7 @@
     <para><command>apt-file</command> is a command line tool for
       searching files in packages for the APT package management system.</para>
     <para>Some actions are required to run the search:</para>
-
     <variablelist>
-      <varlistentry>
-	<term>update</term>
-	<listitem>
-	  <para>
-	    Resynchronize the package contents from their sources. The
-	    lists of the contents of packages are fetched from the location(s)
-	    specified in
-	    <filename>/etc/apt/sources.list</filename>. This command
-	    attempts to fetch the
-	    <filename>Contents-&lt;ARCH&gt;.gz</filename> files from
-	    remote sources. For downloading these uses either the curl or
-	    wget commands as specified in <filename>apt-file.conf</filename>.
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>search</term>
-	<listitem>
-	  <para>
-	    Search in which package a file is included. A list of all
-	    packages containing the <option>pattern</option> pattern
-	    is returned.
-	  </para>
-	  <para>
-	    apt-file will only search for filenames, not directory names.
-	    This is due to the format of the Contents files it searches.
-	</listitem>
-      </varlistentry>
 
       <varlistentry>
 	<term>find</term>
@@ -106,6 +76,30 @@
       </varlistentry>
 
       <varlistentry>
+	<term>purge</term>
+	<listitem>
+	  <para>
+	    remove all <filename>Contents-*</filename>
+	    files from the cache directory.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>search</term>
+	<listitem>
+	  <para>
+	    Search in which package a file is included. A list of all
+	    packages containing the <option>pattern</option> pattern
+	    is returned.
+	  </para>
+	  <para>
+	    apt-file will only search for filenames, not directory names.
+	    This is due to the format of the Contents files it searches.
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
 	<term>show</term>
 	<listitem>
 	  <para>
@@ -115,98 +109,31 @@
       </varlistentry>
 
       <varlistentry>
-	<term>purge</term>
+	<term>update</term>
 	<listitem>
 	  <para>
-	    remove all <filename>Contents-*</filename>
-	    files from the cache directory.
+	    Resynchronize the package contents from their sources. The
+	    lists of the contents of packages are fetched from the location(s)
+	    specified in
+	    <filename>/etc/apt/sources.list</filename>. This command
+	    attempts to fetch the
+	    <filename>Contents-&lt;ARCH&gt;.gz</filename> files from
+	    remote sources. For downloading these uses either the curl or
+	    wget commands as specified in <filename>apt-file.conf</filename>.
 	  </para>
 	</listitem>
       </varlistentry>
+
     </variablelist>
   </refsect1>
 
   <refsect1>
     <title>OPTIONS</title>
     <variablelist>
-      <varlistentry>
-	<term>
-	  <option>--cache | -c</option> <literal>cache-directory</literal>
-	</term>
-	<listitem>
-	  <para>
-	    Sets the cache directory to <filename>cache-directory</filename>
-	    instead of its default. If executed as non-root user, the default
-	    is <filename>$HOME/.cache/apt-file</filename> with fall-back to
-	    <filename>/var/cache/apt/apt-file</filename>. The latter is also
-	    the default if apt-file is called as root.
-	  </para>
-	</listitem>
-      </varlistentry>
 
       <varlistentry>
 	<term>
-	  <option>--verbose | -v</option>
-	</term>
-	<listitem>
-	  <para>
-	    Run <command>apt-file</command> in verbose mode.
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
-	  <option>--cdrom-mount | -d</option> <literal>cdrom-mount-point</literal>
-	</term>
-	<listitem>
-	  <para>
-Use <literal>cdrom-mount-point</literal> instead of
-<command>apt</command>'s.
-</para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
-	  <option>--non-interactive | -N</option>
-	</term>
-	<listitem>
-	  <para>
-	  Skip schemes that are listed in the <literal>interactive</literal> line in
-	  <filename>apt-file.conf</filename>.
-	  This is useful if you want to call 'apt-file update' in cron jobs and skip all
-	  schemes that may require user input. 
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
-	  <option>--ignore-case | -i</option>
-	</term>
-	<listitem>
-	  <para>Ignore case when searching for <literal>pattern</literal>.</para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
-	  <option>--regexp | -x</option>
-	</term>
-	<listitem>
-	  <para>
-	    Treat <literal>pattern</literal> as a (perl) regular expression. See
-	    <command>perlreref</command>(1) for details. Without this option,
-	    <literal>pattern</literal> is treated as a literal string to search
-	    for.
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
-	  <option>--architecture | -a</option>
+	  <option>-a, --architecture</option>
 	  architecture
 	</term>
 	<listitem>
@@ -223,7 +150,106 @@ Use <literal>cdrom-mount-point</literal> instead of
 
       <varlistentry>
 	<term>
-	  <option>--sources-list</option> | <option>-s</option>
+	  <option>-c, --cache</option> <literal>cache-directory</literal>
+	</term>
+	<listitem>
+	  <para>
+	    Sets the cache directory to <filename>cache-directory</filename>
+	    instead of its default. If executed as non-root user, the default
+	    is <filename>$HOME/.cache/apt-file</filename> with fall-back to
+	    <filename>/var/cache/apt/apt-file</filename>. The latter is also
+	    the default if apt-file is called as root.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-d, --cdrom-mount</option> <literal>cdrom-mount-point</literal>
+	</term>
+	<listitem>
+	  <para>
+Use <literal>cdrom-mount-point</literal> instead of
+<command>apt</command>'s.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-D, --from-deb</option>
+	</term>
+	<listitem>
+	  <para>
+	    Use contents of the given .deb archives(s) as patterns.
+	    Useful for searching for file conflicts with other packages.
+	    Implies <option>-F</option>.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-f, --from-file</option>
+	</term>
+	<listitem>
+	  <para>
+	    Read patterns from the given file(s), one per line.
+	    Use <option>-f -<option> for stdin.
+	    This is much faster than invoking apt-file many times.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-F, --fixed-string</option>
+	</term>
+	<listitem>
+	  <para>
+	    Do not expand search pattern with generic characters at
+	    pattern's start and end.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-i, --ignore-case</option>
+	</term>
+	<listitem>
+	  <para>Ignore case when searching for <literal>pattern</literal>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-l, --package-only</option>
+	</term>
+	<listitem>
+	  <para>
+	    Only display package name; do not display file names.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-N, --non-interactive</option>
+	</term>
+	<listitem>
+	  <para>
+	  Skip schemes that are listed in the <literal>interactive</literal> line in
+	  <filename>apt-file.conf</filename>.
+	  This is useful if you want to call 'apt-file update' in cron jobs and skip all
+	  schemes that may require user input.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <option>-s, --sources-list</option>
 	  sources.list
 	</term>
 	<listitem>
@@ -237,53 +263,32 @@ Use <literal>cdrom-mount-point</literal> instead of
 
       <varlistentry>
 	<term>
-	  <option>--package-only | -l</option>
+	  <option>-v, --verbose</option>
 	</term>
 	<listitem>
 	  <para>
-	    Only display package name; do not display file names.
+	    Run <command>apt-file</command> in verbose mode.
 	  </para>
 	</listitem>
       </varlistentry>
 
       <varlistentry>
 	<term>
-	  <option>--from-file | -f</option>
+	  <option>-x, --regexp</option>
 	</term>
 	<listitem>
 	  <para>
-	    Read patterns from the given file(s), one per line.
-	    Use <option>-f -<option> for stdin.
-	    This is much faster than invoking apt-file many times.
+	    Treat <literal>pattern</literal> as a (perl) regular expression. See
+	    <command>perlreref</command>(1) for details. Without this option,
+	    <literal>pattern</literal> is treated as a literal string to search
+	    for.
 	  </para>
 	</listitem>
       </varlistentry>
+
       <varlistentry>
 	<term>
-	  <option>--from-deb | -D</option>
-	</term>
-	<listitem>
-	  <para>
-	    Use contents of the given .deb archives(s) as patterns.
-	    Useful for searching for file conflicts with other packages.
-	    Implies <option>-F</option>.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <option>--fixed-string | -F</option>
-	</term>
-	<listitem>
-	  <para>
-	    Do not expand search pattern with generic characters at
-	    pattern's start and end.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <option>--dummy | -y</option>
+	  <option>-y, --dummy</option>
 	</term>
 	<listitem>
 	  <para>
@@ -291,16 +296,19 @@ Use <literal>cdrom-mount-point</literal> instead of
 	  </para>
 	</listitem>
       </varlistentry>
+
       <varlistentry>
 	<term>
-	  <option>--help | -h</option>
+	  <option>-h, --help</option>
 	</term>
 	<listitem>
 	  <para>Display a short help screen.</para>
 	</listitem>
       </varlistentry>
+
     </variablelist>
   </refsect1>
+
   <refsect1>
     <title>CONFIGURATION FILE</title>
     <para>
@@ -312,6 +320,7 @@ Use <literal>cdrom-mount-point</literal> instead of
 	expansion</literal> section.
     </para>
     <variablelist>
+
       <varlistentry>
 	<term>destination</term>
 	<listitem>
@@ -320,6 +329,7 @@ Use <literal>cdrom-mount-point</literal> instead of
 	  </para>
 	</listitem>
       </varlistentry>
+
       <varlistentry>
 	<term>http | ftp | ssh | rsh | file | cdrom</term>
 	<listitem>
@@ -328,9 +338,11 @@ Use <literal>cdrom-mount-point</literal> instead of
 	  </para>
 	</listitem>
       </varlistentry>
+
     </variablelist>
     <refsect2>
       <title>String expansion</title>
+
       <para>
 	A <filename>sources.list</filename> entry is defined as:
 	<screen>
@@ -341,6 +353,7 @@ Use <literal>cdrom-mount-point</literal> instead of
 	  proto:/[/][user[:password]@]host[:port][/path]
 	</screen>
       </para>
+
       <variablelist>
 	<varlistentry>
 	  <term>&lt;host&gt;</term>
@@ -416,8 +429,31 @@ Use <literal>cdrom-mount-point</literal> instead of
   </refsect1>
 
   <refsect1>
-    <title>FILES</title>
+    <title>BUGS</title>
+    <para>The cdrom backend has not been tested.</para>
+    <para>
+      Non-release lines in sources.list are not handled by apt-file.
+    </para>
+    <para>
+     There is only one Contents file per distribution that contains all
+     components (i.e. main, contrib, and non-free). Threrefore, apt-file will
+     display search results from all components, even if not all components
+     are included in the sources.list file.
+    </para>
+    <para>
+     When a new line has been added to the sources.list and apt-file update has
+     not been run, apt-file does not print a warning message.
+    </para>
+    <para>
+     Complex regular expressions that match the leading slash may not work
+     correctly. As a workaround, try to pull the leading slash to the beginning
+     of the regular expression. For example, use "/(usr/bin/vim|sbin/lvm)"
+     instead of "/usr/bin/vim|/sbin/lvm".
+    </para>
+  </refsect1>
 
+  <refsect1>
+    <title>FILES</title>
     <variablelist>
       <varlistentry>
 	<term><filename>/etc/apt/sources.list</filename></term>
@@ -441,6 +477,7 @@ Use <literal>cdrom-mount-point</literal> instead of
       </varlistentry>
     </variablelist>
   </refsect1>
+
   <refsect1>
     <title>SEE ALSO</title>
     <para>
@@ -456,29 +493,7 @@ Use <literal>cdrom-mount-point</literal> instead of
       <filename>/usr/share/doc/apt/</filename>
     </para>
   </refsect1>
-  <refsect1>
-    <title>BUGS</title>
-    <para>The cdrom backend has not been tested.</para>
-    <para>
-      Non-release lines in sources.list are not handled by apt-file.
-    </para>
-    <para>
-     There is only one Contents file per distribution that contains all
-     components (i.e. main, contrib, and non-free). Threrefore, apt-file will
-     display search results from all components, even if not all components
-     are included in the sources.list file.
-    </para>
-    <para>
-     When a new line has been added to the sources.list and apt-file update has
-     not been run, apt-file does not print a warning message.
-    </para>
-    <para>
-     Complex regular expressions that match the leading slash may not work
-     correctly. As a workaround, try to pull the leading slash to the beginning
-     of the regular expression. For example, use "/(usr/bin/vim|sbin/lvm)"
-     instead of "/usr/bin/vim|/sbin/lvm".
-    </para>
-  </refsect1>
+
   <refsect1>
     <title>AUTHOR</title>
     <para>
@@ -486,4 +501,5 @@ Use <literal>cdrom-mount-point</literal> instead of
       <email>sjg@debian.org</email>.
     </para>
   </refsect1>
+
 </refentry>

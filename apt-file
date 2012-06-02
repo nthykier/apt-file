@@ -542,22 +542,22 @@ apt-file [options] -f action <file>
 apt-file [options] -D action <debfile>
 
 Configuration options:
-    --sources-list     -s  <file>       sources.list location
-    --cache            -c  <dir>        Cache directory
     --architecture     -a  <arch>       Use specific architecture
+    --cache            -c  <dir>        Cache directory
     --cdrom-mount      -d  <cdrom>      Use specific cdrom mountpoint
-    --from-file        -f               Read patterns from file(s), one per line
-                                        (use '-' for stdin)
+    --dummy            -y               run in dummy mode (no action)
+    --fixed-string     -F               Do not expand pattern
     --from-deb         -D               Use file list of .deb package(s) as
                                         patterns; implies -F
+    --from-file        -f               Read patterns from file(s), one per line
+                                        (use '-' for stdin)
+    --ignore-case      -i               Ignore case distinctions
     --non-interactive  -N               Skip schemes requiring user input
                                         (useful in cron jobs)
     --package-only     -l               Only display packages name
-    --fixed-string     -F               Do not expand pattern
-    --ignore-case      -i               Ignore case distinctions
     --regexp           -x               pattern is a regular expression
+    --sources-list     -s  <file>       sources.list location
     --verbose          -v               run in verbose mode
-    --dummy            -y               run in dummy mode (no action)
     --help             -h               Show this help.
                        --               End of options (neccessary if pattern
                                         starts with a '-')

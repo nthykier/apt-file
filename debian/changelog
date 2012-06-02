@@ -7,10 +7,14 @@ apt-file (2.5.1) UNRELEASED; urgency=low
     (closes: #617183).
   * Japanese translation of update-notifier text by Hideki Yamane
     (closes: #641199).
+  * Improve man page layout and help output text. Thanks Jari Aalto for
+    the patch! (Closes: #651695)
 
   [ Enrico Zini ]
-  * rapt-file: Updated distribution names, now it works on wheezy
-  * rapt-file: deal with missing /etc/apt/sources.list. Closes: #636564
+  * rapt-file: Updated distribution names, now it works on wheezy.
+    (Closes: #663592)
+  * rapt-file: deal with missing /etc/apt/sources.list. (Closes: #636564)
+
 
  -- Thijs Kinkhorst <thijs@debian.org>  Mon, 19 Sep 2011 21:29:55 +0200
 
