@@ -15,6 +15,7 @@ apt-file (2.5.1) UNRELEASED; urgency=low
   * Checked for policy 3.9.3, no changes needed. Add explicit python
     recommendation, even though we transitively recommended it via
     python-apt already, to satisfy Lintian.
+  * Add rapt-file manual page (Closes: #613005).
 
   [ Enrico Zini ]
   * rapt-file: Updated distribution names, now it works on wheezy.

@@ -20,6 +20,7 @@ install:
 	$(INSTALL) -m 644 apt-file.1 $(MANDIR)
 	$(INSTALL) -m 644 diffindex-download.1 $(MANDIR)
 	$(INSTALL) -m 644 diffindex-rred.1 $(MANDIR)
+	$(INSTALL) -m 644 rapt-file.1 $(MANDIR)
 	$(INSTALL) -d -m 755 $(BINDIR)
 	$(INSTALL) -m 755 apt-file $(BINDIR)
 	$(INSTALL) -m 755 diffindex-download $(BINDIR)
@@ -39,6 +40,7 @@ man:
 	$(DOCBOOK2MAN) diffindex-download.1.sgml
 	$(DOCBOOK2MAN) diffindex-rred.1.sgml
 	$(DOCBOOK2MAN) apt-file.fr.1.sgml
+	$(DOCBOOK2MAN) rapt-file.1.sgml
 
 test:
 	make -C tests-apt-file test
