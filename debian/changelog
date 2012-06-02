@@ -12,7 +12,9 @@ apt-file (2.5.1) UNRELEASED; urgency=low
   * rapt-file: replace dpkg-architecture call with dpkg --architecture,
     obsoleting the depends-heavy recommendation on dpkg-dev. Thanks
     helix84 (Closes: #671225).
-  * Checked for policy 3.9.3, no changes needed.
+  * Checked for policy 3.9.3, no changes needed. Add explicit python
+    recommendation, even though we transitively recommended it via
+    python-apt already, to satisfy Lintian.
 
   [ Enrico Zini ]
   * rapt-file: Updated distribution names, now it works on wheezy.

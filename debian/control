@@ -13,7 +13,7 @@ Architecture: all
 Depends: ${perl:Depends}, ${misc:Depends},
  curl, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl,
  libregexp-assemble-perl, libfile-temp-perl
-Recommends: python-apt
+Recommends: python, python-apt
 Suggests: openssh-client, sudo
 Description: search for files within Debian packages (command-line interface)
  apt-file is a command line tool for searching files contained in packages
