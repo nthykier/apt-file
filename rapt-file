@@ -37,7 +37,7 @@ def get_architecture(opts):
     if opts.arch:
         return opts.arch
     else:
-        return subprocess.Popen(["dpkg-architecture", "-qDEB_HOST_ARCH"], stdout=subprocess.PIPE).communicate()[0].strip()
+        return subprocess.Popen(["dpkg", "--print-architecture"], stdout=subprocess.PIPE).communicate()[0].strip()
 
 DIST_WHITELIST = set(["sid", "squeeze", "lenny", "wheezy"])
 DIST_ALIASES = {

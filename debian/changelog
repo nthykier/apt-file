@@ -9,12 +9,14 @@ apt-file (2.5.1) UNRELEASED; urgency=low
     (closes: #641199).
   * Improve man page layout and help output text. Thanks Jari Aalto for
     the patch! (Closes: #651695)
+  * rapt-file: replace dpkg-architecture call with dpkg --architecture,
+    obsoleting the depends-heavy recommendation on dpkg-dev. Thanks
+    helix84 (Closes: #671225).
 
   [ Enrico Zini ]
   * rapt-file: Updated distribution names, now it works on wheezy.
     (Closes: #663592)
   * rapt-file: deal with missing /etc/apt/sources.list. (Closes: #636564)
-
 
  -- Thijs Kinkhorst <thijs@debian.org>  Mon, 19 Sep 2011 21:29:55 +0200
 
