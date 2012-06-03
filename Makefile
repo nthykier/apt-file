@@ -48,6 +48,6 @@ test:
 	make -C tests-diffindex test
 
 clean:
-	rm -f *~ manpage.* apt-file.1 apt-file.fr.1 diffindex-download.1 diffindex-rred.1
+	rm -f *~ manpage.* apt-file.1 rapt-file.1 apt-file.fr.1 diffindex-download.1 diffindex-rred.1
 	make -C tests-apt-file clean
 	make -C tests-diffindex clean
