@@ -1,4 +1,4 @@
-apt-file (2.5.1) UNRELEASED; urgency=low
+apt-file (2.5.1) unstable; urgency=low
 
   [ Thijs Kinkhorst ]
   * Fix searching for patterns that start with a '-'. This still requires
@@ -22,7 +22,7 @@ apt-file (2.5.1) UNRELEASED; urgency=low
     (Closes: #663592)
   * rapt-file: deal with missing /etc/apt/sources.list. (Closes: #636564)
 
- -- Thijs Kinkhorst <thijs@debian.org>  Mon, 19 Sep 2011 21:29:55 +0200
+ -- Thijs Kinkhorst <thijs@debian.org>  Sun, 03 Jun 2012 10:26:36 +0200
 
 apt-file (2.5.0) unstable; urgency=low
 
