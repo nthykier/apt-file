@@ -34,6 +34,7 @@ uninstall:
 	rm -f $(BINDIR)/apt-file
 	rm -f $(ETCDIR)/apt-file.conf
 	rm -f $(MANDIR)/apt-file.1
+	rm -f $(MANDIR)/rapt-file.1
 
 man:
 	$(DOCBOOK2MAN) apt-file.1.sgml
