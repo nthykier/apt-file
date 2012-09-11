@@ -1,3 +1,9 @@
+apt-file (2.5.2) UNRELEASED; urgency=low
+
+  * Properly detect failed attempt to apply patches. Closes: #687221
+
+ -- Stefan Fritsch <sf@debian.org>  Tue, 11 Sep 2012 23:22:12 +0200
+
 apt-file (2.5.1) unstable; urgency=low
 
   [ Thijs Kinkhorst ]

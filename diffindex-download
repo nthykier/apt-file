@@ -332,6 +332,7 @@ sub parse_index {
 sub system_or_die {
     my ( $command, $msg, $cleanup ) = @_;
 
+    $command = '/bin/bash -c "set -o pipefail; "' . quotemeta($command);
     debug("Executing '$command'\n");
     system($command);
     if ( WIFEXITED($?) ) {
