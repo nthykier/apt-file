@@ -196,6 +196,7 @@ Use <literal>cdrom-mount-point</literal> instead of
 	  <para>
 	    Read patterns from the given file(s), one per line.
 	    Use <literal>-</literal> as filename for stdin.
+	    If no files are given, then the list will be read from stdin.
 	    This is much faster than invoking apt-file many times.
 	  </para>
 	</listitem>

@@ -674,8 +674,14 @@ sub main {
         }
         else {
             # normal text files
+            # - assume "STDIN" if no arguments are given.
+            push @ARGV, '-' unless @ARGV;
             foreach my $file (@ARGV) {
-                open(my $fh, "<$file")
+                if ($file eq '-') {
+                    push @list, <STDIN>;
+                    next;
+                }
+                open(my $fh, '<', $file)
                     or error("Can't open $file");
                 push @list, <$fh>;
                 close($fh);
