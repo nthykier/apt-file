@@ -1,7 +1,7 @@
 Source: apt-file
 Section: admin
 Priority: optional
-Maintainer: Stefan Fritsch <sf@debian.org>
+Maintainer: Niels Thykier <niels@thykier.net>
 Uploaders: Thijs Kinkhorst <thijs@debian.org>, Enrico Zini <enrico@debian.org>
 Build-Depends: debhelper (>= 8), docbook, docbook-utils, libconfig-file-perl, libapt-pkg-perl, liblist-moreutils-perl, libregexp-assemble-perl, libfile-temp-perl
 Standards-Version: 3.9.3

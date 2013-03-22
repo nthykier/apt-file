@@ -1,6 +1,11 @@
 apt-file (2.5.2) UNRELEASED; urgency=low
 
+  [ Stefan Fritsch ]
   * Properly detect failed attempt to apply patches. Closes: #687221
+
+  [ Niels Thykier ]
+  * New maintainer.  (Closes: #703366)
+    Kudos to Stefan Fritsch for his work on apt-file.
 
  -- Stefan Fritsch <sf@debian.org>  Tue, 11 Sep 2012 23:22:12 +0200
 
