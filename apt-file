@@ -313,7 +313,8 @@ sub print_winners ($$) {
     else {
         print map {"$_\n"} ( sort keys %$filtered_db );
     }
-    exit 0;
+    exit 0 if %$filtered_db;
+    exit 1;
 }
 
 sub find_newest

@@ -1,1 +1,2 @@
 args=search -F bin/noseguy
+rc=1

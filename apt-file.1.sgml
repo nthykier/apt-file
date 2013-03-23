@@ -430,6 +430,16 @@ Use <literal>cdrom-mount-point</literal> instead of
   </refsect1>
 
   <refsect1>
+    <title>EXIT CODES</title>
+    <para>When using one of the
+      actions <option>find</option>, <option>search</option>,
+      <option>list</option> or <option>show</option>, apt-file will
+      exit with a zero value if it successfully matched an entry.  It
+      exits with a non-zero value if there is no match to the pattern.
+    </para>
+  </refsect1>
+
+  <refsect1>
     <title>BUGS</title>
     <para>The cdrom backend has not been tested.</para>
     <para>

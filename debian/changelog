@@ -1,3 +1,10 @@
+apt-file (3.0.0~dev) UNRELEASED; urgency=low
+
+  * Exit with a non-zero value if there is no match.
+    (Closes: #505222)
+
+ -- Niels Thykier <niels@thykier.net>  Sat, 23 Mar 2013 10:45:00 +0200
+
 apt-file (2.5.2) UNRELEASED; urgency=low
 
   [ Stefan Fritsch ]
