@@ -513,7 +513,7 @@ sub grep_package($) {
         (
         '^\s*(.*?)\s+', '(\S*/', $pkgpat,
         defined $Conf->{fixed_strings} || defined $Conf->{regexp} ?
-            '(,\S*|)' : '\S*', ')\s*$',
+            '(?:,\S*|)' : '\S*', ')\s*$',
         );
     my $ret = do_grep $data, $pattern;
     print_winners $ret, 0;
