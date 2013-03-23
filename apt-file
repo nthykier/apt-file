@@ -383,7 +383,7 @@ sub do_grep($$) {
             # skip header lines
             # we can safely assume that the name of the top level directory
             # does not contain spaces
-            next if !m{^[^\s/]*/};
+            next if !m{^[^\s/]*+/};
 
             debug_line ".";
             foreach ( split /,/, $pkgs ) {
