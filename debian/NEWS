@@ -1,0 +1,11 @@
+apt-file (3.0.0~dev) UNRELEASED; urgency=low
+
+  apt-file 3 introduces a number of changes that are not
+  backwards compatible with previous versions.  If you
+  are using apt-file in scripts (or cron jobs), these may
+  need to be updated.
+
+  Please refer to /usr/share/doc/apt-file/README.upgrading
+  for more information.
+
+ -- Niels Thykier <niels@thykier.net>  Sat, 23 Mar 2013 11:43:10 +0100

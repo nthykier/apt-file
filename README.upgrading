@@ -1,0 +1,4 @@
+INCOMPATIBILITIES BETWEEN apt-file 2 AND apt-file 3
+
+ * apt-file >= 3 will exit with a non-zero value on a failed match.
+   Previous versions would exit 0 on a failed match.
