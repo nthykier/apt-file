@@ -44,6 +44,7 @@ man:
 	$(DOCBOOK2MAN) rapt-file.1.sgml
 
 test:
+	prove
 	make -C tests-apt-file test
 	make -C tests-diffindex test
 

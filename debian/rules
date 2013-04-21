@@ -11,6 +11,10 @@ else
 	TEST_TARGET = test
 endif
 
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	jobs = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	PAR_ARGS=-j $(jobs)
+endif
 
 VERSION=$(shell dpkg-parsechangelog |egrep ^Version: | cut -d ' ' -f 2)
 
