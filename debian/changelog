@@ -1,4 +1,4 @@
-apt-file (2.5.2) UNRELEASED; urgency=low
+apt-file (2.5.2) unstable; urgency=low
 
   [ Stefan Fritsch ]
   * Properly detect failed attempt to apply patches. Closes: #687221
@@ -11,7 +11,7 @@ apt-file (2.5.2) UNRELEASED; urgency=low
   * Bump Standards-Versions to 3.9.4 - no changes required.
   * Use the canonical URIs for the Vcs-* fields.
 
- -- Stefan Fritsch <sf@debian.org>  Tue, 11 Sep 2012 23:22:12 +0200
+ -- Niels Thykier <niels@thykier.net>  Sun, 05 May 2013 09:32:24 +0200
 
 apt-file (2.5.1) unstable; urgency=low
 
