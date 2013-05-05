@@ -8,6 +8,8 @@ apt-file (2.5.2) UNRELEASED; urgency=low
     Kudos to Stefan Fritsch for his work on apt-file.
   * When using "-f" and no files are given, default to stdin.
     (Closes: #703594)
+  * Bump Standards-Versions to 3.9.4 - no changes required.
+  * Use the canonical URIs for the Vcs-* fields.
 
  -- Stefan Fritsch <sf@debian.org>  Tue, 11 Sep 2012 23:22:12 +0200
 
