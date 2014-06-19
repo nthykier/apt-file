@@ -1,3 +1,10 @@
+apt-file (2.5.3) UNRELEASED; urgency=medium
+
+  * Gracefully handle spaces inside "option"-list in the
+    APT sources.list.  (Closes: #706284)
+
+ -- Niels Thykier <niels@thykier.net>  Thu, 19 Jun 2014 17:21:49 +0200
+
 apt-file (2.5.2) unstable; urgency=low
 
   [ Stefan Fritsch ]

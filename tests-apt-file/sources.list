@@ -1,2 +1,2 @@
-deb http://site1/debian sid main
-deb http://site1/debian lenny main
+deb [ trusted=true ] http://site1/debian sid main
+deb [ trusted=true ] http://site1/debian lenny main
