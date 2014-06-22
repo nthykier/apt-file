@@ -284,7 +284,8 @@ sub fetch_files ($) {
         if (!defined $Conf->{dummy}) {
             system($cmd);
             if (WIFSIGNALED($?)) {
-                error("Update aborted by signal " .WTERMSIG($?));
+                my $signame = signal_number2name(WTERMSIG($?));
+                errorx("Update aborted by signal SIG$signame");
             }
         }
     }
@@ -776,6 +777,29 @@ sub main {
     }
 
     $actions->{ $Conf->{action} }->($sources);
+}
+
+{
+    my @signame;
+
+    sub signal_number2name {
+        my ($number) = @_;
+        if (not @signame) {
+            require Config;
+            # Doubt this happens for apt-file, but the code might
+            # Cargo-cult-copied or copy-wasted into another project.
+            # Speaking of which, thanks to
+            #  http://www.ccsf.edu/Pub/Perl/perlipc/Signals.html
+            defined($Config::Config{sig_name})
+              or die "Signals not available\n";
+            my $i = 0;
+            for my $name (split(' ', $Config::Config{sig_name})) {
+                $signame[$i] = $name;
+                $i++;
+            }
+        }
+        return $signame[$number];
+    }
 }
 
 main();

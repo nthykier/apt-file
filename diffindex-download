@@ -346,9 +346,10 @@ sub system_or_die {
         }
     }
     else {
+        my $sig = WTERMSIG($?);
         warn "$msg\n" if $msg;
         cleanup($cleanup);
-        die "Command died with signal " . WTERMSIG($?) . "\n";
+        die "Command killed by signal SIG" . signal_number2name($sig) . "\n";
     }
 }
 
@@ -400,6 +401,29 @@ EOF
 
 sub HELP_MESSAGE {
     usage(0);
+}
+
+{
+    my @signame;
+
+    sub signal_number2name {
+        my ($number) = @_;
+        if (not @signame) {
+            require Config;
+            # Doubt this happens for apt-file, but the code might
+            # Cargo-cult-copied or copy-wasted into another project.
+            # Speaking of which, thanks to
+            #  http://www.ccsf.edu/Pub/Perl/perlipc/Signals.html
+            defined($Config::Config{sig_name})
+              or die "Signals not available\n";
+            my $i = 0;
+            for my $name (split(' ', $Config::Config{sig_name})) {
+                $signame[$i] = $name;
+                $i++;
+            }
+        }
+        return $signame[$number];
+    }
 }
 
 # our style is roughly "perltidy -pbp"
