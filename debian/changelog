@@ -5,6 +5,8 @@ apt-file (2.5.2.2) UNRELEASED; urgency=medium
     for spotting this.  (Closes: #731056)
   * Use the name of a signal rather than its number, when
     subprocesses are kiled by such.
+  * Correct the Vcs-* URL's in d/control.  Thanks to Alberto
+    Fuentes for reporting this.  (Closes: #734714)
 
  -- Niels Thykier <niels@thykier.net>  Sun, 22 Jun 2014 11:00:10 +0200
 
