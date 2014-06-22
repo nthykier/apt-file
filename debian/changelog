@@ -1,4 +1,4 @@
-apt-file (2.5.2.2) UNRELEASED; urgency=medium
+apt-file (2.5.2.2) unstable; urgency=medium
 
   * Avoid confusing error message caused by interpreting
     a signal number as an "errno".  Thanks to Julien Cristau
@@ -9,7 +9,7 @@ apt-file (2.5.2.2) UNRELEASED; urgency=medium
     Fuentes for reporting this.  (Closes: #734714)
   * Bump Standards-Versions to 3.9.5 - no changes required.
 
- -- Niels Thykier <niels@thykier.net>  Sun, 22 Jun 2014 11:00:10 +0200
+ -- Niels Thykier <niels@thykier.net>  Sun, 22 Jun 2014 11:54:46 +0200
 
 apt-file (2.5.2.1) unstable; urgency=medium
 
