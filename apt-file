@@ -132,7 +132,7 @@ sub parse_sources_list($) {
                            |rpm-
 			 )
                     /xo;
-            next if !m/^deb\s/;
+            next if !m/^\s*deb\s/;
             chomp;
             my $line = $_;
             debug "got \'$line\'";
