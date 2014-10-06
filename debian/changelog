@@ -1,3 +1,11 @@
+apt-file (2.5.3) unstable; urgency=medium
+
+  * No longer install rapt-file. The backend service this tool uses
+    has unfortunately ceased to exist. (Closes: #729283)
+  * Checked for policy 3.9.6, no changes.
+
+ -- Thijs Kinkhorst <thijs@debian.org>  Mon, 06 Oct 2014 16:07:45 +0000
+
 apt-file (2.5.2.3) unstable; urgency=medium
 
   * Apply patch from Pierre-Elliott Bécue to fix a
