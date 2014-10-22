@@ -1,4 +1,4 @@
-apt-file (2.5.4) UNRELEASED; urgency=medium
+apt-file (2.5.4) unstable; urgency=medium
 
   * Apply patch from Cyril Brulebois to support searching for
     files in "udeb" packages.  This requires "debian-installer"
@@ -6,7 +6,7 @@ apt-file (2.5.4) UNRELEASED; urgency=medium
     "udeb-<arch>" architecture (e.g. "udeb-amd64").
     (Closes: #766295)
 
- -- Niels Thykier <niels@thykier.net>  Wed, 22 Oct 2014 21:59:38 +0200
+ -- Niels Thykier <niels@thykier.net>  Wed, 22 Oct 2014 22:05:36 +0200
 
 apt-file (2.5.3) unstable; urgency=medium
 
