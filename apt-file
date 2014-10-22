@@ -178,8 +178,13 @@ sub parse_sources_list($) {
 
             my $fetch = [];
 
+            # Transform $area/debian-installer into $area:debian-installer for
+            # easy matching below, fetching Contents-udeb-<arch>.gz instead of
+            # Contents-<arch>.gz
+            #
+            # FIXME: What do we do if $2 is different from 'debian-installer'?
             foreach (@extra) {
-                push @$fetch, m{(.*?)/(?:.*)}o ? "$dist/$1" : "$dist/$_";
+                push @$fetch, m{(.*?)/(.*)}o ? "$dist/$1:$2" : "$dist/$_";
             }
 
             foreach ( @{ ( unique $fetch) } ) {
@@ -199,6 +204,15 @@ sub parse_sources_list($) {
                 $dest = $Conf->{destination};
                 my $cache = $Conf->{cache};
                 my $arch  = $Conf->{arch};
+                # udebs are indexed separately, tweak the architecture if
+                # needed:
+                if ( $dist =~ s{:debian-installer$}{} ) {
+                    $arch = "udeb-$arch";
+                }
+                elsif ( $dist =~ m{:[^/]*$} ) {
+                    # See FIXME above, ignore this entry for now.
+                    next;
+                }
                 my $cdrom = $Conf->{cdrom_mount};
                 foreach my $var (
                     qw/host port user passwd path dist pkg

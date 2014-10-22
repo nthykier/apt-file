@@ -1,3 +1,13 @@
+apt-file (2.5.4) UNRELEASED; urgency=medium
+
+  * Apply patch from Cyril Brulebois to support searching for
+    files in "udeb" packages.  This requires "debian-installer"
+    entries in the sources.list and are represented by the pseudo
+    "udeb-<arch>" architecture (e.g. "udeb-amd64").
+    (Closes: #766295)
+
+ -- Niels Thykier <niels@thykier.net>  Wed, 22 Oct 2014 21:59:38 +0200
+
 apt-file (2.5.3) unstable; urgency=medium
 
   * No longer install rapt-file. The backend service this tool uses
