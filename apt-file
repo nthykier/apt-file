@@ -20,15 +20,13 @@
 # MA 02110-1301 USA.
 
 use strict;
-use Config::File "read_config_file";
+use warnings;
 use Getopt::Long qw/:config no_ignore_case/;
-use Data::Dumper;
 use File::Basename;
 use File::Path;
 use File::Temp;
 use AptPkg::Config '$_config';
 use List::MoreUtils qw/uniq/;
-use POSIX qw/WIFSIGNALED WTERMSIG/;
 
 my $Conf;
 
@@ -64,11 +62,6 @@ sub debug($;$) {
 sub debug_line($) {
     return if !defined $Conf->{verbose};
     print STDERR shift;
-}
-
-sub unique($) {
-    my $seen = ();
-    return [ grep { !$seen->{$_}++ } @{ (shift) } ];
 }
 
 sub reverse_hash($) {
@@ -110,199 +103,8 @@ sub find_command {
     }
 }
 
-sub parse_sources_list($) {
-    my $file = shift;
-    my $uri;
-    my @uri_items;
-    my @tmp;
-    my $line;
-    my $ret;
-
-    my ( $cmd, $dest );
-
-    my @files = ref $file ? @$file : [$file];
-
-    foreach $file ( grep -f, @files ) {
-        debug "reading sources file $file";
-        open( SOURCE, "< $file" ) || error "Can't open $file";
-        while (<SOURCE>) {
-            next if /^\s*(?:$
-                           |[#]
-                           |deb-
-                           |rpm-
-			 )
-                    /xo;
-            next if !m/^\s*deb\s/;
-            chomp;
-            my $line = $_;
-            debug "got \'$line\'";
-            $line =~ s{([^/])\#.*$}{$1}o;
-            $line =~ s{^(\S+\s+)\[[^]]*\]}{$1}o;
-            $line =~ s{\s+}{ }go;
-            $line =~ s{^\s+}{}o;
-
-            # CDROM entry
-            if ( @tmp = $line =~ m/^([^\[]*)
-                                    \[
-                                        ([^\]]*)
-                                    \]
-                                    (.*)$
-                                  /xo )
-            {
-                $tmp[1] =~ s/ /_/g;
-                $line = $tmp[0] . '[' . $tmp[1] . ']' . $tmp[2];
-            }
-
-            # Handle $(ARCH) in sources.list
-            $line =~ s/\$\(ARCH\)/$Conf->{arch}/g;
-            debug "kept \'$line\'";
-
-            my ( $pkg, $uri, $dist, @extra ) = split /\s+/, $line;
-            $uri =~ s{/+$}{};
-            my ( $scheme, $user, $passwd, $host, $port, $path, $query,
-                $fragment )
-                = $uri =~ m|^
-                    (?:([^:/?\#]+):)?           # scheme
-                    (?://
-                        (?:
-                            ([^:@]*)            #username
-                            (?::([^@]*))?       #passwd
-                        @)?
-                        ([^:/?\#]*)             # host
-                        (?::(\d+))?             # port
-                    )?
-                    ([^?\#]*)                   # path
-                    (?:\?([^\#]*))?             # query
-                    (?:\#(.*))?                 # fragment
-                |ox;
-
-            my $fetch = [];
-
-            # Transform $area/debian-installer into $area:debian-installer for
-            # easy matching below, fetching Contents-udeb-<arch>.gz instead of
-            # Contents-<arch>.gz
-            #
-            # FIXME: What do we do if $2 is different from 'debian-installer'?
-            foreach (@extra) {
-                push @$fetch, m{(.*?)/(.*)}o ? "$dist/$1:$2" : "$dist/$_";
-            }
-
-            foreach ( @{ ( unique $fetch) } ) {
-                if ( !defined $Conf->{"${scheme}"} ) {
-                    warningx "Don't know how to handle $scheme";
-                    next;
-                }
-                $dist = $_;
-                if ( !$Conf->{is_search} ) {
-                    $cmd = find_command( $Conf, $scheme );
-                    die "Could not find suitable command for $scheme"
-                        unless $cmd;
-                }
-                else {
-                    $cmd = "";
-                }
-                $dest = $Conf->{destination};
-                my $cache = $Conf->{cache};
-                my $arch  = $Conf->{arch};
-                # udebs are indexed separately, tweak the architecture if
-                # needed:
-                if ( $dist =~ s{:debian-installer$}{} ) {
-                    $arch = "udeb-$arch";
-                }
-                elsif ( $dist =~ m{:[^/]*$} ) {
-                    # See FIXME above, ignore this entry for now.
-                    next;
-                }
-                my $cdrom = $Conf->{cdrom_mount};
-                foreach my $var (
-                    qw/host port user passwd path dist pkg
-                    cache arch uri cdrom/
-                    )
-                {
-                    map {
-                        $_ =~ 
-                            s{<$var(?:\|(.+?))?>}
-                             { defined eval "\$$var" ? eval "\$$var" 
-                             : defined $1            ? $1
-                             : "";
-                             }gsex;
-                    } ( $cmd, $dest );
-                }
-                $dest =~ s{(/|_)+}{_}go;
-                $cmd  =~ s/<dest>/$dest/g;
-                my $hash;
-                foreach (
-                    qw/host port user passwd path dist pkg uri line
-                    dest cmd scheme/
-                    )
-                {
-                    $hash->{$_} = eval "\$$_";
-                }
-                push @$ret, $hash;
-            }
-        }
-        close SOURCE;
-    }
-    return $ret;
-}
-
 sub fetch_files ($) {
-    umask 0022;
-    if ( !-d $Conf->{cache} ) {
-        eval { mkpath([$Conf->{cache}]) };
-        if ($@) {
-            error "Can't create $Conf->{cache}: $@";
-        }
-        if ($Conf->{is_user_cache}) {
-            print "apt-file is now using the user's cache directory.\n",
-                  "If you want to switch back to the system-wide cache ",
-                  "directory,\n run 'apt-file purge'\n";
-        }
-    }
-
-    error "Can't write in $Conf->{cache}" if !-w $Conf->{cache};
-    foreach ( @{ (shift) } ) {
-        if (   $Conf->{"non_interactive"}
-            && $Conf->{interactive}->{ $_->{scheme} } )
-        {
-            debug "Ignoring interactive scheme $_->{scheme}";
-            next;
-        }
-        local %ENV = %ENV;
-        my $proxy = defined $_->{host}
-            && $_config->get("Acquire::$_->{scheme}::Proxy::$_->{host}")
-            || $_config->get("Acquire::$_->{scheme}::Proxy");
-        if ($proxy) {
-
-         # wget expects lower case, curl expects upper case (except for http).
-         # we just set/unset both
-            delete $ENV{no_proxy};
-            delete $ENV{NO_PROXY};
-            delete $ENV{all_proxy};
-            delete $ENV{ALL_PROXY};
-            if ( $proxy =~ /^(?:DIRECT|false)$/i ) {
-                debug "not using proxy";
-                delete $ENV{ lc("$_->{scheme}_proxy") };
-                delete $ENV{ uc("$_->{scheme}_proxy") };
-            }
-            else {
-                debug "using proxy: $proxy";
-                $ENV{ lc("$_->{scheme}_proxy") } = $proxy;
-                $ENV{ uc("$_->{scheme}_proxy") } = $proxy;
-            }
-        }
-        debug $_->{cmd};
-        my $cmd = $_->{cmd};
-        $cmd = "set -x; $cmd"       if $Conf->{verbose};
-        $cmd = "($cmd) < /dev/null" if $Conf->{non_interactive};
-        if (!defined $Conf->{dummy}) {
-            system($cmd);
-            if (WIFSIGNALED($?)) {
-                my $signame = signal_number2name(WTERMSIG($?));
-                errorx("Update aborted by signal SIG$signame");
-            }
-        }
-    }
+    exec('apt', 'update');
 }
 
 sub print_winners ($$) {
@@ -332,63 +134,38 @@ sub print_winners ($$) {
     exit 0;
 }
 
-sub find_newest
-{
-    my $name = shift;
-
-    my @candidates = ("$Conf->{cache}/$name");
-    push @candidates, "$Conf->{user_cache}/$name" if $Conf->{user_cache};
-    my $file;
-    my $mtime = 0;
-    while (my $next = shift @candidates) {
-        next unless -f $next;
-        my $next_mtime = (stat($next))[9];
-        if ($next_mtime > $mtime) {
-            $file = $next;
-            $mtime = $next_mtime;
-        }
-    }
-    return $file;
-}
-
 sub do_grep($$) {
     my ( $data, $pattern ) = @_;
-    my $ret;
-    my ( $pkgs, $fname );
-    debug "regexp: $pattern";
+    my ( $pkgs, $fname, %seen, @cmd, $ret);
+    debug "regexp: ${pattern}";
     $| = 1;
-    my $zcat;
     if ($Conf->{is_regexp}) {
-        $zcat = 'zcat';
+        @cmd = ('zcat');
     }
     else {
         delete $ENV{$_} foreach qw{GREP_OPTIONS GREP_COLOR POSIXLY_CORRECT
                                    GREP_COLORS};
-        my $ignore_case = $Conf->{ignore_case} ? "-i" : "";
+        @cmd = ('zfgrep');
+        push(@cmd, '-i') if $Conf->{ignore_case};
         if ($Conf->{from_file}) {
-            $zcat = "zfgrep $ignore_case -f $Conf->{zgrep_tmpfile}";
+            push(@cmd, '-f', $Conf->{zgrep_tmpfile});
         }
         else {
             my $zgrep_pattern = $Conf->{pattern};
             $zgrep_pattern =~ s{^\\/}{};
-            $zcat = "zfgrep $ignore_case -- $zgrep_pattern";
+            push(@cmd, '--', $zgrep_pattern);
         }
     }
-    my $regexp = eval { $Conf->{ignore_case} ? qr/$pattern/i : qr/$pattern/ };
+    my $regexp = eval { $Conf->{ignore_case} ? qr/${pattern}/i : qr/${pattern}/ };
     error($@) if $@;
     my $quick_regexp = escape_parens($regexp);
-    my %seen         = ();
-
-    foreach (@$data) {
-        my $file = find_newest($_->{dest}) or next;
-
+    foreach my $file (@{$data}) {
         # Skip already searched files:
         next if $seen{$file}++;
-        $file = quotemeta $file;
-        debug "Search in $file using $zcat";
-        open( ZCAT, "$zcat $file |" )
-            || warning "Can't $zcat $file";
-        while (<ZCAT>) {
+        debug "Search in $file using @cmd";
+        open(my $fd, '-|', @cmd, $file) or
+            error("Cannot run \"@cmd\" on $file");
+        while (<$fd>) {
 
             # faster, non-capturing search first
             next if !/$quick_regexp/o;
@@ -407,7 +184,7 @@ sub do_grep($$) {
                 push @{ $ret->{"/$fname"} }, basename $_;
             }
         }
-        close ZCAT;
+        close($fd);
         debug_line "\n";
     }
     return reverse_hash($ret);
@@ -535,19 +312,6 @@ sub grep_package($) {
     print_winners $ret, 0;
 }
 
-sub purge_cache($) {
-    my $data = shift;
-    foreach (glob("$Conf->{cache}/*_Contents-*")) {
-        debug "Purging $_";
-        next if defined $Conf->{dummy};
-        next if ( unlink $_ ) > 0;
-        warning "Can't remove $_";
-    }
-    if ($Conf->{is_user_cache}) {
-        rmdir($Conf->{cache});
-    }
-}
-
 sub print_help {
     my $err_code = shift || 0;
 
@@ -559,20 +323,14 @@ apt-file [options] -D action <debfile>
 
 Configuration options:
     --architecture     -a  <arch>       Use specific architecture
-    --cache            -c  <dir>        Cache directory
-    --cdrom-mount      -d  <cdrom>      Use specific cdrom mountpoint
-    --dummy            -y               run in dummy mode (no action)
     --fixed-string     -F               Do not expand pattern
     --from-deb         -D               Use file list of .deb package(s) as
                                         patterns; implies -F
     --from-file        -f               Read patterns from file(s), one per line
                                         (use '-' for stdin)
     --ignore-case      -i               Ignore case distinctions
-    --non-interactive  -N               Skip schemes requiring user input
-                                        (useful in cron jobs)
     --package-only     -l               Only display packages name
     --regexp           -x               pattern is a regular expression
-    --sources-list     -s  <file>       sources.list location
     --verbose          -v               run in verbose mode
     --help             -h               Show this help.
                        --               End of options (neccessary if pattern
@@ -582,30 +340,24 @@ Action:
     update                              Fetch Contents files from apt-sources.
     search|find        <pattern>        Search files in packages
     list|show          <pattern>        List files in packages
-    purge                               Remove cache files
 EOF
     exit $err_code;
 }
 
 sub get_options() {
     my %options = (
-        "sources-list|s=s"  => \$Conf->{sources_list},
-        "cache|c=s"         => \$Conf->{cache},
         "architecture|a=s"  => \$Conf->{arch},
-        "cdrom-mount|d=s"   => \$Conf->{cdrom_mount},
         "verbose|v"         => \$Conf->{verbose},
         "ignore-case|i"     => \$Conf->{ignore_case},
         "regexp|x"          => \$Conf->{is_regexp},
-        "dummy|y"           => \$Conf->{dummy},
         "package-only|l"    => \$Conf->{package_only},
         "fixed-string|F"    => \$Conf->{fixed_strings},
         "from-file|f"       => \$Conf->{from_file},
         "from-deb|D"        => \$Conf->{from_deb},
-        "non-interactive|N" => \$Conf->{non_interactive},
         "help|h"            => \$Conf->{help},
     );
     Getopt::Long::Configure("bundling");
-    GetOptions(%options) || print_help 1;
+    GetOptions(%options) || print_help(1);
 }
 
 sub dir_is_empty {
@@ -623,44 +375,9 @@ sub dir_is_empty {
 }
 
 sub main {
-    my $conf_file;
-    if (exists $ENV{APT_FILE_CONFIG} && -f $ENV{APT_FILE_CONFIG}) {
-        $conf_file = $ENV{APT_FILE_CONFIG};
-    }
-    elsif (exists $ENV{HOME} && -f "$ENV{HOME}/.apt-file.conf") {
-        $conf_file = "$ENV{HOME}/.apt-file.conf";
-    }
-    elsif (-f "/etc/apt/apt-file.conf") {
-        $conf_file = "/etc/apt/apt-file.conf";
-    }
-
-
-    errorx "No config file found\n" if !defined $conf_file;
-
-    $Conf = read_config_file $conf_file;
     get_options();
-
-    my $interactive = $Conf->{interactive};
-    defined $interactive or $interactive = "cdrom rsh ssh";
-    $Conf->{interactive} = {};
-    foreach my $s ( split /\s+/, $interactive ) {
-        $Conf->{interactive}{$s} = 1;
-        if ( !$Conf->{$s} ) {
-            warn "interactive scheme $s does not exist\n";
-        }
-    }
-
     $_config->init;
     $Conf->{arch} ||= $_config->{'APT::Architecture'};
-    $Conf->{sources_list} = [
-          $Conf->{sources_list}
-        ? $Conf->{sources_list}
-        : ( $_config->get_file('Dir::Etc::sourcelist'),
-            glob( $_config->get_dir('Dir::Etc::sourceparts') . '/*.list' )
-        )
-    ];
-    $Conf->{cdrom_mount} ||= $_config->{'Acquire::cdrom::Mount'}
-        || "/cdrom";
 
     $Conf->{action} = shift @ARGV || "none";
     if ($Conf->{from_file} || $Conf->{from_deb}) {
@@ -728,10 +445,10 @@ sub main {
     }
     else {
         $Conf->{pattern} = shift @ARGV;
-        if ( defined $Conf->{pattern} ) {
-            $Conf->{pattern} = quotemeta( $Conf->{pattern} )
-                unless $Conf->{is_regexp};
-        }
+#        if ( defined $Conf->{pattern} ) {
+#            $Conf->{pattern} = quotemeta( $Conf->{pattern} ):
+#                unless $Conf->{is_regexp};
+#        }
     }
     undef $!;
 
@@ -741,7 +458,6 @@ sub main {
         find   => \&grep_file,
         list   => \&grep_package,
         show   => \&grep_package,
-        purge  => \&purge_cache,
     };
 
     $Conf->{help} = 2
@@ -753,67 +469,30 @@ sub main {
     print_help( $Conf->{help} - 1 ) if defined $Conf->{help};
 
     $Conf->{is_search} = 1 if $Conf->{action} =~ m/search|find|list|show/;
-
-    if (!$Conf->{cache}) {
-        my $sys_cache = $_config->get_dir('Dir::Cache') . 'apt-file';
-        $sys_cache =~ s{/\s*$}{};
-        $Conf->{cache} = $sys_cache;
-
-        if ( $> != 0) {
-            my $user_cache;
-
-            # consider cache in $HOME if run as non-root
-            if ( exists $ENV{XDG_CACHE_HOME} ) {
-                $user_cache = "$ENV{XDG_CACHE_HOME}/apt-file";
-            }
-            elsif (exists $ENV{HOME}) {
-                $user_cache = "$ENV{HOME}/.cache/apt-file";
-            }
-            if ($Conf->{is_search}) {
-                # for search, consider both caches
-                $Conf->{user_cache} = $user_cache;
-            }
-            else {
-                # for fetch/purge, only consider the user cache
-                $Conf->{cache} = $user_cache;
-                $Conf->{is_user_cache} = 1;
-            }
-        }
-    }
-    debug "Using cache directory $Conf->{cache}";
-
-    my $sources = parse_sources_list $Conf->{sources_list};
-    errorx "No valid sources in @{$Conf->{sources_list}}" if !defined $sources;
-
-    if ( $Conf->{is_search} && dir_is_empty( $Conf->{cache} ) &&
-         dir_is_empty( $Conf->{user_cache} ) ) {
-        errorx "The cache is empty. You need to run 'apt-file update' first.";
+    my $action = $actions->{$Conf->{action}};
+    if ($Conf->{is_search}) {
+        my @contents = contents_file_paths();
+        $action->(\@contents);
+    } else {
+        $action->();
     }
 
-    $actions->{ $Conf->{action} }->($sources);
 }
 
-{
-    my @signame;
-
-    sub signal_number2name {
-        my ($number) = @_;
-        if (not @signame) {
-            require Config;
-            # Doubt this happens for apt-file, but the code might
-            # Cargo-cult-copied or copy-wasted into another project.
-            # Speaking of which, thanks to
-            #  http://www.ccsf.edu/Pub/Perl/perlipc/Signals.html
-            defined($Config::Config{sig_name})
-              or die "Signals not available\n";
-            my $i = 0;
-            for my $name (split(' ', $Config::Config{sig_name})) {
-                $signame[$i] = $name;
-                $i++;
-            }
-        }
-        return $signame[$number];
+sub contents_file_paths {
+    my @paths;
+    my @cmd = (qw(apt-get indextargets --format),
+               '$(FILENAME)', 'Created-By: Contents');
+    debug("Running @cmd");
+    open(my $fd, '-|', @cmd)
+      or errorx('Cannot execute apt-get indextargets');
+    while (my $line = <$fd>) {
+        chomp($line);
+        next if $line =~ m/^\s*+$/;
+        push(@paths, $line);
     }
+    close($fd);
+    return @paths;
 }
 
 main();

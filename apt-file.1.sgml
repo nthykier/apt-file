@@ -2,14 +2,18 @@
 <refentry>
   <refentryinfo>
     <address>
-      <email>sjg@debian.org</email>
+      <email>niels@thykier.net</email>
     </address>
     <author>
       <firstname>Sebastien</firstname>
       <surname>Gross</surname>
       <othername>J.</othername>
     </author>
-    <date>May 2003</date>
+    <author>
+      <firstname>Niels</firstname>
+      <surname>Thykier</surname>
+    </author>
+    <date>August 2015</date>
   </refentryinfo>
 
   <refmeta>
@@ -112,14 +116,7 @@
 	<term>update</term>
 	<listitem>
 	  <para>
-	    Resynchronize the package contents from their sources. The
-	    lists of the contents of packages are fetched from the location(s)
-	    specified in
-	    <filename>/etc/apt/sources.list</filename>. This command
-	    attempts to fetch the
-	    <filename>Contents-&lt;ARCH&gt;.gz</filename> files from
-	    remote sources. For downloading these uses either the curl or
-	    wget commands as specified in <filename>apt-file.conf</filename>.
+            Calls apt update for you. :)
 	  </para>
 	</listitem>
       </varlistentry>
@@ -141,37 +138,7 @@
 	  Sets architecture to <literal>architecture</literal>. This
 	  option is useful if you search a package for a different
 	  architecture from the one installed on your system.
-	  It determines how the <literal>$ARCH</literal> variable
-	  in sources.list is expanded (but it does not influence
-	  the search in any other way).
 	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
-	  <option>-c, --cache</option> <literal>cache-directory</literal>
-	</term>
-	<listitem>
-	  <para>
-	    Sets the cache directory to <filename>cache-directory</filename>
-	    instead of its default. If executed as non-root user, the default
-	    is <filename>$HOME/.cache/apt-file</filename> with fall-back to
-	    <filename>/var/cache/apt/apt-file</filename>. The latter is also
-	    the default if apt-file is called as root.
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
-	  <option>-d, --cdrom-mount</option> <literal>cdrom-mount-point</literal>
-	</term>
-	<listitem>
-	  <para>
-Use <literal>cdrom-mount-point</literal> instead of
-<command>apt</command>'s.
-</para>
 	</listitem>
       </varlistentry>
 
@@ -236,34 +203,6 @@ Use <literal>cdrom-mount-point</literal> instead of
 
       <varlistentry>
 	<term>
-	  <option>-N, --non-interactive</option>
-	</term>
-	<listitem>
-	  <para>
-	  Skip schemes that are listed in the <literal>interactive</literal> line in
-	  <filename>apt-file.conf</filename>.
-	  This is useful if you want to call 'apt-file update' in cron jobs and skip all
-	  schemes that may require user input.
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
-	  <option>-s, --sources-list</option>
-	  sources.list
-	</term>
-	<listitem>
-	  <para>
-	    Sets the <filename>sources.list</filename> file to a
-	    different value from its default
-	    <filename>/etc/apt/sources.list</filename>.
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
 	  <option>-v, --verbose</option>
 	</term>
 	<listitem>
@@ -289,17 +228,6 @@ Use <literal>cdrom-mount-point</literal> instead of
 
       <varlistentry>
 	<term>
-	  <option>-y, --dummy</option>
-	</term>
-	<listitem>
-	  <para>
-	    Run in dummy mode (no action).
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
 	  <option>-h, --help</option>
 	</term>
 	<listitem>
@@ -311,172 +239,13 @@ Use <literal>cdrom-mount-point</literal> instead of
   </refsect1>
 
   <refsect1>
-    <title>CONFIGURATION FILE</title>
-    <para>
-      The <command>apt-file</command> configuration file can
-      be found in <filename>/etc/apt/apt-file.conf</filename>.
-    </para>
-    <para>
-      A string expansion is done on several values. See the <literal>string
-	expansion</literal> section.
-    </para>
-    <variablelist>
-
-      <varlistentry>
-	<term>destination</term>
-	<listitem>
-	  <para>
-	    This variable describes how cached files will be named.
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>http | ftp | ssh | rsh | file | cdrom</term>
-	<listitem>
-	  <para>
-	    Defines the commands used to fetch files.
-	  </para>
-	</listitem>
-      </varlistentry>
-
-    </variablelist>
-    <refsect2>
-      <title>String expansion</title>
-
-      <para>
-	A <filename>sources.list</filename> entry is defined as:
-	<screen>
-	  deb uri dist component1 component2 ...
-	</screen>
-	A <literal>uri</literal> is defined as:
-	<screen>
-	  proto:/[/][user[:password]@]host[:port][/path]
-	</screen>
-      </para>
-
-      <variablelist>
-	<varlistentry>
-	  <term>&lt;host&gt;</term>
-	  <listitem>
-	    <para>replace with the hostname</para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>&lt;port&gt;</term>
-	  <listitem>
-	    <para>replace with the port number</para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>&lt;uri&gt;</term>
-	  <listitem>
-	    <para>replace with full uri</para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>&lt;path&gt;</term>
-	  <listitem>
-	    <para>
-	      replace with full path (relative to / on the host)
-	    </para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>&lt;dist&gt;</term>
-	  <listitem>
-	    <para>replace with distribution name</para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>&lt;comp&gt;</term>
-	  <listitem>
-	    <para>replace with component name</para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>&lt;cache&gt;</term>
-	  <listitem><para>replace with cache directory</para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>&lt;dest&gt;</term>
-	  <listitem>
-	    <para>
-	      replace with <literal>destination</literal> expanded
-	      value.
-	    </para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>&lt;cdrom&gt;</term>
-	  <listitem>
-	    <para>
-	      replace with <literal>cdrom-mount-point</literal>.
-	    </para>
-	  </listitem>
-	</varlistentry>
-
-      </variablelist>
-    </refsect2>
-  </refsect1>
-
-  <refsect1>
     <title>BUGS</title>
-    <para>The cdrom backend has not been tested.</para>
-    <para>
-      Non-release lines in sources.list are not handled by apt-file.
-    </para>
-    <para>
-     There is only one Contents file per distribution that contains all
-     components (i.e. main, contrib, and non-free). Threrefore, apt-file will
-     display search results from all components, even if not all components
-     are included in the sources.list file.
-    </para>
-    <para>
-     When a new line has been added to the sources.list and apt-file update has
-     not been run, apt-file does not print a warning message.
-    </para>
     <para>
      Complex regular expressions that match the leading slash may not work
      correctly. As a workaround, try to pull the leading slash to the beginning
      of the regular expression. For example, use "/(usr/bin/vim|sbin/lvm)"
      instead of "/usr/bin/vim|/sbin/lvm".
     </para>
-  </refsect1>
-
-  <refsect1>
-    <title>FILES</title>
-    <variablelist>
-      <varlistentry>
-	<term><filename>/etc/apt/sources.list</filename></term>
-	<listitem>
-	  <para>Locations to fetch package contents from.</para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term><filename>/etc/apt/sources.list.d/</filename></term>
-	<listitem>
-	  <para>Directory with additional sources.list snippets</para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term><filename>/etc/apt/apt-file.conf</filename></term>
-	<listitem>
-	  <para>
-	    Configuration file for <command>apt-file</command>.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
   </refsect1>
 
   <refsect1>
@@ -498,7 +267,8 @@ Use <literal>cdrom-mount-point</literal> instead of
   <refsect1>
     <title>AUTHOR</title>
     <para>
-      <command>apt-file</command> was written by Sebastien J. Gross
+      <command>apt-file</command> was originally written by Sebastien
+      J. Gross
       <email>sjg@debian.org</email>.
     </para>
   </refsect1>

@@ -1,3 +1,20 @@
+apt-file (3.0~exp) UNRELEASED; urgency=medium
+
+  * BACKWARDS INCOMPATIBLE CHANGES:
+    - diffindex-download and diffindex-rred has been removed!
+      (Closes: #788780)
+  * Rewrite apt-file to use apt's new acquire system.  By using
+    apt, apt-file (et al)
+    - now understands "non-release" lines.  (Closes: #297707)
+    - no longer sends "double" requests.  (Closes: #663417)
+    - now validates downloads correctly.  (Closes: #515942)
+    - can resume downloads (like apt).  (Closes: #594879)
+    - now respects Acquire::http::Dl-Limit.  (Closes: #525631)
+    - support deb822 sources.list file.  (Closes: #740978)
+    (Closes: #752292)
+
+ -- Niels Thykier <niels@thykier.net>  Wed, 26 Aug 2015 19:14:57 +0200
+
 apt-file (2.5.4) unstable; urgency=medium
 
   * Apply patch from Cyril Brulebois to support searching for
