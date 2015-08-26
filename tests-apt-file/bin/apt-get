@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$1" != "indextargets" ]; then
+    echo "$0: Fake apt-get does not support $1" >&1
+    exit 1
+fi
+echo "$TEST_DIR/cache/site1_debian_dists_lenny_main_Contents-fooarch.gz"
+echo "$TEST_DIR/site1_debian_dists_sid_main_Contents-fooarch.gz"
