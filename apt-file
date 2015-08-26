@@ -482,14 +482,16 @@ sub main {
 sub contents_file_paths {
     my @paths;
     my @cmd = (qw(apt-get indextargets --format),
-               '$(FILENAME)', 'Created-By: Contents');
+               '$(CREATED_BY) $(TARGET_OF) $(ARCHITECTURE) $(FILENAME)');
     debug("Running @cmd");
     open(my $fd, '-|', @cmd)
       or errorx('Cannot execute apt-get indextargets');
     while (my $line = <$fd>) {
+        my ($target, $arch, $filename);
         chomp($line);
-        next if $line =~ m/^\s*+$/;
-        push(@paths, $line);
+        next if $line !~ m/^Contents[^ ]* /;
+        (undef, $target, $arch, $filename) = split(' ', $line, 4);
+        push(@paths, $filename);
     }
     close($fd);
     return @paths;
