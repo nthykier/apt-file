@@ -12,6 +12,7 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     - now respects Acquire::http::Dl-Limit.  (Closes: #525631)
     - support deb822 sources.list file.  (Closes: #740978)
     (Closes: #752292)
+  * Update dependency lists due to the above rewrite.
 
  -- Niels Thykier <niels@thykier.net>  Wed, 26 Aug 2015 19:14:57 +0200
 
