@@ -421,6 +421,9 @@ sub main {
     my $action = $actions->{$Conf->{action}};
     if ($Conf->{is_search}) {
         my @contents = contents_file_paths();
+        if (not @contents) {
+            errorx('The cache is empty. You need to run \"apt update\" first.');
+        }
         $action->(\@contents);
     } else {
         $action->();
