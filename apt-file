@@ -114,9 +114,10 @@ sub do_grep($$) {
             push(@cmd, '-f', $Conf->{zgrep_tmpfile});
         }
         else {
-            my $zgrep_pattern = $Conf->{pattern};
-            $zgrep_pattern =~ s{^\\/}{};
+            my $zgrep_pattern = $Conf->{grep_pattern} // '.';
+            $zgrep_pattern =~ s{^/}{};
             push(@cmd, '--', $zgrep_pattern);
+            @cmd = ('zcat') if $zgrep_pattern eq '.';
         }
     }
     my $regexp = eval { $Conf->{ignore_case} ? qr/${pattern}/i : qr/${pattern}/ };
@@ -398,10 +399,10 @@ sub main {
     }
     else {
         $Conf->{pattern} = shift @ARGV;
-#        if ( defined $Conf->{pattern} ) {
-#            $Conf->{pattern} = quotemeta( $Conf->{pattern} ):
-#                unless $Conf->{is_regexp};
-#        }
+        if (defined($Conf->{pattern}) and not $Conf->{is_regexp}) {
+            $Conf->{grep_pattern} = $Conf->{pattern};
+            $Conf->{pattern} = quotemeta($Conf->{pattern});
+        }
     }
     undef $!;
 
