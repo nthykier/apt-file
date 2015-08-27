@@ -198,8 +198,8 @@ sub fix_regexp {
     return ($pattern, $pattern2);
 }
 
-sub grep_file($) {
-    my $data    = shift;
+sub grep_file {
+    my ($data) = @_;
     my $pattern = $Conf->{pattern};
 
     # If pattern starts with /, we need to match both ^pattern-without-slash
@@ -211,23 +211,25 @@ sub grep_file($) {
         if (!$Conf->{from_file}) {
             ($pattern, $pattern2) = fix_regexp($pattern);
         }
-    }
-    elsif ( substr( $pattern, 0, 2 ) eq '\/' ) {
+    } elsif (substr($pattern, 0, 1) eq '/') {
+        # Tweak grep pattern to exclude the slash
+        $Conf->{pattern} = substr($pattern, 1);
         if ( $Conf->{fixed_strings} ) {
-
             # remove leading /
-            $pattern = substr( $pattern, 2 );
+            $pattern = quotemeta(substr($pattern, 1));
         }
         else {
 
             # If pattern starts with /, match both ^pattern-without-slash
             # and ^.*pattern.
-            $pattern2 = '.*?' . $pattern;
-            $pattern  = substr( $pattern, 2 );
+            $pattern2 = '.*?' . quotemeta($pattern);
+            $pattern  = quotemeta(substr($pattern, 1));
         }
-    }
-    else {
-        $pattern = '.*?' . $pattern unless $Conf->{fixed_strings};
+        debug("Modified (and quoted) pattern is ${pattern}");
+    } elsif ($Conf->{fixed_strings}) {
+        $pattern = quotemeta($pattern);
+    } else {
+        $pattern = '.*?' . quotemeta($pattern);
     }
 
     if ( ! defined $Conf->{fixed_strings} && ! defined $Conf->{is_regexp} ) {
