@@ -324,11 +324,15 @@ sub get_options() {
 }
 
 sub main {
+    my ($action, $is_search);
     get_options();
     $_config->init;
     $Conf->{arch} ||= $_config->{'APT::Architecture'};
 
-    $Conf->{action} = shift @ARGV || "none";
+    $action = shift(@ARGV) // 'none';
+
+    $is_search = 1 if $action =~ m/^(?:search|find|list|show)$/;
+
     if ($Conf->{from_file} || $Conf->{from_deb}) {
         use Regexp::Assemble;
         my $ra = Regexp::Assemble->new;
@@ -410,23 +414,21 @@ sub main {
     };
 
     $Conf->{help} = 2
-        if $Conf->{action} =~ m/search|find|list|show/
-            && !defined $Conf->{pattern};
+        if $is_search && !defined $Conf->{pattern};
     $Conf->{help} = 2
-        if !defined $actions->{ $Conf->{action} }
+        if !defined $actions->{$action}
             && !defined $Conf->{help};
     print_help( $Conf->{help} - 1 ) if defined $Conf->{help};
 
-    $Conf->{is_search} = 1 if $Conf->{action} =~ m/search|find|list|show/;
-    my $action = $actions->{$Conf->{action}};
-    if ($Conf->{is_search}) {
+    my $action_handler = $actions->{$action};
+    if ($is_search) {
         my @contents = contents_file_paths();
         if (not @contents) {
             errorx('The cache is empty. You need to run \"apt update\" first.');
         }
-        $action->(\@contents);
+        $action_handler->(\@contents);
     } else {
-        $action->();
+        $action_handler->();
     }
 
 }
