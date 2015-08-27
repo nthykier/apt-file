@@ -41,15 +41,6 @@ sub errorx($) {
     exit 1;
 }
 
-sub warning($) {
-    print STDERR "W: ", shift, $! ? ": $!" : "", "\n";
-    undef $!;
-}
-
-sub warningx($) {
-    print STDERR "W: ", shift, "\n";
-}
-
 sub debug($;$) {
     return if !defined $Conf->{verbose};
     my ( $msg, $use_errstr ) = @_;
@@ -73,34 +64,6 @@ sub reverse_hash($) {
         }
     }
     return $ret;
-}
-
-# find_command
-# looks through the PATH environment variable for the command named by
-# $conf->{$scheme}, if that command doesn't exist, it will look for
-# $conf->{${scheme}2}, and so on until it runs out of configured
-# commands or an executable is found.
-#
-sub find_command {
-    my $conf   = shift;
-    my $scheme = shift;
-
-    my $i = 1;
-    while (1) {
-        my $key = $scheme;
-        $key = $key . $i if $i != 1;
-        return unless defined $conf->{$key};
-        my $cmd = $conf->{$key};
-        $cmd =~ s/^[( ]+//;
-        $cmd =~ s/ .*//;
-        if ( $cmd =~ m{^/} and -x $cmd ) {
-            return $conf->{$key};
-        }
-        for my $path ( split( /:/, $ENV{'PATH'} ) ) {
-            return $conf->{$key} if -x ( $path . '/' . $cmd );
-        }
-        $i = $i + 1;
-    }
 }
 
 sub fetch_files ($) {
@@ -358,20 +321,6 @@ sub get_options() {
     );
     Getopt::Long::Configure("bundling");
     GetOptions(%options) || print_help(1);
-}
-
-sub dir_is_empty {
-    my ($path) = @_;
-    defined $path or return 1;
-    -d $path or return 1;
-    opendir DIR, $path or die "Cannot read cache directory $path: $!\n";
-    while ( my $entry = readdir DIR ) {
-        next if ( $entry =~ /^\.\.?$/ );
-        closedir DIR;
-        return 0;
-    }
-    closedir DIR;
-    return 1;
 }
 
 sub main {
