@@ -7,7 +7,7 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
       Notably this means that "+" cannot be used for options
       any longer.
   * Rewrite apt-file to use apt's new acquire system.  By using
-    apt, apt-file (et al)
+    apt, apt-file:
     - now understands "non-release" lines.  (Closes: #297707)
     - no longer sends "double" requests.  (Closes: #663417)
     - now validates downloads correctly.  (Closes: #515942)
