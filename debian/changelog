@@ -3,6 +3,9 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
   * BACKWARDS INCOMPATIBLE CHANGES:
     - diffindex-download and diffindex-rred has been removed!
       (Closes: #788780)
+    - apt-file now uses "gnu-getopt" option style parsing.
+      Notably this means that "+" cannot be used for options
+      any longer.
   * Rewrite apt-file to use apt's new acquire system.  By using
     apt, apt-file (et al)
     - now understands "non-release" lines.  (Closes: #297707)
