@@ -26,7 +26,7 @@ use File::Basename;
 use File::Path;
 use File::Temp;
 use AptPkg::Config '$_config';
-use List::MoreUtils qw/uniq/;
+use List::MoreUtils qw/any uniq/;
 
 my $Conf;
 
@@ -330,10 +330,11 @@ sub get_options() {
 }
 
 sub main {
-    my ($action, $is_search);
+    my ($action, $is_search, @arch_res);
     get_options();
     $_config->init;
-    $Conf->{arch} ||= $_config->{'APT::Architecture'};
+    @arch_res = split(m/\s*,\s*/,
+                      $Conf->{arch} || $_config->{'APT::Architecture'});
 
     $action = shift(@ARGV) // 'none';
 
@@ -428,10 +429,7 @@ sub main {
 
     my $action_handler = $actions->{$action};
     if ($is_search) {
-        my @contents = contents_file_paths();
-        if (not @contents) {
-            errorx('The cache is empty. You need to run \"apt update\" first.');
-        }
+        my @contents = contents_file_paths(\@arch_res);
         $action_handler->(\@contents);
     } else {
         $action_handler->();
@@ -440,7 +438,8 @@ sub main {
 }
 
 sub contents_file_paths {
-    my @paths;
+    my ($arch_res) = @_;
+    my (@paths, $any_entries);
     my @cmd = (qw(apt-get indextargets --format),
                '$(CREATED_BY) $(TARGET_OF) $(ARCHITECTURE) $(FILENAME)');
     debug("Running @cmd");
@@ -450,9 +449,18 @@ sub contents_file_paths {
         my ($target, $arch, $filename);
         chomp($line);
         next if $line !~ m/^Contents[^ ]* /;
+        $any_entries = 1;
         (undef, $target, $arch, $filename) = split(' ', $line, 4);
+        next if not any { $_ eq $arch } @{$arch_res};
         push(@paths, $filename);
     }
+    if (not @paths) {
+        if (not $any_entries) {
+            errorx('The cache is empty. You need to run \"apt update\" first.');
+        }
+        errorx('No contents with the given restrictions');
+    }
+
     close($fd);
     return @paths;
 }
