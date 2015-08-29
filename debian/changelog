@@ -22,7 +22,8 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     - supports deb822 sources.list file.  (Closes: #740978)
     - supports tor+http protocol (Closes: #764349)
     (Closes: #752292)
-  * Update dependency lists due to the above rewrite.
+  * Rewrite the manpage from docbook to POD format.
+  * Update dependency lists due to the above rewrites.
   * Remove the old apt-file cache on upgrade.  This means that
     users will have to run "apt update" after upgrading.
   * Update the "is-cache-empty" and "do-apt-file-update"

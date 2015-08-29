@@ -1,0 +1,162 @@
+=head1 NAME
+
+apt-file -- APT package searching utility -- command-line interface
+
+=head1 SYNOPSIS
+
+ apt-file [options] [action] [pattern]
+
+=head1 DESCRIPTION
+
+B<apt-file> is a command line tool for searching files in packages for
+the APT package management system.
+
+Some actions are required to run the search:
+
+=over 4
+
+=item find
+
+Alias for search.
+
+=item list
+
+List the contents of a package matching the pattern pattern. This
+action is very close to the B<dpkg -L> command except the package does
+not need to be installed or fetched.
+
+=item search
+
+Search in which package a file is included. A list of all packages
+containing the pattern pattern is returned.
+
+The B<apt-file> command will only search for filenames, not directory
+names.  This is due to the format of the Contents files it searches.
+
+=item show
+
+Alias for list.
+
+=item update
+
+Deprecated action that just calls "apt update".
+
+=back
+
+=head1 OPTIONS
+
+The following options are available:
+
+=over 4
+
+=item -a, --architecture I<architecture[,...]>
+
+This option is useful if you search a package for a different
+architecture from the one installed on your system.
+
+It can be a comma-separated list for searching on multiple
+architectures.
+
+=item -D, --from-deb
+
+Use contents of the given .deb archives(s) as patterns.  Useful for
+searching for file conflicts with other packages.  Implies -F.
+
+=item -f, --from-file
+
+Read patterns from the given file(s), one per line.  Use - as filename
+for stdin.  If no files are given, then the list will be read from
+stdin.  This is much faster than invoking apt-file many times.
+
+=item -F, --fixed-string
+
+Do not expand search pattern with generic characters at pattern's
+start and end.
+
+=item --index-type I<type[,...]>
+
+Only search indexes of the given type(s).  The type(s) must match one
+or more of the names used in the APT configuration (minus leading
+"Contents-").  Example if the configuration has the following snippets:
+
+ Acquire::IndexTargets::deb::Contents-deb { ... };
+ Acquire::IndexTargets::deb-src::Contents-dsc { ... };
+ Acquire::IndexTargets::deb::Contents-udeb { ... };
+
+Then, apt-file will recognise "deb", "dsc" and "udeb" as index types.
+
+=item -i, --ignore-case
+
+Ignore case when searching for pattern.
+
+=item -l, --package-only
+
+Only display package name; do not display file names.
+
+=item -v, --verbose
+
+Run apt-file in verbose/debug mode.
+
+=item -x, --regexp
+
+Treat pattern as a (perl) regular expression. See perlreref(1) for
+details. Without this option, pattern is treated as a literal string
+to search for.
+
+Be advised that this option can be rather slow.  If performance is an
+issue, consider giving apt-file non-regex pattern matching too much
+and pipe the output to B<<perl -ne '/<pattern-here>/'>>.  This enables
+apt-file to use more optimizations and leaves less work to the
+"slower" regex.
+
+=item -h, --help
+
+Display a short help screen.
+
+=back
+
+=head1 CONFIGURATION FILES
+
+The apt-file command does not have any configuration files on its own
+that alters its behavior.  However, it does ship a configuration file
+for apt to have apt download the Contents files.
+
+=over 4
+
+=item /etc/apt/apt.conf.d/50apt-file.conf
+
+Chooses which Contents files to download.
+
+=back
+
+=head1 BUGS, QUIRKS
+
+There are some known issues or "quirks" that are good to keep in mind.
+
+=over 4
+
+=item *
+
+The Contents files do B<not> include a leading slash on paths.  This
+means that F</bin/ls> is listed as I<bin/ls> in the Contents file.  If
+you are looking for something in a top-level directory, it is often
+better to omit the leading slash.
+
+The search algorithm will attempt to work around the leading slash,
+but it will not work in all cases.  As a workaround, try to pull the
+leading slash to the beginning of regular expressions.  For example,
+use "/(?:usr/bin/vim|sbin/lvm)" instead of  "/usr/bin/vim|/sbin/lvm".
+
+=item *
+
+When a new line has been added to the sources.list and apt update
+has not been run, apt-file does not print a warning message.
+
+=back
+
+=head1 SEE ALSO
+
+L<apt(1)>, L<apt-cache(8)>, L<apt.conf(5)>
+
+The APT users guide in /usr/share/doc/apt/
+

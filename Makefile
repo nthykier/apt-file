@@ -6,7 +6,6 @@
 #DESTDIR=debian/apt-file
 
 INSTALL=install
-DOCBOOK2MAN=docbook2man
 
 BINDIR=$(DESTDIR)/usr/bin
 ETCDIR=$(DESTDIR)/etc/apt/apt.conf.d
@@ -33,8 +32,7 @@ uninstall:
 #	rm -f $(MANDIR)/rapt-file.1
 
 man:
-	$(DOCBOOK2MAN) apt-file.1.sgml
-	$(DOCBOOK2MAN) apt-file.fr.1.sgml
+	pod2man apt-file.pod > apt-file.1
 #	$(DOCBOOK2MAN) rapt-file.1.sgml
 
 test:

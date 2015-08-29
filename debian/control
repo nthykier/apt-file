@@ -3,10 +3,10 @@ Section: admin
 Priority: optional
 Maintainer: Niels Thykier <niels@thykier.net>
 Uploaders: Thijs Kinkhorst <thijs@debian.org>, Enrico Zini <enrico@debian.org>
-Build-Depends: debhelper (>= 8), docbook, docbook-utils, libapt-pkg-perl, liblist-moreutils-perl, libregexp-assemble-perl, libfile-temp-perl,
+Build-Depends: debhelper (>= 8) libapt-pkg-perl, liblist-moreutils-perl, libregexp-assemble-perl,
  libtest-minimumversion-perl,
  libtest-strict-perl,
- perl,
+ perl
 Standards-Version: 3.9.6
 Vcs-Browser: http://anonscm.debian.org/viewvc/collab-maint/deb-maint/apt-file/trunk/
 Vcs-svn: svn://anonscm.debian.org/collab-maint/deb-maint/apt-file/trunk
@@ -16,7 +16,7 @@ Architecture: all
 Depends: ${perl:Depends}, ${misc:Depends},
  apt (>= 1.1~exp10),
  libapt-pkg-perl, liblist-moreutils-perl,
- libregexp-assemble-perl, libfile-temp-perl
+ libregexp-assemble-perl
 #Recommends: python, python-apt
 Suggests: openssh-client, sudo
 Description: search for files within Debian packages (command-line interface)
