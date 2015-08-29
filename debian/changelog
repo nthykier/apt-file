@@ -8,6 +8,8 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
       any longer.
     - apt-file now exit with non-zero exit code when the
       query results in no matches.  (Closes: #505222)
+    - apt-file no longer supports "personal" caches on its
+      own.
   * Rewrite apt-file to use apt's new acquire system.  By using
     apt, apt-file:
     - now understands "non-release" lines.  (Closes: #297707)
@@ -22,6 +24,8 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
   * Update dependency lists due to the above rewrite.
   * Remove the old apt-file cache on upgrade.  This means that
     users will have to run "apt update" after upgrading.
+  * Update the "is-cache-empty" and "do-apt-file-update"
+    scripts.
 
  -- Niels Thykier <niels@thykier.net>  Wed, 26 Aug 2015 19:14:57 +0200
 

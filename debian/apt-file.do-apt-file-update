@@ -2,6 +2,5 @@
 #
 # This script gets called from the update-notifier hook.
 #
-
-/usr/bin/apt-file update
+/usr/bin/apt update
 
