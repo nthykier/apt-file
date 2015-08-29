@@ -13,7 +13,9 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     - now validates downloads correctly.  (Closes: #515942)
     - can resume downloads (like apt).  (Closes: #594879)
     - now respects Acquire::http::Dl-Limit.  (Closes: #525631)
-    - support deb822 sources.list file.  (Closes: #740978)
+    - supports deb822 sources.list file.  (Closes: #740978)
+    - supports tor+http protocol (Closes: #764349)
+    - makes apt refresh the Contents files.  (Closes: #476401)
     (Closes: #752292)
   * Update dependency lists due to the above rewrite.
 
