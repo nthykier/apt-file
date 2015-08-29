@@ -12,6 +12,8 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
       own.
   * Rewrite apt-file to use apt's new acquire system.  By using
     apt, apt-file:
+    - makes apt refresh the Contents files.
+      (Closes: #476401, #594879)
     - now understands "non-release" lines.  (Closes: #297707)
     - no longer sends "double" requests.  (Closes: #663417)
     - now validates downloads correctly.  (Closes: #515942)
@@ -19,7 +21,6 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     - now respects Acquire::http::Dl-Limit.  (Closes: #525631)
     - supports deb822 sources.list file.  (Closes: #740978)
     - supports tor+http protocol (Closes: #764349)
-    - makes apt refresh the Contents files.  (Closes: #476401)
     (Closes: #752292)
   * Update dependency lists due to the above rewrite.
   * Remove the old apt-file cache on upgrade.  This means that
