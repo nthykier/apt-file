@@ -81,6 +81,7 @@ sub print_winners ($$) {
         # $db is a hash from package name to array of file names.  It
         # is a superset of the matching cases, so first we filter this
         # by the real pattern.
+        $filtered_db = {};
         foreach my $key ( keys %$db ) {
             if ( $key =~ /$Conf->{pattern}/ ) {
                 $filtered_db->{$key} = $db->{$key};
