@@ -10,6 +10,9 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
       query results in no matches.  (Closes: #505222)
     - apt-file no longer supports "personal" caches on its
       own.
+    - apt-file show (a.k.a. list) now looks up only an exact
+      package name by default.  To retain the previous
+      behaviour, please use the new --substring-match option.
   * Rewrite apt-file to use apt's new acquire system.  By using
     apt, apt-file:
     - makes apt refresh the Contents files.
@@ -30,6 +33,7 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     scripts.
   * Rewrite d/rules to use debhelper "tiny" and bump the
     compat level 9.
+  * Add --substring-match option to apt-file.
 
  -- Niels Thykier <niels@thykier.net>  Wed, 26 Aug 2015 19:14:57 +0200
 

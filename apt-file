@@ -329,6 +329,7 @@ sub get_options() {
         "verbose|v"         => \$Conf->{verbose},
         "ignore-case|i"     => \$Conf->{ignore_case},
         "regexp|x"          => \$Conf->{is_regexp},
+        "substring-match"   => \$Conf->{substring_match},
         "package-only|l"    => \$Conf->{package_only},
         "fixed-string|F"    => \$Conf->{fixed_strings},
         "from-file|f"       => \$Conf->{from_file},
@@ -349,7 +350,25 @@ sub main {
 
     $action = shift(@ARGV) // 'none';
 
-    $is_search = 1 if $action =~ m/^(?:search|find|list|show)$/;
+    if ($Conf->{fixed_strings} and $Conf->{is_regexp}) {
+        error('Cannot use -F together with -x');
+    }
+    if ($Conf->{fixed_strings} and $Conf->{substring_match}) {
+        error('Cannot use -F together with --substring-match');
+    }
+    if ($Conf->{is_regexp} and $Conf->{substring_match}) {
+        error('Cannot use -x together with --substring-match');
+    }
+
+    if ($action =~ m/^(?:search|find|list|show)$/) {
+        $is_search = 1;
+        if (not defined($Conf->{substring_match}) and
+            not $Conf->{fixed_strings} and not $Conf->{is_regexp}) {
+            debug('substring match (default)');
+            $Conf->{fixed_strings} = 1
+              if $action eq 'list' or $action eq 'show';
+        }
+    }
 
     if ($Conf->{from_file} || $Conf->{from_deb}) {
         use Regexp::Assemble;
@@ -417,8 +436,10 @@ sub main {
     else {
         $Conf->{pattern} = shift @ARGV;
         if (defined($Conf->{pattern}) and not $Conf->{is_regexp}) {
-            $Conf->{grep_pattern} = $Conf->{pattern};
-            $Conf->{pattern} = quotemeta($Conf->{pattern});
+            my $pattern = $Conf->{pattern};
+            $Conf->{grep_pattern} = $pattern;
+            $pattern = quotemeta($pattern);
+            $Conf->{pattern} = $pattern;
         }
     }
     undef $!;

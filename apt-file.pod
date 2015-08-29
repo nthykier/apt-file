@@ -4,7 +4,9 @@ apt-file -- APT package searching utility -- command-line interface
 
 =head1 SYNOPSIS
 
- apt-file [options] [action] [pattern]
+ B<apt-file> [I<options>] search I<pattern>
+
+ B<apt-file> [I<options>] show I<package>
 
 =head1 DESCRIPTION
 
@@ -21,9 +23,9 @@ Alias for search.
 
 =item list
 
-List the contents of a package matching the pattern pattern. This
-action is very close to the B<dpkg -L> command except the package does
-not need to be installed or fetched.
+List the contents of a package. This action is very close to the
+B<dpkg -L> command except the package does not need to be installed or
+fetched.
 
 =item search
 
@@ -73,6 +75,8 @@ stdin.  This is much faster than invoking apt-file many times.
 Do not expand search pattern with generic characters at pattern's
 start and end.
 
+This is default for B<show> and B<list> actions.
+
 =item --index-type I<type[,...]>
 
 Only search indexes of the given type(s).  The type(s) must match one
@@ -92,6 +96,13 @@ Ignore case when searching for pattern.
 =item -l, --package-only
 
 Only display package name; do not display file names.
+
+=item --substring-match
+
+Match if the given search I<pattern> is a substring of a path or
+package.
+
+This is default for B<search> and B<find> actions.
 
 =item -v, --verbose
 

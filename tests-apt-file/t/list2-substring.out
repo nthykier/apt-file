@@ -1,0 +1,4 @@
+bash: /bin/bash
+bash-debug: /usr/debug/bin/bash
+bash-minimal: /bin/bash-minimal
+bash-static: /bin/bash-static
