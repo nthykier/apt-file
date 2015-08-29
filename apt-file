@@ -89,6 +89,11 @@ sub print_winners ($$) {
         }
     }
 
+    if (not $filtered_db or not %{$filtered_db}) {
+        debug('No matches');
+        exit 1;
+    }
+
     # Now print the winners
     if ( !defined $Conf->{package_only} ) {
         foreach my $key ( sort keys %$filtered_db ) {

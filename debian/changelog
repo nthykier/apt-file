@@ -6,6 +6,8 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     - apt-file now uses "gnu-getopt" option style parsing.
       Notably this means that "+" cannot be used for options
       any longer.
+    - apt-file now exit with non-zero exit code when the
+      query results in no matches.  (Closes: #505222)
   * Rewrite apt-file to use apt's new acquire system.  By using
     apt, apt-file:
     - now understands "non-release" lines.  (Closes: #297707)
