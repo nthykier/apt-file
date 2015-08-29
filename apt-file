@@ -291,19 +291,22 @@ apt-file [options] -f action <file>
 apt-file [options] -D action <debfile>
 
 Configuration options:
-    --architecture     -a  <arch>       Use specific architecture
+    --architecture     -a  <arch>       Use specific architecture [L]
     --fixed-string     -F               Do not expand pattern
     --from-deb         -D               Use file list of .deb package(s) as
                                         patterns; implies -F
     --from-file        -f               Read patterns from file(s), one per line
                                         (use '-' for stdin)
     --ignore-case      -i               Ignore case distinctions
+    --index-type          <type>        Only search indices named <type> [L]
     --package-only     -l               Only display packages name
     --regexp           -x               pattern is a regular expression
     --verbose          -v               run in verbose mode
     --help             -h               Show this help.
                        --               End of options (neccessary if pattern
                                         starts with a '-')
+
+[L]: Takes a comma-separated list of values.
 
 Action:
     update                              Fetch Contents files from apt-sources.
@@ -316,6 +319,7 @@ EOF
 sub get_options() {
     my %options = (
         "architecture|a=s"  => \$Conf->{arch},
+        "index-type=s"      => \$Conf->{index_type},
         "verbose|v"         => \$Conf->{verbose},
         "ignore-case|i"     => \$Conf->{ignore_case},
         "regexp|x"          => \$Conf->{is_regexp},
@@ -330,11 +334,12 @@ sub get_options() {
 }
 
 sub main {
-    my ($action, $is_search, @arch_res);
+    my ($action, $is_search, @arch_res, @type_res);
     get_options();
     $_config->init;
     @arch_res = split(m/\s*,\s*/,
                       $Conf->{arch} || $_config->{'APT::Architecture'});
+    @type_res = split(m/\s*,\s*/, $Conf->{index_type} || 'deb');
 
     $action = shift(@ARGV) // 'none';
 
@@ -429,7 +434,7 @@ sub main {
 
     my $action_handler = $actions->{$action};
     if ($is_search) {
-        my @contents = contents_file_paths(\@arch_res);
+        my @contents = contents_file_paths(\@type_res, \@arch_res);
         $action_handler->(\@contents);
     } else {
         $action_handler->();
@@ -438,20 +443,21 @@ sub main {
 }
 
 sub contents_file_paths {
-    my ($arch_res) = @_;
+    my ($type_res, $arch_res) = @_;
     my (@paths, $any_entries);
     my @cmd = (qw(apt-get indextargets --format),
-               '$(CREATED_BY) $(TARGET_OF) $(ARCHITECTURE) $(FILENAME)');
+               '$(CREATED_BY) $(ARCHITECTURE) $(FILENAME)');
     debug("Running @cmd");
     open(my $fd, '-|', @cmd)
       or errorx('Cannot execute apt-get indextargets');
     while (my $line = <$fd>) {
-        my ($target, $arch, $filename);
+        my ($index_type, $arch, $filename);
         chomp($line);
-        next if $line !~ m/^Contents[^ ]* /;
+        next if $line !~ s/^Contents-//;
         $any_entries = 1;
-        (undef, $target, $arch, $filename) = split(' ', $line, 4);
+        ($index_type, $arch, $filename) = split(' ', $line, 3);
         next if not any { $_ eq $arch } @{$arch_res};
+        next if not any { $_ eq $index_type } @{$type_res};
         push(@paths, $filename);
     }
     if (not @paths) {
