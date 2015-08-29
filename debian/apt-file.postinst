@@ -7,12 +7,9 @@ if [ "$1" != configure ]; then
 	exit 0
 fi
 
-# fix wrong permissions created by old versions
-if     [ -n "$2" ] &&
-       dpkg --compare-versions "$2" lt 2.1.5~ &&
-       ! dpkg-statoverride --list /var/cache/apt/apt-file > /dev/null 2>&1
-then
-       chmod 755 /var/cache/apt/apt-file
+if [ -d /var/cache/apt/apt-file ]; then
+	echo "Discarding old apt-file cache, please run \"apt update\""
+	rm -fr /var/cache/apt/apt-file/
 fi
 
 unud=/var/lib/update-notifier/user.d

@@ -20,6 +20,8 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     - makes apt refresh the Contents files.  (Closes: #476401)
     (Closes: #752292)
   * Update dependency lists due to the above rewrite.
+  * Remove the old apt-file cache on upgrade.  This means that
+    users will have to run "apt update" after upgrading.
 
  -- Niels Thykier <niels@thykier.net>  Wed, 26 Aug 2015 19:14:57 +0200
 
