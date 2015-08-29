@@ -27,7 +27,7 @@ install:
 
 uninstall:
 	rm -f $(BINDIR)/apt-file
-	rm -f $(ETCDIR)/apt-file.conf
+	rm -f $(ETCDIR)/50apt-file.conf
 	rm -f $(MANDIR)/apt-file.1
 #	rm -f $(MANDIR)/rapt-file.1
 
