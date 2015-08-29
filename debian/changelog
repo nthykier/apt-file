@@ -28,6 +28,8 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     users will have to run "apt update" after upgrading.
   * Update the "is-cache-empty" and "do-apt-file-update"
     scripts.
+  * Rewrite d/rules to use debhelper "tiny" and bump the
+    compat level 9.
 
  -- Niels Thykier <niels@thykier.net>  Wed, 26 Aug 2015 19:14:57 +0200
 

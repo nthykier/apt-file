@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Niels Thykier <niels@thykier.net>
 Uploaders: Thijs Kinkhorst <thijs@debian.org>, Enrico Zini <enrico@debian.org>
-Build-Depends: debhelper (>= 8) libapt-pkg-perl, liblist-moreutils-perl, libregexp-assemble-perl,
+Build-Depends: debhelper (>= 9), libapt-pkg-perl, liblist-moreutils-perl, libregexp-assemble-perl,
  libtest-minimumversion-perl,
  libtest-strict-perl,
  perl

@@ -1,5 +1,0 @@
-etc/apt
-usr/bin
-usr/share/apt-file
-usr/share/man/man1
-var/cache/apt/apt-file
