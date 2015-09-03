@@ -358,13 +358,13 @@ sub main {
     $action = shift(@ARGV) // 'none';
 
     if ($Conf->{fixed_strings} and $Conf->{is_regexp}) {
-        error('Cannot use -F together with -x');
+        errorx('Cannot use -F together with -x');
     }
     if ($Conf->{fixed_strings} and $Conf->{substring_match}) {
-        error('Cannot use -F together with --substring-match');
+        errorx('Cannot use -F together with --substring-match');
     }
     if ($Conf->{is_regexp} and $Conf->{substring_match}) {
-        error('Cannot use -x together with --substring-match');
+        errorx('Cannot use -x together with --substring-match');
     }
 
     if ($action =~ m/^(?:search|find|list|show)$/) {
@@ -391,7 +391,7 @@ sub main {
             foreach my $deb (@ARGV) {
                 push @content, qx{dpkg-deb -c \Q$deb};
                 if ($? != 0) {
-                    error("Couldn't get contents from $deb");
+                    errorx("Couldn't get contents from $deb");
                 }
             }
             foreach my $line (@content) {
