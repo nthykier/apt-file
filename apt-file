@@ -114,7 +114,7 @@ sub do_grep($$) {
     debug "regexp: ${pattern}";
     $| = 1;
     if ($Conf->{is_regexp}) {
-        @cmd = ('zcat');
+        @cmd = ('zcat', '--');
     }
     else {
         delete $ENV{$_} foreach qw{GREP_OPTIONS GREP_COLOR POSIXLY_CORRECT
@@ -128,7 +128,7 @@ sub do_grep($$) {
             my $zgrep_pattern = $Conf->{grep_pattern} // '.';
             $zgrep_pattern =~ s{^/}{};
             push(@cmd, '--', $zgrep_pattern);
-            @cmd = ('zcat') if $zgrep_pattern eq '.';
+            @cmd = ('zcat', '--') if $zgrep_pattern eq '.';
         }
     }
     my $regexp = eval { $Conf->{ignore_case} ? qr/${pattern}/i : qr/${pattern}/ };
@@ -137,9 +137,16 @@ sub do_grep($$) {
     foreach my $file (@{$data}) {
         # Skip already searched files:
         next if $seen{$file}++;
-        debug "Search in $file using @cmd";
-        open(my $fd, '-|', @cmd, $file) or
-            error("Cannot run \"@cmd\" on $file");
+        my $fd;
+        if ($cmd[0] eq 'zcat' and $file !~ m/\.gz$/) {
+            debug "Opening $file directly";
+            open($fd, '<', $file) or
+              error("open $file failed");
+        } else {
+            debug "Search in $file using @cmd";
+            open($fd, '-|', @cmd, $file) or
+              error("Cannot run \"@cmd\" on $file");
+        }
         while (<$fd>) {
 
             # faster, non-capturing search first
