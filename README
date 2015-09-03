@@ -19,9 +19,9 @@ is done with:
 
 The apt command downloads the Contents files listed in its
 configuration.  Here, apt-file installs
-/etc/apt/conf.d/50apt-file.conf to have apt download indices of binary
-packages (.deb files).  Once downloaded, you can now search in these
-indices by using:
+/etc/apt/apt.conf.d/50apt-file.conf to have apt download indices of
+binary packages (.deb files).  Once downloaded, you can now search in
+these indices by using:
 
   apt-file search bin/lintian
   (or: apt-file find bin/lintian)
@@ -47,4 +47,4 @@ look at other indices by using the "--index-names" option.
 
 This of course requires that you have the relevant indices available.
 The indices listed in the examples above are all in the default
-/etc/apt/conf.d/50apt-file.conf, although some of them are disabled.
+/etc/apt/apt.conf.d/50apt-file.conf, although some of them are disabled.
