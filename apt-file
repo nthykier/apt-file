@@ -499,7 +499,7 @@ sub contents_file_paths {
     }
     if (not @paths) {
         if (not $any_entries) {
-            errorx('The cache is empty. You need to run \"apt update\" first.');
+            errorx('The cache is empty. You need to run "apt update" first.');
         }
         errorx('No contents with the given restrictions');
     }
