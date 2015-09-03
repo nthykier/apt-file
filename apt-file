@@ -311,8 +311,9 @@ Configuration options:
     --from-file        -f               Read patterns from file(s), one per line
                                         (use '-' for stdin)
     --ignore-case      -i               Ignore case distinctions
-    --index-type          <type>        Only search indices named <type> [L]
+    --index-names          <names>      Only search indices listed in <names> [L]
     --package-only     -l               Only display packages name
+    --substring-match                   pattern is a substring (no glob/regex)
     --regexp           -x               pattern is a regular expression
     --verbose          -v               run in verbose mode
     --help             -h               Show this help.
@@ -332,7 +333,7 @@ EOF
 sub get_options() {
     my %options = (
         "architecture|a=s"  => \$Conf->{arch},
-        "index-type=s"      => \$Conf->{index_type},
+        "index-names=s"     => \$Conf->{index_names},
         "verbose|v"         => \$Conf->{verbose},
         "ignore-case|i"     => \$Conf->{ignore_case},
         "regexp|x"          => \$Conf->{is_regexp},
@@ -348,12 +349,12 @@ sub get_options() {
 }
 
 sub main {
-    my ($action, $is_search, @arch_res, @type_res);
+    my ($action, $is_search, @arch_res, @index_names);
     get_options();
     $_config->init;
     @arch_res = split(m/\s*,\s*/,
                       $Conf->{arch} || $_config->{'APT::Architecture'});
-    @type_res = split(m/\s*,\s*/, $Conf->{index_type} || 'deb');
+    @index_names = split(m/\s*,\s*/, $Conf->{index_names} || 'deb');
 
     $action = shift(@ARGV) // 'none';
 
@@ -468,7 +469,7 @@ sub main {
 
     my $action_handler = $actions->{$action};
     if ($is_search) {
-        my @contents = contents_file_paths(\@type_res, \@arch_res);
+        my @contents = contents_file_paths(\@index_names, \@arch_res);
         $action_handler->(\@contents);
     } else {
         $action_handler->();
@@ -477,7 +478,7 @@ sub main {
 }
 
 sub contents_file_paths {
-    my ($type_res, $arch_res) = @_;
+    my ($index_names, $arch_res) = @_;
     my (@paths, $any_entries);
     my @cmd = (qw(apt-get indextargets --format),
                '$(CREATED_BY) $(ARCHITECTURE) $(FILENAME)');
@@ -485,13 +486,15 @@ sub contents_file_paths {
     open(my $fd, '-|', @cmd)
       or errorx('Cannot execute apt-get indextargets');
     while (my $line = <$fd>) {
-        my ($index_type, $arch, $filename);
+        my ($index_name, $arch, $filename);
         chomp($line);
         next if $line !~ s/^Contents-//;
         $any_entries = 1;
-        ($index_type, $arch, $filename) = split(' ', $line, 3);
-        next if not any { $_ eq $arch } @{$arch_res};
-        next if not any { $_ eq $index_type } @{$type_res};
+        ($index_name, $arch, $filename) = split(' ', $line, 3);
+        if ($arch ne '$(ARCHITECTURE)') {
+            next if not any { $_ eq $arch } @{$arch_res};
+        }
+        next if not any { $_ eq $index_name } @{$index_names};
         push(@paths, $filename);
     }
     if (not @paths) {
