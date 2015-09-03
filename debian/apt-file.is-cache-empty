@@ -2,7 +2,9 @@
 # This script checks if the cache directory is empty
 
 if apt-get indextargets --format '$(CREATED_BY)' | grep -q ^Contents- ; then
-    exit 0
+    # Not empty
+    exit 1
 fi
-exit 1
+# Empty
+exit 0
 
