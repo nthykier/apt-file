@@ -136,7 +136,8 @@ for apt to have apt download the Contents files.
 
 =item /etc/apt/apt.conf.d/50apt-file.conf
 
-Chooses which Contents files to download.
+Chooses which Contents files to download.  Note that apt-file
+recognises only "Acquire" targets that starts with "Contents-".
 
 =back
 
