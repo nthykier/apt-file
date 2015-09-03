@@ -1,0 +1,20 @@
+apt-file (3.0~exp) experimental; urgency=medium
+
+  * BACKWARDS INCOMPATIBLE CHANGES (see the changelog for
+    more details)
+    - diffindex-* have been removed.
+    - show/list command defaults to -F.
+    - personal "caches" no longer supported.
+    - non-matching search causes non-zero exit code.
+    - command line options removed and parsing changed.
+  * Beyond this, apt-file now uses apt's acquire system to
+    download Contents files.
+    - Please consult /etc/apt/apt.conf.d/50apt-file.conf to
+      assert you are fetching the desired Contents files
+    - Run "apt update" to re-fetch the Contents files.
+    - The previous system-wide cache will been removed on
+      upgrade.
+    - Personal caches under XDG_CACHE_HOME/apt-file or
+      ~/.cache/apt-file must be removed manually.
+
+ -- Niels Thykier <niels@thykier.net>  Thu, 03 Sep 2015 21:03:43 +0200
