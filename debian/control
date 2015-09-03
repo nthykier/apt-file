@@ -6,7 +6,8 @@ Uploaders: Thijs Kinkhorst <thijs@debian.org>, Enrico Zini <enrico@debian.org>
 Build-Depends: debhelper (>= 9), libapt-pkg-perl, liblist-moreutils-perl, libregexp-assemble-perl,
  libtest-minimumversion-perl,
  libtest-strict-perl,
- perl
+ perl,
+ bash-completion,
 Standards-Version: 3.9.6
 Vcs-Browser: http://anonscm.debian.org/viewvc/collab-maint/deb-maint/apt-file/trunk/
 Vcs-svn: svn://anonscm.debian.org/collab-maint/deb-maint/apt-file/trunk

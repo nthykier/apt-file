@@ -22,8 +22,8 @@ install:
 	$(INSTALL) -m 755 apt-file $(BINDIR)
 	$(INSTALL) -d -m 755 $(ETCDIR)
 	$(INSTALL) -m 644 50apt-file.conf $(ETCDIR)
-	$(INSTALL) -d -m 755 $(COMPDIR)
-	$(INSTALL) -m 644 apt-file.bash_completion $(COMPDIR)/apt-file
+#	$(INSTALL) -d -m 755 $(COMPDIR)
+#	$(INSTALL) -m 644 apt-file.bash_completion $(COMPDIR)/apt-file
 
 uninstall:
 	rm -f $(BINDIR)/apt-file

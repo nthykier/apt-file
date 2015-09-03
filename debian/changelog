@@ -39,6 +39,8 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     compat level 9.
   * Add --substring-match option to apt-file.
   * Update bash completions to match the changes.
+  * Install bash-completions in their new location and drop
+    old bash-completion conffile.
 
  -- Niels Thykier <niels@thykier.net>  Wed, 26 Aug 2015 19:14:57 +0200
 

@@ -1,7 +1,7 @@
-have apt-file &&
+_have apt-file &&
 _apt_file()
 {
-	local cur prev
+	local cur prev indices
 
 	COMPREPLY=()
 	cur=${COMP_WORDS[COMP_CWORD]}
@@ -16,8 +16,12 @@ _apt_file()
 	    _filedir
 	    return 0
 	    ;;
-	esac;
-
+        --index-names)
+            indices=$(apt-get indextargets --format '$(CREATED_BY)' | sed -n '/^Contents/ s/^Contents-//  p' | sort -u)
+            COMPREPLY=( $(compgen -W "$indices" -- $cur ) )
+            return 0
+            ;;
+        esac;
 	if [[ "$cur" == -* ]]; then
 
 		COMPREPLY=( $( compgen -W '-v -a -l -f -F \
