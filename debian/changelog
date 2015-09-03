@@ -3,9 +3,6 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
   * BACKWARDS INCOMPATIBLE CHANGES:
     - diffindex-download and diffindex-rred has been removed!
       (Closes: #788780)
-    - apt-file now uses "gnu-getopt" option style parsing.
-      Notably this means that "+" cannot be used for options
-      any longer.
     - apt-file now exit with non-zero exit code when the
       query results in no matches.  (Closes: #505222)
     - apt-file no longer supports "personal" caches on its
@@ -13,6 +10,11 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     - apt-file show (a.k.a. list) now looks up only an exact
       package name by default.  To retain the previous
       behaviour, please use the new --substring-match option.
+    - Special uses of "-a" to search in Source packages or
+      udebs have been replaced by "--index-names".
+    - apt-file now uses "gnu-getopt" option style parsing.
+      Notably this means that "+" cannot be used for options
+      any longer.
   * Rewrite apt-file to use apt's new acquire system.  By using
     apt, apt-file:
     - makes apt refresh the Contents files.
@@ -25,6 +27,8 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
     - supports deb822 sources.list file.  (Closes: #740978)
     - supports tor+http protocol (Closes: #764349)
     (Closes: #752292)
+  * Expand the README a bit to give a quick introduction to
+    apt-file and indices.
   * Rewrite the manpage from docbook to POD format.
   * Update dependency lists due to the above rewrites.
   * Remove the old apt-file cache on upgrade.  This means that
