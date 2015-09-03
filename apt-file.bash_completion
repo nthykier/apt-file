@@ -20,15 +20,16 @@ _apt_file()
 
 	if [[ "$cur" == -* ]]; then
 
-		COMPREPLY=( $( compgen -W '-c -v -V -a -s -l -F -y -H -N -d \
-				--cache --verbose --version --architecture \
-				--sources-list --package-only --fixed-string \
-				--architecture --cdrom-mount --non-interactive \
-				--dummy --help' -- $cur ) )
+		COMPREPLY=( $( compgen -W '-v -a -l -f -F \
+				--verbose --architecture \
+				--package-only --fixed-string \
+				--architecture \
+                                --index-names --substring-match \
+				--help' -- $cur ) )
 	else
 
 		COMPREPLY=( $( compgen -W 'update search list find \
-	                        show purge' -- $cur ) )
+	                        show' -- $cur ) )
 
 	fi
 
