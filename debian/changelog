@@ -1,4 +1,4 @@
-apt-file (3.0~exp) UNRELEASED; urgency=medium
+apt-file (3.0~exp) experimental; urgency=medium
 
   * BACKWARDS INCOMPATIBLE CHANGES:
     - diffindex-download and diffindex-rred has been removed!
@@ -42,7 +42,7 @@ apt-file (3.0~exp) UNRELEASED; urgency=medium
   * Install bash-completions in their new location and drop
     old bash-completion conffile.
 
- -- Niels Thykier <niels@thykier.net>  Wed, 26 Aug 2015 19:14:57 +0200
+ -- Niels Thykier <niels@thykier.net>  Fri, 11 Sep 2015 19:49:57 +0200
 
 apt-file (2.5.4) unstable; urgency=medium
 
