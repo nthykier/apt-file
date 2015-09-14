@@ -2,6 +2,9 @@ apt-file (3.0~exp1) UNRELEASED; urgency=medium
 
   * Enable PDiffs by default for Contents files even if
     Acquire::PDiffs is set to false.
+  * Remove remark about the "user cache" in the postinst
+    script.  Thanks to Jakub Wilk for the report.
+    (Closes: #798925)
 
  -- Niels Thykier <niels@thykier.net>  Fri, 11 Sep 2015 20:19:41 +0200
 
