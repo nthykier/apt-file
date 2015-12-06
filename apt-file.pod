@@ -77,9 +77,9 @@ start and end.
 
 This is default for B<show> and B<list> actions.
 
-=item --index-type I<type[,...]>, -I I<type[,...]>
+=item --index-names I<type[,...]>, -I I<type[,...]>
 
-Only search indexes of the given type(s).  The type(s) must match one
+Only search indexes of the given name(s).  The name(s) must match one
 or more of the names used in the APT configuration (minus leading
 "Contents-").  Example if the configuration has the following snippets:
 
@@ -87,7 +87,7 @@ or more of the names used in the APT configuration (minus leading
  Acquire::IndexTargets::deb-src::Contents-dsc { ... };
  Acquire::IndexTargets::deb::Contents-udeb { ... };
 
-Then, apt-file will recognise "deb", "dsc" and "udeb" as index types.
+Then, apt-file will recognise "deb", "dsc" and "udeb" as index names.
 
 =item -i, --ignore-case
 
