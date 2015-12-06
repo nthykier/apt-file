@@ -7,6 +7,7 @@ apt-file (3.0~exp1) UNRELEASED; urgency=medium
     (Closes: #798925)
   * Remember to remove the /etc/apt/apt-file.conf conffile.
     Thanks to Jakub Wilk for the report.  (Closes: #798926)
+  * Add "-I" as short-hand for "--index-names".
 
  -- Niels Thykier <niels@thykier.net>  Fri, 11 Sep 2015 20:19:41 +0200
 

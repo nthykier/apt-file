@@ -77,7 +77,7 @@ start and end.
 
 This is default for B<show> and B<list> actions.
 
-=item --index-type I<type[,...]>
+=item --index-type I<type[,...]>, -I I<type[,...]>
 
 Only search indexes of the given type(s).  The type(s) must match one
 or more of the names used in the APT configuration (minus leading

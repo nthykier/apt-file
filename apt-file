@@ -311,7 +311,7 @@ Configuration options:
     --from-file        -f               Read patterns from file(s), one per line
                                         (use '-' for stdin)
     --ignore-case      -i               Ignore case distinctions
-    --index-names          <names>      Only search indices listed in <names> [L]
+    --index-names      -I  <names>      Only search indices listed in <names> [L]
     --package-only     -l               Only display packages name
     --substring-match                   pattern is a substring (no glob/regex)
     --regexp           -x               pattern is a regular expression
@@ -333,7 +333,7 @@ EOF
 sub get_options() {
     my %options = (
         "architecture|a=s"  => \$Conf->{arch},
-        "index-names=s"     => \$Conf->{index_names},
+        "index-names|I=s"   => \$Conf->{index_names},
         "verbose|v"         => \$Conf->{verbose},
         "ignore-case|i"     => \$Conf->{ignore_case},
         "regexp|x"          => \$Conf->{is_regexp},
