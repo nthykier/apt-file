@@ -33,12 +33,12 @@ my $Conf;
 sub error($) {
     print STDERR "E: ", shift, $! ? ": $!" : "", "\n";
     undef $!;
-    exit 1;
+    exit 2;
 }
 
 sub errorx($) {
     print STDERR "E: ", shift, "\n";
-    exit 1;
+    exit 2;
 }
 
 sub debug($;$) {
@@ -345,7 +345,7 @@ sub get_options() {
         "help|h"            => \$Conf->{help},
     );
     Getopt::Long::Configure("bundling");
-    GetOptions(%options) || print_help(1);
+    GetOptions(%options) || print_help(2);
 }
 
 sub main {
@@ -465,9 +465,9 @@ sub main {
         show   => \&grep_package,
     };
 
-    $Conf->{help} = 2
+    $Conf->{help} = 3
         if $is_search && !defined $Conf->{pattern};
-    $Conf->{help} = 2
+    $Conf->{help} = 3
         if !defined $actions->{$action}
             && !defined $Conf->{help};
     print_help( $Conf->{help} - 1 ) if defined $Conf->{help};
