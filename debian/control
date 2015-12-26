@@ -3,7 +3,12 @@ Section: admin
 Priority: optional
 Maintainer: Niels Thykier <niels@thykier.net>
 Uploaders: Thijs Kinkhorst <thijs@debian.org>, Enrico Zini <enrico@debian.org>
-Build-Depends: debhelper (>= 9), libapt-pkg-perl, liblist-moreutils-perl, libregexp-assemble-perl,
+Build-Depends:
+ apt (>= 1.1.8),
+ debhelper (>= 9),
+ libapt-pkg-perl,
+ liblist-moreutils-perl,
+ libregexp-assemble-perl,
  libtest-minimumversion-perl,
  libtest-strict-perl,
  perl,
@@ -15,7 +20,7 @@ Vcs-svn: svn://anonscm.debian.org/collab-maint/deb-maint/apt-file/trunk
 Package: apt-file
 Architecture: all
 Depends: ${perl:Depends}, ${misc:Depends},
- apt (>= 1.1~exp10),
+ apt (>= 1.1.8),
  libapt-pkg-perl, liblist-moreutils-perl,
  libregexp-assemble-perl
 #Recommends: python, python-apt

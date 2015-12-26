@@ -12,6 +12,9 @@ apt-file (3.0~exp1) UNRELEASED; urgency=medium
     in the man page.
   * Search also Contents-all by default when present to
     prepare for the advent of Contents-all files.
+  * Migrate to use the new "cat-file" feature in apt-helper.
+    Thanks to Julian Andres Klode for implementing it.
+  * Rewrite file reading to use an xargs pipeline.
 
  -- Niels Thykier <niels@thykier.net>  Fri, 11 Sep 2015 20:19:41 +0200
 

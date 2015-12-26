@@ -21,6 +21,7 @@
 
 use strict;
 use warnings;
+use POSIX qw(_exit);
 use Getopt::Long qw/:config gnu_getopt no_ignore_case/;
 use File::Basename;
 use File::Path;
@@ -44,9 +45,10 @@ sub errorx($) {
 sub debug($;$) {
     return if !defined $Conf->{verbose};
     my ( $msg, $use_errstr ) = @_;
-    print STDERR "D: ", $msg;
-    print STDERR $! ? ": $!" : "" if $use_errstr;
-    print STDERR "\n";
+    my $d = "D: ${msg}";
+    $d .= $! ? ": $!" : '' if $use_errstr;
+    $d .= "\n";
+    print STDERR $d;
     undef $!;
 }
 
@@ -108,66 +110,115 @@ sub print_winners ($$) {
     exit 0;
 }
 
+sub start_pipe_to_cmd {
+    my ($sub_proc_write_end, @cmd) = @_;
+    my ($read_end, $our_write_end, $pid);
+    pipe($read_end, $our_write_end)
+        or error("pipe failed: $!");
+    $pid = fork()
+        // error("fork failed: $!");
+    if (not $pid) {
+        open(STDIN, '>&', $read_end);
+        open(STDOUT, '>&', $sub_proc_write_end)
+            or error("fdup stdout failed: $!");
+        close($our_write_end)
+            or error("close write end of pipe: $!");
+        debug 'starting ' . join(' ', @cmd);
+        exec {$cmd[0]} @cmd
+            or error('exec ' . join(' ', @cmd) . " failed: $!");
+    }
+    close($read_end)
+        or error("close write end of pipe: $!");
+    close($sub_proc_write_end)
+        or error("close unneeded write end of pipe: $!");
+    return $our_write_end;
+}
+
+sub open_data_pipeline {
+    my ($file_list) = @_;
+    my ($read_end, $write_end, $pid);
+    pipe($read_end, $write_end)
+        or error("pipe failed: $!");
+    $pid = fork()
+        // error("fork failed: $!");
+    if (not $pid) {
+        my ($to_cat, $dead_pid, $sub_proc_error);
+        my $grep_pattern = $Conf->{grep_pattern} // '.';
+        close($read_end)
+            or error("Close read end of pipeline: $!");
+        if ($grep_pattern ne '.' and not $Conf->{is_regexp}) {
+            my @grep_cmd = ('fgrep');
+            push(@grep_cmd, '-i') if $Conf->{ignore_case};
+            if ($Conf->{from_file}) {
+                 push(@grep_cmd, '-f', $Conf->{zgrep_tmpfile});
+            } else {
+                my $gp = $grep_pattern;
+                $gp =~ s{^/}{};
+                push(@grep_cmd, $gp);
+            }
+
+            delete $ENV{$_} foreach qw{GREP_OPTIONS GREP_COLOR
+                                       POSIXLY_CORRECT GREP_COLORS};
+            $write_end = start_pipe_to_cmd($write_end, @grep_cmd);
+        }
+        $to_cat = start_pipe_to_cmd($write_end, 'xargs', '-0r',
+                                    '/usr/lib/apt/apt-helper',
+                                    'cat-file');
+        debug "Starting to pass files";
+        for my $file (uniq(@{$file_list})) {
+            debug "Passing $file";
+            printf {$to_cat} "%s\0", $file;
+        }
+        debug "Closing input to cat";
+        close($to_cat)
+            or error("close write end of xargs pipe: $!");
+        do {
+            $dead_pid = waitpid(-1, 0);
+            $sub_proc_error = $? if not $sub_proc_error and $dead_pid > 0;
+        } while ($dead_pid > 0);
+        if (my $sig = ($sub_proc_error & 0x7f)) {
+            POSIX::_exit($sig);
+        }
+        POSIX::_exit(($sub_proc_error >> 8) & 0xff);
+    }
+    close($write_end)
+        or error("close write end of pipe: $!");
+    return $read_end;
+}
+
 sub do_grep($$) {
     my ( $data, $pattern ) = @_;
-    my ( $pkgs, $fname, %seen, @cmd, $ret);
+    my ( $pkgs, $fname, @cmd, $ret);
     debug "regexp: ${pattern}";
     $| = 1;
-    if ($Conf->{is_regexp}) {
-        @cmd = ('zcat', '--');
-    }
-    else {
-        delete $ENV{$_} foreach qw{GREP_OPTIONS GREP_COLOR POSIXLY_CORRECT
-                                   GREP_COLORS};
-        @cmd = ('zfgrep');
-        push(@cmd, '-i') if $Conf->{ignore_case};
-        if ($Conf->{from_file}) {
-            push(@cmd, '-f', $Conf->{zgrep_tmpfile});
-        }
-        else {
-            my $zgrep_pattern = $Conf->{grep_pattern} // '.';
-            $zgrep_pattern =~ s{^/}{};
-            push(@cmd, '--', $zgrep_pattern);
-            @cmd = ('zcat', '--') if $zgrep_pattern eq '.';
-        }
-    }
     my $regexp = eval { $Conf->{ignore_case} ? qr/${pattern}/i : qr/${pattern}/ };
     error($@) if $@;
     my $quick_regexp = escape_parens($regexp);
-    foreach my $file (@{$data}) {
-        # Skip already searched files:
-        next if $seen{$file}++;
-        my $fd;
-        if ($cmd[0] eq 'zcat' and $file !~ m/\.gz$/) {
-            debug "Opening $file directly";
-            open($fd, '<', $file) or
-              error("open $file failed");
-        } else {
-            debug "Search in $file using @cmd";
-            open($fd, '-|', @cmd, $file) or
-              error("Cannot run \"@cmd\" on $file");
+    my $fd = open_data_pipeline($data);
+    while (<$fd>) {
+
+        # faster, non-capturing search first
+        next if !/$quick_regexp/o;
+
+        next if !( ( $fname, $pkgs ) = /$regexp/o );
+
+        # skip header lines
+        # we can safely assume that the name of the top level directory
+        # does not contain spaces
+        next if !m{^[^\s/]*/};
+
+        debug_line ".";
+        foreach ( split /,/, $pkgs ) {
+
+            # Put leading slash on file name
+            push @{ $ret->{"/$fname"} }, basename $_;
         }
-        while (<$fd>) {
-
-            # faster, non-capturing search first
-            next if !/$quick_regexp/o;
-
-            next if !( ( $fname, $pkgs ) = /$regexp/o );
-
-            # skip header lines
-            # we can safely assume that the name of the top level directory
-            # does not contain spaces
-            next if !m{^[^\s/]*/};
-
-            debug_line ".";
-            foreach ( split /,/, $pkgs ) {
-
-                # Put leading slash on file name
-                push @{ $ret->{"/$fname"} }, basename $_;
-            }
-        }
-        close($fd);
-        debug_line "\n";
+    }
+    close($fd);
+    debug_line "\n";
+    waitpid(-1, 0);
+    if ($?) {
+        warn("A subprocess exited uncleanly (raw: $?) - result may be incomplete");
     }
     return reverse_hash($ret);
 }
