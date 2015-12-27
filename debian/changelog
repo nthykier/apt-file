@@ -1,4 +1,4 @@
-apt-file (3.0~exp1) UNRELEASED; urgency=medium
+apt-file (3.0~exp1) experimental; urgency=medium
 
   * Enable PDiffs by default for Contents files even if
     Acquire::PDiffs is set to false.
@@ -18,7 +18,7 @@ apt-file (3.0~exp1) UNRELEASED; urgency=medium
   * Add an DEP-8/autopkgtest test suite based on the build
     time tests.
 
- -- Niels Thykier <niels@thykier.net>  Fri, 11 Sep 2015 20:19:41 +0200
+ -- Niels Thykier <niels@thykier.net>  Sun, 27 Dec 2015 12:22:03 +0000
 
 apt-file (3.0~exp) experimental; urgency=medium
 
