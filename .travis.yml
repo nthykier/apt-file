@@ -1,20 +1,7 @@
-language: c
 sudo: required
-dist: trusty
-before_install:
-    # update package list
-    - sudo apt-get update -qq
 
-install:
-    # install packages needed for mk-build-deps
-    - sudo apt-get install -y -qq --no-install-recommends devscripts equivs
-    # pull build deps from debian/control
-    - yes y | head -n1 | sudo mk-build-deps -ir
-    # remove packages needed for mk-build-deps
-    - sudo apt-get purge -y -qq equivs
-    - sudo apt-get autoremove -y -qq
+services:
+  - docker
 
 script:
-    # build the debian package
-    - debuild -uc -us
-
+  - wget -O- http://travis.debian.net/script.sh | sh -
