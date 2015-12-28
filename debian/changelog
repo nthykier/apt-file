@@ -10,6 +10,8 @@ apt-file (3.0~exp2) UNRELEASED; urgency=medium
   * Remove suggests on sudo, which is not used directly in
     apt-file.  Thanks to Jakub Wilk for the report.
     (Closes: #809276)
+  * Apply patch from Jakub Wilk to fix some formatting errors
+    in the apt-file manpage.  (Closes: #809277)
 
  -- Niels Thykier <niels@thykier.net>  Mon, 28 Dec 2015 21:39:21 +0000
 

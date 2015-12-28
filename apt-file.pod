@@ -4,9 +4,9 @@ apt-file -- APT package searching utility -- command-line interface
 
 =head1 SYNOPSIS
 
- B<apt-file> [I<options>] search I<pattern>
+B<apt-file> [I<options>] search I<pattern>
 
- B<apt-file> [I<options>] show I<package>
+B<apt-file> [I<options>] show I<package>
 
 =head1 DESCRIPTION
 
@@ -116,7 +116,7 @@ to search for.
 
 Be advised that this option can be rather slow.  If performance is an
 issue, consider giving apt-file non-regex pattern matching too much
-and pipe the output to B<<perl -ne '/<pattern-here>/'>>.  This enables
+and pipe the output to B<< perl -ne '/<pattern-here>/' >>.  This enables
 apt-file to use more optimizations and leaves less work to the
 "slower" regex.
 
