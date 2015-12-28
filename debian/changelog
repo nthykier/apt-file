@@ -3,6 +3,10 @@ apt-file (3.0~exp2) UNRELEASED; urgency=medium
   * Remove suggests on openssh-client, which was replaced by
     using APT's acquire system.  Thanks to Jakub Wilk for
     the report.  (Closes: #809264)
+  * Fix invalid warning about subprocess exiting uncleanly on
+    no matches.  The grep(1) process is expected to exit non-zero
+    in such cases and apt-file now gracefully handles that.
+    Thanks to Jakub Wilk for the report.  (Closes: #809261)
 
  -- Niels Thykier <niels@thykier.net>  Mon, 28 Dec 2015 21:39:21 +0000
 

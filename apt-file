@@ -131,7 +131,7 @@ sub start_pipe_to_cmd {
         or error("close write end of pipe: $!");
     close($sub_proc_write_end)
         or error("close unneeded write end of pipe: $!");
-    return $our_write_end;
+    return ($our_write_end, $pid);
 }
 
 sub open_data_pipeline {
@@ -142,11 +142,15 @@ sub open_data_pipeline {
     $pid = fork()
         // error("fork failed: $!");
     if (not $pid) {
-        my ($to_cat, $dead_pid, $sub_proc_error);
+        my ($to_cat, $dead_pid, $failed_cmd, $cat_pid, %pid_table);
+        my $sub_proc_error = 0;
+        my @cat_cmd = ('xargs', '-0r',
+                       '/usr/lib/apt/apt-helper', 'cat-file');
         my $grep_pattern = $Conf->{grep_pattern} // '.';
         close($read_end)
             or error("Close read end of pipeline: $!");
         if ($grep_pattern ne '.' and not $Conf->{is_regexp}) {
+            my ($grep_pid);
             my @grep_cmd = ('fgrep');
             push(@grep_cmd, '-i') if $Conf->{ignore_case};
             if ($Conf->{from_file}) {
@@ -159,11 +163,16 @@ sub open_data_pipeline {
 
             delete $ENV{$_} foreach qw{GREP_OPTIONS GREP_COLOR
                                        POSIXLY_CORRECT GREP_COLORS};
-            $write_end = start_pipe_to_cmd($write_end, @grep_cmd);
+            ($write_end, $grep_pid) = start_pipe_to_cmd($write_end, @grep_cmd);
+            $pid_table{$grep_pid} = {
+                'ignore-exit' => 1,
+                'cmd' => \@grep_cmd,
+            };
         }
-        $to_cat = start_pipe_to_cmd($write_end, 'xargs', '-0r',
-                                    '/usr/lib/apt/apt-helper',
-                                    'cat-file');
+        ($to_cat, $cat_pid) = start_pipe_to_cmd($write_end, @cat_cmd);
+        $pid_table{$cat_pid} = {
+            'cmd' => \@cat_cmd,
+        };
         debug "Starting to pass files";
         for my $file (uniq(@{$file_list})) {
             debug "Passing $file";
@@ -174,12 +183,29 @@ sub open_data_pipeline {
             or error("close write end of xargs pipe: $!");
         do {
             $dead_pid = waitpid(-1, 0);
-            $sub_proc_error = $? if not $sub_proc_error and $dead_pid > 0;
+            if ($dead_pid > 0) {
+                my $pid_info = $pid_table{$dead_pid};
+                my $is_issue = $?;
+                if ($pid_info->{'ignore-exit'}) {
+                    # Only "killed by signal" counts in this case
+                    $is_issue = $? & 0x7F;
+                }
+                if ($is_issue and not $sub_proc_error) {
+                    $sub_proc_error = $?;
+                    $failed_cmd = join(' ', @{$pid_info->{'cmd'}});
+                }
+            }
         } while ($dead_pid > 0);
         if (my $sig = ($sub_proc_error & 0x7f)) {
+            warn("Command ${failed_cmd} was killed by signal ${sig}");
             POSIX::_exit($sig);
         }
-        POSIX::_exit(($sub_proc_error >> 8) & 0xff);
+        if ($sub_proc_error) {
+            my $retval = ($sub_proc_error >> 8) & 0xff;
+            warn("Command ${failed_cmd} exited with code ${retval}");
+            POSIX::_exit($retval);
+        }
+        POSIX::_exit(0);
     }
     close($write_end)
         or error("close write end of pipe: $!");
