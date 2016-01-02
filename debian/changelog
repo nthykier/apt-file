@@ -1,3 +1,11 @@
+apt-file (2.5.5) UNRELEASED; urgency=medium
+
+  * diffindex-download: Ignore unknown fields in the PDiff
+    Index file.  Thanks to Julien Cristau for reporting
+    the issue.  (Closes: #809656)
+
+ -- Niels Thykier <niels@thykier.net>  Sat, 02 Jan 2016 13:01:51 +0000
+
 apt-file (2.5.4) unstable; urgency=medium
 
   * Apply patch from Cyril Brulebois to support searching for

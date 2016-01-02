@@ -288,6 +288,12 @@ sub parse_index {
             }
             $previous = undef;
         }
+        elsif ( $line =~ m{^[^ :]+:}) {
+            $section = 'ignore';
+        }
+        elsif ($section eq 'ignore') {
+            next;
+        }
         elsif ( $line =~ m{^\s+($re_sum)\s+(\d+)\s+(\S+)\s*$} ) {
             my ( $sum, $size, $name ) = ( lc($1), $2, $3 );
             if ( !defined $section ) {
