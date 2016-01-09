@@ -21,6 +21,14 @@
 
 use strict;
 use warnings;
+
+use constant {
+    RETURN_CODE_NO_RESULTS => 1,
+    RETURN_CODE_GENERIC_ERROR => 2,
+    RETURN_CODE_CACHE_IS_EMPTY => 3,
+    RETURN_CODE_CACHE_NO_MATCHING_INDICES => 4,
+};
+
 use POSIX qw(_exit);
 use Getopt::Long qw/:config gnu_getopt no_ignore_case/;
 use File::Basename;
@@ -32,14 +40,26 @@ use List::MoreUtils qw/any none uniq/;
 my $Conf;
 
 sub error($) {
-    print STDERR "E: ", shift, $! ? ": $!" : "", "\n";
+    my ($msg) = @_;
+    print STDERR "E: $msg", $! ? ": $!" : "", "\n";
     undef $!;
-    exit 2;
+    exit RETURN_CODE_GENERIC_ERROR;
 }
 
 sub errorx($) {
-    print STDERR "E: ", shift, "\n";
-    exit 2;
+    my ($msg) = @_;
+    print STDERR "E: $msg\n";
+    exit RETURN_CODE_GENERIC_ERROR;
+}
+
+sub stop_with_msg {
+    my ($msg, $return_code) = @_;
+    print STDERR "E: $msg\n";
+    if (not defined($return_code)) {
+        print STDERR "INTERNAL ERROR: Missing correct return code\n";
+        $return_code //= 255;
+    }
+    exit $return_code;
 }
 
 sub debug($;$) {
@@ -99,7 +119,7 @@ sub print_winners ($$) {
 
     if (not $filtered_db or not %{$filtered_db}) {
         debug('No matches');
-        exit 1;
+        exit RETURN_CODE_NO_RESULTS;
     }
 
     # Now print the winners
@@ -433,7 +453,7 @@ sub get_options() {
         "help|h"            => \$Conf->{help},
     );
     Getopt::Long::Configure("bundling");
-    GetOptions(%options) || print_help(2);
+    GetOptions(%options) || print_help(RETURN_CODE_GENERIC_ERROR);
 }
 
 sub main {
@@ -570,14 +590,17 @@ EOF
         show   => \&grep_package,
     };
 
-    $Conf->{help} = 3
-        if $is_search && !defined $Conf->{pattern};
-    $Conf->{help} = 3
-        if !defined $actions->{$action}
-            && !defined $Conf->{help};
-    print_help( $Conf->{help} - 1 ) if defined $Conf->{help};
-
+    if ($Conf->{help}) {
+        print_help();
+    }
+    if ($is_search && not defined($Conf->{pattern})) {
+        print_help(RETURN_CODE_GENERIC_ERROR);
+    }
     my $action_handler = $actions->{$action};
+    if (not defined($action_handler)) {
+        print_help(RETURN_CODE_GENERIC_ERROR);
+    }
+
     if ($is_search) {
         my @contents = contents_file_paths(\@index_names, \@arch_res);
         $action_handler->(\@contents);
@@ -613,16 +636,24 @@ sub contents_file_paths {
     }
     if (not @paths) {
         if (not $any_entries) {
-            errorx('The cache is empty. You need to run "apt update" first.');
+            stop_with_msg('The cache is empty. You need to run "apt update" first.',
+                          RETURN_CODE_CACHE_IS_EMPTY);
         }
-        errorx('No contents with the given restrictions');
+        stop_with_msg('No Contents in the cache with the given restrictions',
+                      RETURN_CODE_CACHE_NO_MATCHING_INDICES);
     }
 
     close($fd);
     return @paths;
 }
 
-main();
+eval {
+    main();
+    exit(0);
+};
+if (my $err = $@) {
+    stop_with_message($err, 255);
+}
 
 __END__
 
