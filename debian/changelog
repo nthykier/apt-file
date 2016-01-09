@@ -1,8 +1,8 @@
 apt-file (3.0~exp3) UNRELEASED; urgency=medium
 
-  * apt-file: Add -c/--config-file to read an APT config file
-    like APT.  It will also be passed to all APT commands
-    called by apt-file.  (Closes: #772804)
+  * apt-file:  Accept -c/-o with the same meaning as APT's
+    options of same name.  They will also be passed to all
+    APT commands called by apt-file.  (Closes: #772804)
   * Add versioned Breaks on command-not-found and apt-venv.
   * apt-file(.pod): Expand and document the exit codes used by
     apt-file.

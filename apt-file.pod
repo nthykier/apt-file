@@ -105,6 +105,12 @@ Ignore case when searching for pattern.
 
 Only display package name; do not display file names.
 
+=item -o, --option APT::Option=Value
+
+Set a Configuration Option; This will set an arbitrary configuration
+option. The syntax is B<-o APT::Option=Value>.  B<-o> and B<--option>
+can be used multiple times to set different options.
+
 =item --substring-match
 
 Match if the given search I<pattern> is a substring of a path or

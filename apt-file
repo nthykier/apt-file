@@ -37,7 +37,7 @@ use File::Temp;
 use AptPkg::Config '$_config';
 use List::MoreUtils qw/any none uniq/;
 
-my $Conf;
+my ($Conf, @apt_options);
 
 sub error($) {
     my ($msg) = @_;
@@ -89,11 +89,7 @@ sub reverse_hash($) {
 }
 
 sub fetch_files ($) {
-    my @cmd = ('apt');
-    if ($Conf->{apt_config}) {
-        push(@cmd, '--config-file', $Conf->{apt_config});
-    }
-    push(@cmd, 'update');
+    my @cmd = ('apt', @apt_options, 'update');
     debug("Running @cmd");
     exec(@cmd);
 }
@@ -172,11 +168,8 @@ sub open_data_pipeline {
         my $sub_proc_error = 0;
         my $grep_pattern = $Conf->{grep_pattern} // '.';
         my @cat_cmd = ('xargs', '-0r',
-                       '/usr/lib/apt/apt-helper');
-        if ($Conf->{apt_config}) {
-            push(@cat_cmd, '--config-file', $Conf->{apt_config});
-        }
-        push(@cat_cmd, 'cat-file');
+                       '/usr/lib/apt/apt-helper',
+                       @apt_options, 'cat-file');
         close($read_end)
             or error("Close read end of pipeline: $!");
         if ($grep_pattern ne '.' and not $Conf->{is_regexp}) {
@@ -423,11 +416,14 @@ Configuration options:
     --substring-match                   pattern is a substring (no glob/regex)
     --regexp           -x               pattern is a regular expression
     --verbose          -v               run in verbose mode
+    --config           -c <file>        Parse the given APT config file [R]
+    --option           -o <A::B=V>      Set the given APT config option to "V" [R]
     --help             -h               Show this help.
                        --               End of options (neccessary if pattern
                                         starts with a '-')
 
 [L]: Takes a comma-separated list of values.
+[R]: The option can be used repeatedly
 
 Action:
     update                              Fetch Contents files from apt-sources.
@@ -449,7 +445,8 @@ sub get_options() {
         "fixed-string|F"    => \$Conf->{fixed_strings},
         "from-file|f"       => \$Conf->{from_file},
         "from-deb|D"        => \$Conf->{from_deb},
-        'config-file|c=s'   => \$Conf->{apt_config},
+        'config-file|c=s@'  => sub { push(@{$Conf->{'apt_options'}}, ['-c', $_[1]]); },
+        'option|o=s@'       => sub { push(@{$Conf->{'apt_options'}}, ['-o', $_[1]]); },
         "help|h"            => \$Conf->{help},
     );
     Getopt::Long::Configure("bundling");
@@ -460,9 +457,16 @@ sub main {
     my ($action, $is_search, @arch_res, @index_names);
     get_options();
     $_config->init;
-    if ($Conf->{apt_config}) {
-        if ( -d $Conf->{apt_config}) {
-            print STDERR <<EOF;
+    for my $apt_option (@{$Conf->{'apt_options'} // []}) {
+        my ($param_name, $param_value) = @{$apt_option};
+        if ($param_name eq '-o') {
+            my ($opt_name, $opt_value) = split(m/=/, $param_value, 2);
+            $_config->set($opt_name, $opt_value);
+            debug("Parsed set ${opt_name} to ${opt_value} (due to --option)");
+        } elsif ($param_name eq '-c') {
+            my $conf_file = $param_value;
+            if ( -d $param_value) {
+                print STDERR <<EOF;
 The "-c" option is now short for "--config-file" and parses an APT
 config file.  It /used/ to be the option for specifying a custom
 "cache-dir", but support for these were retired in apt-file 3.
@@ -471,12 +475,18 @@ If you need the cache-dir feature, please create an APT config
 file that makes APT use the desired cache dir directory.
 
 EOF
-            errorx("Please pass an APT config file after -c/--config-file");
+                errorx("Please pass an APT config file after -c/--config-file");
+            }
+            debug("Parsed $conf_file (due to --config-file)");
+
+            $_config->read_file($conf_file)
+                or error("Cannot parse ${conf_file}");
+        } else {
+            stop_with_msg("Unhandled apt option ${param_name}", 255);
         }
-        $_config->read_file($Conf->{apt_config})
-            or error("Cannot parse $Conf->{apt_config}");
-        debug("Parsed $Conf->{apt_config} (due to --config-file)");
+        push(@apt_options, $param_name, $param_value);
     }
+
     @arch_res = split(m/\s*,\s*/,
                       $Conf->{arch} || $_config->{'APT::Architecture'});
     if (none { $_ eq 'all' } @arch_res) {
@@ -613,12 +623,8 @@ EOF
 sub contents_file_paths {
     my ($index_names, $arch_res) = @_;
     my (@paths, $any_entries);
-    my @cmd = ('apt-get');
-    if ($Conf->{apt_config}) {
-        push(@cmd, '--config-file', $Conf->{apt_config});
-    }
-    push(@cmd, 'indextargets', '--format',
-         '$(CREATED_BY) $(ARCHITECTURE) $(FILENAME)');
+    my @cmd = ('apt-get', @apt_options, 'indextargets',
+               '--format', '$(CREATED_BY) $(ARCHITECTURE) $(FILENAME)');
     debug("Running @cmd");
     open(my $fd, '-|', @cmd)
       or errorx('Cannot execute apt-get indextargets');
