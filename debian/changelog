@@ -10,6 +10,8 @@ apt-file (3.0~exp3) UNRELEASED; urgency=medium
     incorrectly discarded results, where the filename had
     spaces *after* the given pattern matched.
     (Closes: #810566)
+  * apt-file.pod: Document that not all APT repositories have
+    Contents files.  (Closes: #712555)
 
  -- Niels Thykier <niels@thykier.net>  Sat, 09 Jan 2016 15:29:59 +0000
 

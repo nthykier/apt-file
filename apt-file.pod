@@ -178,6 +178,15 @@ use "/(?:usr/bin/vim|sbin/lvm)" instead of  "/usr/bin/vim|/sbin/lvm".
 When a new line has been added to the sources.list and apt update
 has not been run, apt-file does not print a warning message.
 
+=item *
+
+Not all APT repositories have Contents files.  Notably common install
+media (CDs etc.) may omit them to conserve space.
+
+The default configuration by B<apt-file> marks Contents files as
+optional and will just silently fail to search in Contents files in
+such repositories.
+
 =back
 
 =head1 EXIT CODES
