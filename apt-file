@@ -350,8 +350,8 @@ sub grep_file($) {
     }
 
     if ( ! defined $Conf->{fixed_strings} && ! defined $Conf->{is_regexp} ) {
-        $pattern  .= '[^\s]*';
-        $pattern2 .= '[^\s]*' if defined $pattern2;
+        $pattern  .= '(?:.*[^\s])?';
+        $pattern2 .= '(?:.*[^\s])?' if defined $pattern2;
     }
 
     $pattern = "$pattern|$pattern2" if defined $pattern2;

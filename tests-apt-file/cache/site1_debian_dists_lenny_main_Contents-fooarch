@@ -36,3 +36,7 @@ bin/bash-minimal					shells/bash-minimal
 bin/bash-static						shells/bash-static
 usr/lib/uml/modules/2.6.24/kernel/fs/fat/fat.ko		misc/user-mode-linux
 usr/lib/uml/modules/2.6.24/kernel/fs/vfat/vfat.ko	misc/user-mode-linux
+usr/share/zynaddsubfx/examples/Synth Bells Choir Reverb.xmz  sound/zynaddsubfx-data
+usr/share/zynaddsubfx/examples/Synth Piano Reverb.xmz        sound/zynaddsubfx-data
+usr/share/zynaddsubfx/examples/Synth.xmz                     sound/zynaddsubfx-data
+

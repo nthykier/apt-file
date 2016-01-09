@@ -6,6 +6,10 @@ apt-file (3.0~exp3) UNRELEASED; urgency=medium
   * Add versioned Breaks on command-not-found and apt-venv.
   * apt-file(.pod): Expand and document the exit codes used by
     apt-file.
+  * apt-file: Fix bug where -x and --substring-match searches
+    incorrectly discarded results, where the filename had
+    spaces *after* the given pattern matched.
+    (Closes: #810566)
 
  -- Niels Thykier <niels@thykier.net>  Sat, 09 Jan 2016 15:29:59 +0000
 
