@@ -59,6 +59,14 @@ architecture from the one installed on your system.
 It can be a comma-separated list for searching on multiple
 architectures.
 
+=item -c, --config-file I<APT config-file>
+
+Configuration File; Specify a configuration file to use. The program
+will read the default configuration file and then this configuration
+file. If configuration settings need to be set before the default
+configuration files are parsed specify a file with the B<APT_CONFIG>
+environment variable. See L<apt.conf(5)> for syntax information.
+
 =item -D, --from-deb
 
 Use contents of the given .deb archives(s) as patterns.  Useful for

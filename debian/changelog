@@ -1,3 +1,11 @@
+apt-file (3.0~exp3) UNRELEASED; urgency=medium
+
+  * apt-file: Add -c/--config-file to read an APT config file
+    like APT.  It will also be passed to all APT commands
+    called by apt-file.
+
+ -- Niels Thykier <niels@thykier.net>  Sat, 09 Jan 2016 15:29:59 +0000
+
 apt-file (3.0~exp2) experimental; urgency=medium
 
   * Remove suggests on openssh-client, which was replaced by
