@@ -27,13 +27,19 @@ List the contents of a package. This action is very close to the
 B<dpkg -L> command except the package does not need to be installed or
 fetched.
 
+By default, the B<list> action interprets its pattern as if
+B<--fixed-string> was specified.
+
 =item search
 
 Search in which package a file is included. A list of all packages
 containing the pattern pattern is returned.
 
-The B<apt-file> command will only search for filenames, not directory
-names.  This is due to the format of the Contents files it searches.
+Since Contents files does not contain directories, the pattern must
+match (part of a) file name.
+
+By default, the B<search> action interprets its pattern as if
+B<--substring-string> was specified.
 
 =item show
 

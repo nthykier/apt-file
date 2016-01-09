@@ -12,6 +12,9 @@ apt-file (3.0~exp3) UNRELEASED; urgency=medium
     (Closes: #810566)
   * apt-file.pod: Document that not all APT repositories have
     Contents files.  (Closes: #712555)
+  * apt-file.pod: Clarify that search defaults to
+    --substring-search and list defaults to --fixed-string.
+    (Closes: #766729)
 
  -- Niels Thykier <niels@thykier.net>  Sat, 09 Jan 2016 15:29:59 +0000
 
