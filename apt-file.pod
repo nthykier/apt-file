@@ -213,7 +213,7 @@ B<apt-file> completed a search successfully, but it had no results.
 
 =item B<2>
 
-An error occured (including invalid/conflicting user options).
+An error occurred (including invalid/conflicting user options).
 
 =item B<3>
 
@@ -226,7 +226,7 @@ run B<apt update> to fetch them.
 B<apt-file> could not complete the command because the cache does not
 have any files matching the restrictions.  Either change the
 restrictions (e.g. B<--index-names>) or configure apt to fetch the
-relevent files and run B<apt update>.
+relevant files and run B<apt update>.
 
 =item B<255>
 
