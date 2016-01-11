@@ -11,7 +11,7 @@ To do this, please run the following as root:
 
 NB: Depending on your system and your APT configuration, you may have
 to tweak the resulting /etc/apt/apt-file.conf to ensure you do not
-fetch somethings twice (it uses a blacklist).
+fetch some resources twice (it uses a blacklist).
 
 If you want to undo it, then as root run:
   $0 --uninstall
