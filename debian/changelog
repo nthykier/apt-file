@@ -2,6 +2,12 @@ apt-file (3.0~exp4) UNRELEASED; urgency=medium
 
   * apt-file: Read /etc/apt/apt-file.conf by default if it
     exists.
+  * Install example configuration for how to emulate apt-file/2
+    behaviour in some cases.
+  * apt-file.pod: Document a how-to for two common apt-file/2
+    configurations.
+  * debian/NEWS: Document the existence of the new example
+    configurations.
 
  -- Niels Thykier <niels@thykier.net>  Mon, 11 Jan 2016 22:50:06 +0000
 

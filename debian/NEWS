@@ -1,3 +1,19 @@
+apt-file (3.0~exp4) UNRELEASED; urgency=medium
+
+  The new version of apt-file will by default configure apt to
+  fetch Contents files on "apt update".  For users that prefer
+  the previous behaviour, please consult the example config
+  files provided in "/usr/share/doc/apt-file/examples" as well
+  as "man apt-file" (under "CONFIGURATION FILES").
+
+  Notably, the "apt-file-2-update.sh" script should be able to
+  get you started.
+
+  Please note that these example configurations may need some
+  tweaking to work for you.
+
+ -- Niels Thykier <niels@thykier.net>  Mon, 11 Jan 2016 22:58:54 +0000
+
 apt-file (3.0~exp) experimental; urgency=medium
 
   BACKWARDS INCOMPATIBLE CHANGES (see the changelog for

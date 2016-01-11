@@ -177,6 +177,64 @@ recognises only "Acquire" targets that starts with "Contents-".
 
 =back
 
+=head2 Special configurations similar to apt-file 2
+
+Here are some B<apt-file> 2 related work flows and how to (almost)
+emulate them with B<apt-file> 3.  They are documented as a I<starting
+point> for people, who are attached to these.
+
+The emulation may not be perfect for you out of the box.  Patches are
+welcome to keep the examples updated as long as the examples remain
+"trivial".
+
+=over 4
+
+=item *
+
+Only make B<apt-file update> fetch Contents files
+
+If you are accustomed to B<apt update> I<not> fetching Contents files,
+then you can run
+F</usr/share/doc/apt-file/examples/apt-file-2-update.sh>.  This script
+will configure B<apt> and B<apt-file> accordingly after best effort.
+
+Please read the resulting F</etc/apt/apt-file.conf>.
+
+=item *
+
+Creating/using "user" caches
+
+Previous versions of B<apt-file> had a "--cache" option, which could
+be used to denote a directory to store the Contents files.  This can
+be emulated by doing:
+
+  # Setup
+  $ mkdir -p ~/.cache/apt-file ~/.config
+  $ touch ~/.cache/apt-file/dpkg-status
+  $ sed '/^Dir::State/ d; /^Dir::Cache/ d;' \
+    /usr/share/doc/apt-file/examples/apt-file.conf \
+    > ~/.config/apt-file.conf
+  $ cat <<EOF >> ~/.config/apt-file.conf
+Dir::State "$HOME/.cache/apt-file";
+Dir::Cache "$HOME/.cache/apt-file";
+Dir::State::status "$HOME/.cache/apt-file/dpkg-status";
+EOF
+
+  # Update the cache
+  $ apt-file -c ~/.config/apt-file.conf update
+
+  # Search using the cache
+  $ apt-file -c ~/.config/apt-file.conf show apt-file
+
+  # Removal of the cache + config
+  $ rm -fr ~/.cache/apt-file ~/.config/apt-file.conf
+
+(You will probably want to add an alias apt-file in your F<~/.bashrc>)
+
+Please read the resulting F<./apt-file-user-cache.conf>.
+
+=back
+
 =head1 BUGS, QUIRKS
 
 There are some known issues or "quirks" that are good to keep in mind.
@@ -258,4 +316,6 @@ Any other exit code is reserved for future use.
 L<apt(1)>, L<apt-cache(8)>, L<apt.conf(5)>
 
 The APT users guide in /usr/share/doc/apt/
+
+The example config in /usr/share/doc/apt-file/examples
 
