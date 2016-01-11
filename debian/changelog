@@ -1,6 +1,13 @@
+apt-file (3.0~exp4) UNRELEASED; urgency=medium
+
+  * apt-file: Read /etc/apt/apt-file.conf by default if it
+    exists.
+
+ -- Niels Thykier <niels@thykier.net>  Mon, 11 Jan 2016 22:50:06 +0000
+
 apt-file (3.0~exp3) experimental; urgency=medium
 
-  * apt-file:  Accept -c/-o with the same meaning as APT's
+  * apt-file: Accept -c/-o with the same meaning as APT's
     options of same name.  They will also be passed to all
     APT commands called by apt-file.
     (Closes: #516817, #772804)

@@ -457,6 +457,19 @@ sub main {
     my ($action, $is_search, @arch_res, @index_names);
     get_options();
     $_config->init;
+    if (my $apt_file_conf = $_config->get_file('Dir::Etc::apt-file-main')) {
+        debug "Dir::Etc::apt-file-main is set to $apt_file_conf";
+        if ( -l $apt_file_conf or -e $apt_file_conf) {
+            debug "Reading ${apt_file_conf}";
+            $_config->read_file($apt_file_conf)
+                or error("Cannot parse ${apt_file_conf}");
+            push(@apt_options, '-c', $apt_file_conf);
+        } else {
+            debug "The file ${apt_file_conf} does not exist";
+        }
+    } else {
+        debug "Dir::Etc::apt-file-main was not set";
+    }
     for my $apt_option (@{$Conf->{'apt_options'} // []}) {
         my ($param_name, $param_value) = @{$apt_option};
         if ($param_name eq '-o') {

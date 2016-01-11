@@ -148,13 +148,29 @@ Display a short help screen.
 
 =head1 CONFIGURATION FILES
 
-The apt-file command does not have any configuration files on its own
-that alters its behavior.  However, it does ship a configuration file
-for apt to have apt download the Contents files.
+The apt-file command relies on the APT configuration.  Notably, the
+default configuration makes B<apt> fetch Contents files by default
+during a call to B<apt update>.
+
+The following files are notably interesting:
 
 =over 4
 
-=item /etc/apt/apt.conf.d/50apt-file.conf
+=item F</etc/apt/apt-file.conf>
+
+Note this path is actually configurable by changing the value of the
+APT configuration called "Dir::Etc::apt-file-main".  The listed value
+is merely the default value of that option.
+
+If this file is present, B<apt-file> will read this file I<after> all
+default APT configuration files.  Any config file B<-c> or option
+(B<-o>) will be evaluated I<after> this file (and can override options
+set in it).
+
+The file will also be passed on to all APT tools called by
+B<apt-file>.
+
+=item F</etc/apt/apt.conf.d/50apt-file.conf>
 
 Chooses which Contents files to download.  Note that apt-file
 recognises only "Acquire" targets that starts with "Contents-".
