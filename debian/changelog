@@ -8,6 +8,8 @@ apt-file (3.0~exp4) UNRELEASED; urgency=medium
     configurations.
   * debian/NEWS: Document the existence of the new example
     configurations.
+  * Make the test suite independent of the system's APT
+    configuration.
 
  -- Niels Thykier <niels@thykier.net>  Mon, 11 Jan 2016 22:50:06 +0000
 
