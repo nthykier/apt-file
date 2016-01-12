@@ -12,6 +12,8 @@ apt-file (3.0~exp4) UNRELEASED; urgency=medium
     configuration.
   * d/control: apt-file is now maintained in a git repository.
   * d/compat: Live life at the edge - bump to compat 10.
+  * d/control: Remove Enrico Zini from the list of Uploaders.
+    Thanks for your work up till now!
 
  -- Niels Thykier <niels@thykier.net>  Mon, 11 Jan 2016 22:50:06 +0000
 
