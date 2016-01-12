@@ -14,8 +14,8 @@ Build-Depends:
  perl,
  bash-completion,
 Standards-Version: 3.9.6
-Vcs-Browser: http://anonscm.debian.org/viewvc/collab-maint/deb-maint/apt-file/trunk/
-Vcs-svn: svn://anonscm.debian.org/collab-maint/deb-maint/apt-file/trunk
+Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/apt-file.git
+Vcs-Git: https://anonscm.debian.org/cgit/collab-maint/apt-file.git
 
 Package: apt-file
 Architecture: all
