@@ -1,3 +1,10 @@
+apt-file (3.0~exp5) UNRELEASED; urgency=medium
+
+  * d/bash-completion: Update bash-completion to include the
+    new command like options.
+
+ -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 22:27:37 +0000
+
 apt-file (3.0~exp4) experimental; urgency=medium
 
   * apt-file: Read /etc/apt/apt-file.conf by default if it

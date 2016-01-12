@@ -16,7 +16,17 @@ _apt_file()
 	    _filedir
 	    return 0
 	    ;;
-        --index-names)
+        --architecture|-a)
+            arch=$(dpkg --print-architecture)
+            foreign_archs=$(dpkg --print-foreign-architectures)
+            COMPREPLY=( $( compgen -W "${arch} ${forein_archs}" -- $cur) )
+            return 0
+            ;;
+        --config-file|-c)
+	    _filedir
+	    return 0
+	    ;;
+        --index-names|-I)
             indices=$(apt-get indextargets --format '$(CREATED_BY)' | sed -n '/^Contents/ s/^Contents-//  p' | sort -u)
             COMPREPLY=( $(compgen -W "$indices" -- $cur ) )
             return 0
@@ -24,12 +34,12 @@ _apt_file()
         esac;
 	if [[ "$cur" == -* ]]; then
 
-		COMPREPLY=( $( compgen -W '-v -a -l -f -F \
+		COMPREPLY=( $( compgen -W '-v -a -l -f -F -o -c -I \
 				--verbose --architecture \
 				--package-only --fixed-string \
-				--architecture \
+				--architecture --config-file \
                                 --index-names --substring-match \
-				--help' -- $cur ) )
+                                --option --help' -- $cur ) )
 	else
 
 		COMPREPLY=( $( compgen -W 'update search list find \
