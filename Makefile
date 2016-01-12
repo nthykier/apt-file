@@ -37,8 +37,8 @@ man:
 
 test:
 	prove
-	make -C tests-apt-file test
+	$(MAKE) -C tests-apt-file test
 
 clean:
 	rm -f *~ manpage.* apt-file.1 rapt-file.1 apt-file.fr.1
-	make -C tests-apt-file clean
+	$(MAKE) -C tests-apt-file clean
