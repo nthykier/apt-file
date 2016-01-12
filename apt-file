@@ -39,6 +39,12 @@ use List::MoreUtils qw/any none uniq/;
 
 my ($Conf, @apt_options);
 
+sub warning {
+    my ($msg) = @_;
+    print STDERR "W: $msg\n";
+    return;
+}
+
 sub error($) {
     my ($msg) = @_;
     print STDERR "E: $msg", $! ? ": $!" : "", "\n";
@@ -474,6 +480,13 @@ sub main {
         my ($param_name, $param_value) = @{$apt_option};
         if ($param_name eq '-o') {
             my ($opt_name, $opt_value) = split(m/=/, $param_value, 2);
+            if (not defined($opt_value)) {
+                if ($opt_name =~ m/ /) {
+                    my ($n, $v) = split(m/ /, $opt_name);
+                    warning("Did you perhaps intend to use -o \"${n}=${v}\"?");
+                }
+                errorx("Missing value for ${opt_name}: Expected -o \"Foo::Bar=value\"");
+            }
             $_config->set($opt_name, $opt_value);
             debug("Parsed set ${opt_name} to ${opt_value} (due to --option)");
         } elsif ($param_name eq '-c') {
