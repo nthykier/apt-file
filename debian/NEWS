@@ -1,4 +1,4 @@
-apt-file (3.0~exp4) UNRELEASED; urgency=medium
+apt-file (3.0~exp4) experimental; urgency=medium
 
   The new version of apt-file will by default configure apt to
   fetch Contents files on "apt update".  For users that prefer

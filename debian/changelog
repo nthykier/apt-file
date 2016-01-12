@@ -1,4 +1,4 @@
-apt-file (3.0~exp4) UNRELEASED; urgency=medium
+apt-file (3.0~exp4) experimental; urgency=medium
 
   * apt-file: Read /etc/apt/apt-file.conf by default if it
     exists.
@@ -16,7 +16,7 @@ apt-file (3.0~exp4) UNRELEASED; urgency=medium
     Thanks for your work up till now!
   * Makefile: Use $(MAKE) when invoking a make.
 
- -- Niels Thykier <niels@thykier.net>  Mon, 11 Jan 2016 22:50:06 +0000
+ -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 21:25:55 +0000
 
 apt-file (3.0~exp3) experimental; urgency=medium
 
