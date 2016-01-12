@@ -493,13 +493,15 @@ sub main {
             my $conf_file = $param_value;
             if ( -d $param_value) {
                 print STDERR <<EOF;
+You passed a directory to -c but apt-file (now) expects a file.
+
 The "-c" option is now short for "--config-file" and parses an APT
 config file.  It /used/ to be the option for specifying a custom
 "cache-dir", but support for these were retired in apt-file 3.
 
 If you need the cache-dir feature, please create an APT config file
 that makes APT use the desired cache dir directory.  (The man page has
-an example to get you started)
+an example to get you started.)
 
 EOF
                 errorx("Please pass an APT config file after -c/--config-file");
