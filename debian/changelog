@@ -2,6 +2,8 @@ apt-file (3.0~exp5) UNRELEASED; urgency=medium
 
   * d/bash-completion: Update bash-completion to include the
     new command like options.
+  * apt-file-2-update.sh: Fix a bug in --uninstall, where it would
+    not remove /etc/apt/apt-file.conf
 
  -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 22:27:37 +0000
 

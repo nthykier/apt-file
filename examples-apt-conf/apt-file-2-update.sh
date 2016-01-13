@@ -60,7 +60,7 @@ if [ "$1" = "--install" ] ; then
     echo "please note the caveats listed in that file"
 elif [ "$1" = "--uninstall" ] ; then
     run rm -f /etc/apt/apt.conf.d/60disable-contents-fetching.conf
-    run rm -f /etc/apt/60disable-contents-fetching.conf
+    run rm -f /etc/apt/apt-file.conf
     run rm -fr /var/lib/apt-file
 else
     echo "Please run $0 --install (or --uninstall)" 2>&1
