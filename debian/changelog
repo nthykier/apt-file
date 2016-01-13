@@ -6,6 +6,8 @@ apt-file (3.0~exp5) UNRELEASED; urgency=medium
     not remove /etc/apt/apt-file.conf
   * 50apt-file.conf: Disable Contents-dsc by default.  They are
     vastly more resource heavy than the rest.
+  * README: Document how to change which Contents files are
+    downloaded.
 
  -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 22:27:37 +0000
 
