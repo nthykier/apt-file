@@ -58,6 +58,8 @@ by fetching new Contents files.
  * Ensure that PDiffs are enabled for Contents files
    - This is the default for apt-file/3, but your local configuration
      might have disabled it.
+   - Keep in mind that PDiff cannot be used for the initial download
+     or if it has been too long since your last update.
    - NB: Not all suites/distributions provide these.
  * Use apt/1.2 and its LZ4 compression for Contents files (requires
    PDiffs)
