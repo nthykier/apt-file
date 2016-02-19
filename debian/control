@@ -23,8 +23,9 @@ Depends: ${perl:Depends}, ${misc:Depends},
  apt (>= 1.1.8),
  libapt-pkg-perl, liblist-moreutils-perl,
  libregexp-assemble-perl
-Breaks: command-not-found (<< 0.2.38-2~), apt-venv (<< 1.0.0-1~)
-#Recommends: python, python-apt
+Breaks: apt-venv (<< 1.0.0-1~),
+        command-not-found (<< 0.2.38-2~),
+        devscripts (<< 2.15.10~),
 Description: search for files within Debian packages (command-line interface)
  apt-file is a command line tool for searching files contained in packages
  for the APT packaging system. You can search in which package a file is
