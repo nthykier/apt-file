@@ -1,7 +1,7 @@
 apt-file (3.0~exp5) UNRELEASED; urgency=medium
 
   * d/bash-completion: Update bash-completion to include the
-    new command like options.
+    new command line options.
   * apt-file-2-update.sh: Fix a bug in --uninstall, where it would
     not remove /etc/apt/apt-file.conf
   * 50apt-file.conf: Disable Contents-dsc by default.  They are
