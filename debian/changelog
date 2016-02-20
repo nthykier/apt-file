@@ -8,6 +8,7 @@ apt-file (3.0~exp5) UNRELEASED; urgency=medium
     vastly more resource heavy than the rest.
   * README: Document how to change which Contents files are
     downloaded.
+  * d/changelog: Add some missing "LP:"-closes in the 3.0~exp entry.
 
  -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 22:27:37 +0000
 
@@ -119,6 +120,10 @@ apt-file (3.0~exp) experimental; urgency=medium
     - now respects Acquire::http::Dl-Limit.  (Closes: #525631)
     - supports deb822 sources.list file.  (Closes: #740978)
     - supports tor+http protocol (Closes: #764349)
+    - supports "mirror" protocol (Closes: LP: #888316,
+      LP: #1156717, LP: #1395988)
+    - respects APT proxy settings (Closes: LP: #817517,
+      LP: #767061)
     (Closes: #752292)
   * Expand the README a bit to give a quick introduction to
     apt-file and indices.
