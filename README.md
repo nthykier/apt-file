@@ -127,11 +127,12 @@ download Contents files for all of them.
 
 Here are a couple of suggestions:
 
- * Contents-dsc (source) has a rather large churn and even its PDiffs
-   are large.
-
  * If you track unstable + testing, you can probably omit the Contents
    files for testing without any issues.
+ * Contents-dsc (source) has a rather large churn and even its PDiffs
+   are large.
+   - It is not enabled by default, but consider if you really need it
+     before enabling it.
 
 ## Configuring APT to fetch fewer Contents files
 
@@ -139,6 +140,9 @@ There are several ways to do this:
 
  * Disable all Contents files by default and then enable them on a
    per source.list entry basis.
+   - The example config file 60disable-contents-fetching.conf may be
+     a useful starting point.  The full path is
+     /usr/share/doc/apt-file/examples/60disable-contents-fetching.conf
 
  * Disable Contents files for a given source.list entry
 
