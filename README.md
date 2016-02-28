@@ -178,6 +178,8 @@ numbers from Debian amd64 unstable (only the main component).
 
 Accordingly, if you update your Contents files more frequently than
 every once every ~26 days, it is (on average) cheaper to use PDiffs.
+Of course, if you use a different distribution, your mileage may
+vary.
 
 **NOTE**: The "apt update" after installing apt-file 3 (or upgrading
 from apt-file 2) *cannot* use PDiffs.  This is because PDiffs
