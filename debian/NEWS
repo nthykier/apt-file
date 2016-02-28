@@ -1,23 +1,8 @@
-apt-file (3.0~exp4) experimental; urgency=medium
+apt-file (3.0) unstable; urgency=medium
 
-  The new version of apt-file will by default configure apt to
-  fetch Contents files on "apt update".  For users that prefer
-  the previous behaviour, please consult the example config
-  files provided in "/usr/share/doc/apt-file/examples" as well
-  as "man apt-file" (under "CONFIGURATION FILES").
-
-  Notably, the "apt-file-2-update.sh" script should be able to
-  get you started.
-
-  Please note that these example configurations may need some
-  tweaking to work for you.
-
- -- Niels Thykier <niels@thykier.net>  Mon, 11 Jan 2016 22:58:54 +0000
-
-apt-file (3.0~exp) experimental; urgency=medium
-
-  BACKWARDS INCOMPATIBLE CHANGES (see the changelog for
-  more details)
+  BACKWARDS INCOMPATIBLE CHANGES
+    - The format of /etc/apt/apt-file.conf changed.
+      (the file is optional and can be removed if not needed)
     - diffindex-* have been removed.
     - show/list command defaults to -F.
     - personal "caches" no longer supported.
@@ -33,5 +18,15 @@ apt-file (3.0~exp) experimental; urgency=medium
       upgrade.
     - Personal caches under XDG_CACHE_HOME/apt-file or
       ~/.cache/apt-file must be removed manually.
+    -  If you strongly prefer the previous behaviour of
+       "apt update" and "apt-file update", then it is possible
+       by reconfiguring apt and apt-file.  This is explained
+       in /usr/share/doc/apt-file/README.md.gz
 
- -- Niels Thykier <niels@thykier.net>  Thu, 03 Sep 2015 21:03:43 +0200
+  Please consult the following documentation for more
+  information:
+    - /usr/share/doc/apt-file/README.md.gz
+    - man apt-file
+    - /usr/share/doc/apt-file/examples
+
+ -- Niels Thykier <niels@thykier.net>  Sun, 28 Feb 2016 10:30:00 +0000

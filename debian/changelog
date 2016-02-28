@@ -9,6 +9,8 @@ apt-file (3.0~exp5) UNRELEASED; urgency=medium
   * README: Document how to change which Contents files are
     downloaded.
   * d/changelog: Add some missing "LP:"-closes in the 3.0~exp entry.
+  * Merge and improve the NEWS entries for the experimental apt-file
+    3.0 uploads.
 
  -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 22:27:37 +0000
 
