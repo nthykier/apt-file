@@ -153,7 +153,8 @@ default configuration makes B<apt> fetch Contents files by default
 during a call to B<apt update>.
 
 For information on how to configure APT to fetch more or fewer
-Contents files, please refer to F</usr/share/doc/apt-file/README>.
+Contents files, please refer to
+F</usr/share/doc/apt-file/README.md.gz>.
 
 The following files are notably interesting:
 
@@ -322,4 +323,4 @@ The APT users guide in /usr/share/doc/apt/
 
 The example config in /usr/share/doc/apt-file/examples
 
-The README at F</usr/share/doc/apt-file/README>
+The README at F</usr/share/doc/apt-file/README.md.gz>
