@@ -12,14 +12,7 @@ if [ -d /var/cache/apt/apt-file ]; then
 	rm -fr /var/cache/apt/apt-file/
 fi
 
-unud=/var/lib/update-notifier/user.d
-
 if /usr/share/apt-file/is-cache-empty; then
 	echo "The system-wide cache is empty. You may want to run 'apt-file update'"
 	echo "as root to update the cache."
-fi
-
-if [ -d $unud ]; then
-	cp -f /usr/share/apt-file/apt-file-update.update-notifier \
-	    "$unud/apt-file-update"
 fi
