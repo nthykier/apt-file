@@ -11,6 +11,8 @@ apt-file (3.0) UNRELEASED; urgency=medium
   * d/changelog: Add some missing "LP:"-closes in the 3.0~exp entry.
   * Merge and improve the NEWS entries for the experimental apt-file
     3.0 uploads.
+  * Drop update-notifier scripts since update-notifier has been
+    removed from Debian.
 
  -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 22:27:37 +0000
 
