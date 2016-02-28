@@ -2,7 +2,7 @@
 
 apt-file helps you to find in which package a file is included. This
 application has the same behaviour as the web version found at
-http://packages.debian.org.
+https://packages.debian.org.
 
 Additionally you can list all files included in a package without
 installing or downloading it (see dpkg -S and dpkg --contents for more
