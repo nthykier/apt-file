@@ -1,4 +1,4 @@
-apt-file (3.0~exp5) UNRELEASED; urgency=medium
+apt-file (3.0) UNRELEASED; urgency=medium
 
   * d/bash-completion: Update bash-completion to include the
     new command line options.
