@@ -1,0 +1,2 @@
+rm_conffile /etc/bash_completion.d/apt-file 3.0~exp
+rm_conffile /etc/apt/apt-file.conf 3.0~exp

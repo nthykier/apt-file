@@ -1,16 +1,10 @@
 #!/bin/sh
 # This script checks if the cache directory is empty
-#
-# TODO: might exclude obsolete files from check, so it returns false/1 in case of upgrades.
 
-
-for dir in $XDG_CACHE_HOME/apt-file $HOME/.cache/apt-file /var/cache/apt/apt-file
-do
-	if [ -d $dir ] && [ -n "$(find $dir -mindepth 1 -not -name '*tmp')" ]
-	then
-		# Cache is not empty
-		exit 1
-	fi
-done
-
+if apt-get indextargets --format '$(CREATED_BY)' | grep -q ^Contents- ; then
+    # Not empty
+    exit 1
+fi
+# Empty
 exit 0
+

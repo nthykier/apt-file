@@ -1,0 +1,32 @@
+apt-file (3.0) unstable; urgency=low
+
+  BACKWARDS INCOMPATIBLE CHANGES
+    - The format of /etc/apt/apt-file.conf changed.
+      (the file is optional and can be removed if not needed)
+    - diffindex-* have been removed.
+    - show/list command defaults to -F.
+    - personal "caches" no longer supported.
+    - non-matching search causes non-zero exit code.
+    - command line options removed and parsing changed.
+
+  Beyond this, apt-file now uses apt's acquire system to
+  download Contents files.
+    - Please consult /etc/apt/apt.conf.d/50apt-file.conf to
+      assert you are fetching the desired Contents files
+    - Run "apt update" to re-fetch the Contents files.
+    - The previous system-wide cache will been removed on
+      upgrade.
+    - Personal caches under XDG_CACHE_HOME/apt-file or
+      ~/.cache/apt-file must be removed manually.
+    -  If you strongly prefer the previous behaviour of
+       "apt update" and "apt-file update", then it is possible
+       by reconfiguring apt and apt-file.  This is explained
+       in /usr/share/doc/apt-file/README.md.gz
+
+  Please consult the following documentation for more
+  information:
+    - /usr/share/doc/apt-file/README.md.gz
+    - man apt-file
+    - /usr/share/doc/apt-file/examples
+
+ -- Niels Thykier <niels@thykier.net>  Sun, 28 Feb 2016 10:30:00 +0000

@@ -7,23 +7,12 @@ if [ "$1" != configure ]; then
 	exit 0
 fi
 
-# fix wrong permissions created by old versions
-if     [ -n "$2" ] &&
-       dpkg --compare-versions "$2" lt 2.1.5~ &&
-       ! dpkg-statoverride --list /var/cache/apt/apt-file > /dev/null 2>&1
-then
-       chmod 755 /var/cache/apt/apt-file
+if [ -d /var/cache/apt/apt-file ]; then
+	echo "Discarding old apt-file cache, please run \"apt update\""
+	rm -fr /var/cache/apt/apt-file/
 fi
-
-unud=/var/lib/update-notifier/user.d
 
 if /usr/share/apt-file/is-cache-empty; then
 	echo "The system-wide cache is empty. You may want to run 'apt-file update'"
-	echo "as root to update the cache. You can also run 'apt-file update' as"
-	echo "normal user to use a cache in the user's home directory."
-fi
-
-if [ -d $unud ]; then
-	cp -f /usr/share/apt-file/apt-file-update.update-notifier \
-	    "$unud/apt-file-update"
+	echo "as root to update the cache."
 fi

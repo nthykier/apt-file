@@ -1,0 +1,326 @@
+=head1 NAME
+
+apt-file -- APT package searching utility -- command-line interface
+
+=head1 SYNOPSIS
+
+B<apt-file> [I<options>] search I<pattern>
+
+B<apt-file> [I<options>] show I<package>
+
+=head1 DESCRIPTION
+
+B<apt-file> is a command line tool for searching files in packages for
+the APT package management system.
+
+Some actions are required to run the search:
+
+=over 4
+
+=item find
+
+Alias for search.
+
+=item list
+
+List the contents of a package. This action is very close to the
+B<dpkg -L> command except the package does not need to be installed or
+fetched.
+
+By default, the B<list> action interprets its pattern as if
+B<--fixed-string> was specified.
+
+=item search
+
+Search in which package a file is included. A list of all packages
+containing the pattern pattern is returned.
+
+Since Contents files does not contain directories, the pattern must
+match (part of a) file name.
+
+By default, the B<search> action interprets its pattern as if
+B<--substring-string> was specified.
+
+=item show
+
+Alias for list.
+
+=item update
+
+Deprecated action that just calls "apt update".
+
+=back
+
+=head1 OPTIONS
+
+The following options are available:
+
+=over 4
+
+=item -a, --architecture I<architecture[,...]>
+
+This option is useful if you search a package for a different
+architecture from the one installed on your system.
+
+It can be a comma-separated list for searching on multiple
+architectures.
+
+=item -c, --config-file I<APT config-file>
+
+Configuration File; Specify a configuration file to use. The program
+will read the default configuration file and then this configuration
+file. If configuration settings need to be set before the default
+configuration files are parsed specify a file with the B<APT_CONFIG>
+environment variable. See L<apt.conf(5)> for syntax information.
+
+=item -D, --from-deb
+
+Use contents of the given .deb archives(s) as patterns.  Useful for
+searching for file conflicts with other packages.  Implies -F.
+
+=item -f, --from-file
+
+Read patterns from the given file(s), one per line.  Use - as filename
+for stdin.  If no files are given, then the list will be read from
+stdin.  This is much faster than invoking apt-file many times.
+
+=item -F, --fixed-string
+
+Do not expand search pattern with generic characters at pattern's
+start and end.
+
+This is default for B<show> and B<list> actions.
+
+=item --index-names I<type[,...]>, -I I<type[,...]>
+
+Only search indexes of the given name(s).  The name(s) must match one
+or more of the names used in the APT configuration (minus leading
+"Contents-").  Example if the configuration has the following snippets:
+
+ Acquire::IndexTargets::deb::Contents-deb { ... };
+ Acquire::IndexTargets::deb-src::Contents-dsc { ... };
+ Acquire::IndexTargets::deb::Contents-udeb { ... };
+
+Then, apt-file will recognise "deb", "dsc" and "udeb" as index names.
+
+=item -i, --ignore-case
+
+Ignore case when searching for pattern.
+
+=item -l, --package-only
+
+Only display package name; do not display file names.
+
+=item -o, --option APT::Option=Value
+
+Set a Configuration Option; This will set an arbitrary configuration
+option. The syntax is B<-o APT::Option=Value>.  B<-o> and B<--option>
+can be used multiple times to set different options.
+
+=item --substring-match
+
+Match if the given search I<pattern> is a substring of a path or
+package.
+
+This is default for B<search> and B<find> actions.
+
+=item -v, --verbose
+
+Run apt-file in verbose/debug mode.
+
+=item -x, --regexp
+
+Treat pattern as a (perl) regular expression. See perlreref(1) for
+details. Without this option, pattern is treated as a literal string
+to search for.
+
+Be advised that this option can be rather slow.  If performance is an
+issue, consider giving apt-file non-regex pattern matching too much
+and pipe the output to B<< perl -ne '/<pattern-here>/' >>.  This enables
+apt-file to use more optimizations and leaves less work to the
+"slower" regex.
+
+=item -h, --help
+
+Display a short help screen.
+
+=back
+
+=head1 CONFIGURATION FILES
+
+The apt-file command relies on the APT configuration.  Notably, the
+default configuration makes B<apt> fetch Contents files by default
+during a call to B<apt update>.
+
+For information on how to configure APT to fetch more or fewer
+Contents files, please refer to
+F</usr/share/doc/apt-file/README.md.gz>.
+
+The following files are notably interesting:
+
+=over 4
+
+=item F</etc/apt/apt-file.conf>
+
+Note this path is actually configurable by changing the value of the
+APT configuration called "Dir::Etc::apt-file-main".  The listed value
+is merely the default value of that option.
+
+If this file is present, B<apt-file> will read this file I<after> all
+default APT configuration files.  Any config file B<-c> or option
+(B<-o>) will be evaluated I<after> this file (and can override options
+set in it).
+
+The file will also be passed on to all APT tools called by
+B<apt-file>.
+
+=item F</etc/apt/apt.conf.d/50apt-file.conf>
+
+Chooses which Contents files to download.  Note that apt-file
+recognises only "Acquire" targets that starts with "Contents-".
+
+=back
+
+=head2 Special configurations similar to apt-file 2
+
+Here are some B<apt-file> 2 related work flows and how to (almost)
+emulate them with B<apt-file> 3.  They are documented as a I<starting
+point> for people, who are attached to these.
+
+The emulation may not be perfect for you out of the box.  Patches are
+welcome to keep the examples updated as long as the examples remain
+"trivial".
+
+=over 4
+
+=item *
+
+Only make B<apt-file update> fetch Contents files
+
+If you are accustomed to B<apt update> I<not> fetching Contents files,
+then you can run
+F</usr/share/doc/apt-file/examples/apt-file-2-update.sh>.  This script
+will configure B<apt> and B<apt-file> accordingly after best effort.
+
+Please read the resulting F</etc/apt/apt-file.conf>.
+
+=item *
+
+Creating/using "user" caches
+
+Previous versions of B<apt-file> had a "--cache" option, which could
+be used to denote a directory to store the Contents files.  This can
+be emulated by doing:
+
+  # Setup
+  $ mkdir -p ~/.cache/apt-file ~/.config
+  $ touch ~/.cache/apt-file/dpkg-status
+  $ sed '/^Dir::State/ d; /^Dir::Cache/ d;' \
+    /usr/share/doc/apt-file/examples/apt-file.conf \
+    > ~/.config/apt-file.conf
+  $ cat <<EOF >> ~/.config/apt-file.conf
+Dir::State "$HOME/.cache/apt-file";
+Dir::Cache "$HOME/.cache/apt-file";
+Dir::State::status "$HOME/.cache/apt-file/dpkg-status";
+EOF
+
+  # Update the cache
+  $ apt-file -c ~/.config/apt-file.conf update
+
+  # Search using the cache
+  $ apt-file -c ~/.config/apt-file.conf show apt-file
+
+  # Removal of the cache + config
+  $ rm -fr ~/.cache/apt-file ~/.config/apt-file.conf
+
+(You will probably want to add an alias apt-file in your F<~/.bashrc>)
+
+Please read the resulting F<./apt-file-user-cache.conf>.
+
+=back
+
+=head1 BUGS, QUIRKS
+
+There are some known issues or "quirks" that are good to keep in mind.
+
+=over 4
+
+=item *
+
+The Contents files do B<not> include a leading slash on paths.  This
+means that F</bin/ls> is listed as I<bin/ls> in the Contents file.  If
+you are looking for something in a top-level directory, it is often
+better to omit the leading slash.
+
+The search algorithm will attempt to work around the leading slash,
+but it will not work in all cases.  As a workaround, try to pull the
+leading slash to the beginning of regular expressions.  For example,
+use "/(?:usr/bin/vim|sbin/lvm)" instead of  "/usr/bin/vim|/sbin/lvm".
+
+=item *
+
+When a new line has been added to the sources.list and apt update
+has not been run, apt-file does not print a warning message.
+
+=item *
+
+Not all APT repositories have Contents files.  Notably common install
+media (CDs etc.) may omit them to conserve space.
+
+The default configuration by B<apt-file> marks Contents files as
+optional and will just silently fail to search in Contents files in
+such repositories.
+
+=back
+
+=head1 EXIT CODES
+
+B<apt-file> has the following defined exit codes, which can be used
+for scripting purposes.
+
+=over
+
+=item B<0>
+
+B<apt-file> returned successfully.  If the command was a search, there
+was at least one result.
+
+=item B<1>
+
+B<apt-file> completed a search successfully, but it had no results.
+
+=item B<2>
+
+An error occurred (including invalid/conflicting user options).
+
+=item B<3>
+
+B<apt-file> could not complete the command because the cache was
+empty.  Please ensure there are indices enabled in the APT config and
+run B<apt update> to fetch them.
+
+=item B<4>
+
+B<apt-file> could not complete the command because the cache does not
+have any files matching the restrictions.  Either change the
+restrictions (e.g. B<--index-names>) or configure apt to fetch the
+relevant files and run B<apt update>.
+
+=item B<255>
+
+There was an internal errors / uncaught exception in B<apt-file>.
+Please file a bug against B<apt-file>.
+
+=back
+
+Any other exit code is reserved for future use.
+
+=head1 SEE ALSO
+
+L<apt(1)>, L<apt-cache(8)>, L<apt.conf(5)>
+
+The APT users guide in /usr/share/doc/apt/
+
+The example config in /usr/share/doc/apt-file/examples
+
+The README at F</usr/share/doc/apt-file/README.md.gz>

@@ -1,0 +1,55 @@
+_have apt-file &&
+_apt_file()
+{
+	local cur prev indices
+
+	COMPREPLY=()
+	cur=${COMP_WORDS[COMP_CWORD]}
+	prev=${COMP_WORDS[COMP_CWORD-1]}
+
+	case "$prev" in
+	list | show)
+	    COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) );
+	    return 0
+	    ;;
+	search | find)
+	    _filedir
+	    return 0
+	    ;;
+        --architecture|-a)
+            arch=$(dpkg --print-architecture)
+            foreign_archs=$(dpkg --print-foreign-architectures)
+            COMPREPLY=( $( compgen -W "${arch} ${forein_archs}" -- $cur) )
+            return 0
+            ;;
+        --config-file|-c)
+	    _filedir
+	    return 0
+	    ;;
+        --index-names|-I)
+            indices=$(apt-get indextargets --format '$(CREATED_BY)' | sed -n '/^Contents/ s/^Contents-//  p' | sort -u)
+            COMPREPLY=( $(compgen -W "$indices" -- $cur ) )
+            return 0
+            ;;
+        esac;
+	if [[ "$cur" == -* ]]; then
+
+		COMPREPLY=( $( compgen -W '-v -a -l -f -F -o -c -I \
+				--verbose --architecture \
+				--package-only --fixed-string \
+				--architecture --config-file \
+                                --index-names --substring-match \
+                                --option --help' -- $cur ) )
+	else
+
+		COMPREPLY=( $( compgen -W 'update search list find \
+	                        show' -- $cur ) )
+
+	fi
+
+
+	return 0
+
+}
+complete -f -F _apt_file apt-file
+

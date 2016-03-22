@@ -1,11 +1,10 @@
 TEST_PRG=../apt-file
-TEST_SOURCE=./sources.list
-TEST_CACHE=./cache
-TEST_CONFIG=../apt-file.conf
+export TEST_DIR=$(CURDIR)
+export APT_CONFIG=$(CURDIR)/empty.conf
 
 test:
 	set -e ; for a in cache/*fooarch ; do gzip -c < $$a > $$a.gz ; done
-	./runtests APT_FILE_CONFIG=$(TEST_CONFIG) $(TEST_PRG) -s $(TEST_SOURCE) -c $(TEST_CACHE) -a fooarch
+	PATH=$(CURDIR)/bin:$$PATH ./runtests $(TEST_PRG) -a fooarch
 
 clean:
 	rm -f cache/*.gz

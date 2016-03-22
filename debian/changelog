@@ -1,3 +1,154 @@
+apt-file (3.0) unstable; urgency=low
+
+  * Upload to unstable.
+  * d/bash-completion: Update bash-completion to include the
+    new command line options.
+  * apt-file-2-update.sh: Fix a bug in --uninstall, where it would
+    not remove /etc/apt/apt-file.conf
+  * 50apt-file.conf: Disable Contents-dsc by default.  They are
+    vastly more resource heavy than the rest.
+  * README: Document how to change which Contents files are
+    downloaded.
+  * d/changelog: Add some missing "LP:"-closes in the 3.0~exp entry.
+  * Merge and improve the NEWS entries for the experimental apt-file
+    3.0 uploads.
+  * Drop update-notifier scripts since update-notifier has been
+    removed from Debian.
+  * d/control: Bump Standards-Versions to 3.9.7 - no changes
+    required.
+
+ -- Niels Thykier <niels@thykier.net>  Tue, 22 Mar 2016 11:51:27 +0000
+
+apt-file (3.0~exp4) experimental; urgency=medium
+
+  * apt-file: Read /etc/apt/apt-file.conf by default if it
+    exists.
+  * Install example configuration for how to emulate apt-file/2
+    behaviour in some cases.
+  * apt-file.pod: Document a how-to for two common apt-file/2
+    configurations.
+  * debian/NEWS: Document the existence of the new example
+    configurations.
+  * Make the test suite independent of the system's APT
+    configuration.
+  * d/control: apt-file is now maintained in a git repository.
+  * d/compat: Live life at the edge - bump to compat 10.
+  * d/control: Remove Enrico Zini from the list of Uploaders.
+    Thanks for your work up till now!
+  * Makefile: Use $(MAKE) when invoking a make.
+
+ -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 21:25:55 +0000
+
+apt-file (3.0~exp3) experimental; urgency=medium
+
+  * apt-file: Accept -c/-o with the same meaning as APT's
+    options of same name.  They will also be passed to all
+    APT commands called by apt-file.
+    (Closes: #516817, #772804)
+  * Add versioned Breaks on command-not-found and apt-venv.
+  * apt-file(.pod): Expand and document the exit codes used by
+    apt-file.
+  * apt-file: Fix bug where -x and --substring-match searches
+    incorrectly discarded results, where the filename had
+    spaces *after* the given pattern matched.
+    (Closes: #810566)
+  * apt-file.pod: Document that not all APT repositories have
+    Contents files.  (Closes: #712555)
+  * apt-file.pod: Clarify that search defaults to
+    --substring-search and list defaults to --fixed-string.
+    (Closes: #766729)
+
+ -- Niels Thykier <niels@thykier.net>  Sun, 10 Jan 2016 14:20:10 +0000
+
+apt-file (3.0~exp2) experimental; urgency=medium
+
+  * Remove suggests on openssh-client, which was replaced by
+    using APT's acquire system.  Thanks to Jakub Wilk for
+    the report.  (Closes: #809264)
+  * Fix invalid warning about subprocess exiting uncleanly on
+    no matches.  The grep(1) process is expected to exit non-zero
+    in such cases and apt-file now gracefully handles that.
+    Thanks to Jakub Wilk for the report.  (Closes: #809261)
+  * Remove suggests on sudo, which is not used directly in
+    apt-file.  Thanks to Jakub Wilk for the report.
+    (Closes: #809276)
+  * Apply patch from Jakub Wilk to fix some formatting errors
+    in the apt-file manpage.  (Closes: #809277)
+
+ -- Niels Thykier <niels@thykier.net>  Mon, 28 Dec 2015 22:31:05 +0000
+
+apt-file (3.0~exp1) experimental; urgency=medium
+
+  * Enable PDiffs by default for Contents files even if
+    Acquire::PDiffs is set to false.
+  * Remove remark about the "user cache" in the postinst
+    script.  Thanks to Jakub Wilk for the report.
+    (Closes: #798925)
+  * Remember to remove the /etc/apt/apt-file.conf conffile.
+    Thanks to Jakub Wilk for the report.  (Closes: #798926)
+  * Add "-I" as short-hand for "--index-names".
+  * Use "index name" rather than "index type" consistently
+    in the man page.
+  * Search also Contents-all by default when present to
+    prepare for the advent of Contents-all files.
+  * Migrate to use the new "cat-file" feature in apt-helper.
+    Thanks to Julian Andres Klode for implementing it.
+  * Rewrite file reading to use an xargs pipeline.
+  * Add an DEP-8/autopkgtest test suite based on the build
+    time tests.
+
+ -- Niels Thykier <niels@thykier.net>  Sun, 27 Dec 2015 12:22:03 +0000
+
+apt-file (3.0~exp) experimental; urgency=medium
+
+  * BACKWARDS INCOMPATIBLE CHANGES:
+    - diffindex-download and diffindex-rred has been removed!
+      (Closes: #788780)
+    - apt-file now exit with non-zero exit code when the
+      query results in no matches.  (Closes: #505222)
+    - apt-file no longer supports "personal" caches on its
+      own.
+    - apt-file show (a.k.a. list) now looks up only an exact
+      package name by default.  To retain the previous
+      behaviour, please use the new --substring-match option.
+    - Special uses of "-a" to search in Source packages or
+      udebs have been replaced by "--index-names".
+    - apt-file now uses "gnu-getopt" option style parsing.
+      Notably this means that "+" cannot be used for options
+      any longer.
+  * Rewrite apt-file to use apt's new acquire system.  By using
+    apt, apt-file:
+    - makes apt refresh the Contents files.
+      (Closes: #476401, #594879)
+    - now understands "non-release" lines.  (Closes: #297707)
+    - no longer sends "double" requests.  (Closes: #663417)
+    - now validates downloads correctly.  (Closes: #515942)
+    - can resume downloads (like apt).  (Closes: #594879)
+    - now respects Acquire::http::Dl-Limit.  (Closes: #525631)
+    - supports deb822 sources.list file.  (Closes: #740978)
+    - supports tor+http protocol (Closes: #764349)
+    - supports "mirror" protocol (Closes: LP: #888316,
+      LP: #1156717, LP: #1395988)
+    - respects APT proxy settings (Closes: LP: #817517,
+      LP: #767061)
+    (Closes: #752292)
+  * Expand the README a bit to give a quick introduction to
+    apt-file and indices.
+  * Rewrite the manpage from docbook to POD format.
+  * Update dependency lists due to the above rewrites.
+  * Remove the old apt-file cache on upgrade.  This means that
+    users will have to run "apt update" after upgrading.
+  * Update the "is-cache-empty" and "do-apt-file-update"
+    scripts.
+  * Rewrite d/rules to use debhelper "tiny" and bump the
+    compat level 9.
+  * Add --substring-match option to apt-file.
+  * Update bash completions to match the changes.
+  * Install bash-completions in their new location and drop
+    old bash-completion conffile.
+
+ -- Niels Thykier <niels@thykier.net>  Fri, 11 Sep 2015 19:49:57 +0200
+
 apt-file (2.5.5) unstable; urgency=medium
 
   * diffindex-download: Ignore unknown fields in the PDiff

@@ -1,8 +1,5 @@
-afio: /bin/afio
 ash: /bin/ash
 bash: /bin/bash
 bash-debug: /usr/debug/bin/bash
 bash-minimal: /bin/bash-minimal
 bash-static: /bin/bash-static
-g++-5.1: /usr/bin/g++-5.1
-mp3gain: /usr/bin/mp3gain

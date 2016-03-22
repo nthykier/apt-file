@@ -1,7 +1,0 @@
-#!/bin/sh
-#
-# This script gets called from the update-notifier hook.
-#
-
-/usr/bin/apt-file update
-
