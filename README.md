@@ -111,7 +111,8 @@ by fetching new Contents files.
      might have disabled it.
    - Keep in mind that PDiff cannot be used for the initial download
      or if it has been too long since your last update.
-   - NB: Not all suites/distributions provide these.
+   - NB: Not all suites/distributions provide these.  Notably Ubuntu's
+     development suites do ''not'' offer PDiffs.
  * Use apt/1.2 and its LZ4 compression for Contents files (requires
    PDiffs)
    - When fetching PDiffs, apt will recompress the Contents files as
@@ -119,6 +120,10 @@ by fetching new Contents files.
    - This also gives a much faster search speed with apt-file.
  * Disable fetching of Contents files you do not need/want.
    - See the "Choosing which Contents files to fetch" section below.
+
+If you are tracking a rapidly updating distribution, which does
+''not'' have PDiffs, you probably want to disable fetching Contents by
+default for that distribution.
 
 ## Choosing which Contents files to fetch
 
