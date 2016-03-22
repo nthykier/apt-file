@@ -13,6 +13,8 @@ apt-file (3.0) UNRELEASED; urgency=low
     3.0 uploads.
   * Drop update-notifier scripts since update-notifier has been
     removed from Debian.
+  * d/control: Bump Standards-Versions to 3.9.7 - no changes
+    required.
 
  -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 22:27:37 +0000
 
