@@ -1,5 +1,6 @@
-apt-file (3.0) UNRELEASED; urgency=low
+apt-file (3.0) unstable; urgency=low
 
+  * Upload to unstable.
   * d/bash-completion: Update bash-completion to include the
     new command line options.
   * apt-file-2-update.sh: Fix a bug in --uninstall, where it would
@@ -16,7 +17,7 @@ apt-file (3.0) UNRELEASED; urgency=low
   * d/control: Bump Standards-Versions to 3.9.7 - no changes
     required.
 
- -- Niels Thykier <niels@thykier.net>  Tue, 12 Jan 2016 22:27:37 +0000
+ -- Niels Thykier <niels@thykier.net>  Tue, 22 Mar 2016 11:51:27 +0000
 
 apt-file (3.0~exp4) experimental; urgency=medium
 
