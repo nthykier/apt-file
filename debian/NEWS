@@ -1,4 +1,4 @@
-apt-file (3.0) unstable; urgency=medium
+apt-file (3.0) unstable; urgency=low
 
   BACKWARDS INCOMPATIBLE CHANGES
     - The format of /etc/apt/apt-file.conf changed.
