@@ -2,7 +2,6 @@ Source: apt-file
 Section: admin
 Priority: optional
 Maintainer: Niels Thykier <niels@thykier.net>
-Uploaders: Thijs Kinkhorst <thijs@debian.org>
 Build-Depends:
  apt (>= 1.1.8),
  debhelper (>= 9),
