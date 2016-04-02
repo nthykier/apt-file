@@ -1,7 +1,8 @@
 Source: apt-file
 Section: admin
 Priority: optional
-Maintainer: Niels Thykier <niels@thykier.net>
+Maintainer: APT Development Team <deity@lists.debian.org>
+Uploaders: Niels Thykier <niels@thykier.net>
 Build-Depends:
  apt (>= 1.1.8),
  debhelper (>= 9),
