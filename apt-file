@@ -187,7 +187,7 @@ sub open_data_pipeline {
             } else {
                 my $gp = $grep_pattern;
                 $gp =~ s{^/}{};
-                push(@grep_cmd, $gp);
+                push(@grep_cmd, '--', $gp);
             }
 
             delete $ENV{$_} foreach qw{GREP_OPTIONS GREP_COLOR

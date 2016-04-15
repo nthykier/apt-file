@@ -1,6 +1,9 @@
 apt-file (3.1) UNRELEASED; urgency=medium
 
   * Move apt-file under the APT packaging team.
+  * apt-file: Fix bug in handling patterns starting with "-".
+    Thanks to Paul Wise for reporting the issue.
+    (Closes: #821016)
 
  -- Niels Thykier <niels@thykier.net>  Sat, 02 Apr 2016 20:37:50 +0000
 
