@@ -41,3 +41,4 @@ usr/lib/uml/modules/2.6.24/kernel/fs/vfat/vfat.ko	misc/user-mode-linux
 usr/lib/perl5/Template.pm				perl/libtemplate-perl
 usr/bin/mp3gain						audio/mp3gain
 usr/bin/g++-5.1                                         devel/g++-5.1
+usr/lib/i386-linux-gnu/perl5/5.22/Crypt/AuthEnc/GCM.pod	libcryptx-perl

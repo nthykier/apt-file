@@ -392,7 +392,7 @@ sub grep_package($) {
     # ($fname, $pkgs) = (line =~ '^\s*(.*?)\s+(\S+)\s*$')
     my $pattern = join "",
         (
-        '^\s*(.*?)\s+', '(\S*/', $pkgpat,
+        '^\s*(.*?)\s+', '((?:\S*/)?', $pkgpat,
         defined $Conf->{fixed_strings} || defined $Conf->{regexp} ?
             '(?:,\S*|)' : '\S*', ')\s*$',
         );

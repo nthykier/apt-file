@@ -4,6 +4,9 @@ apt-file (3.1) UNRELEASED; urgency=medium
   * apt-file: Fix bug in handling patterns starting with "-".
     Thanks to Paul Wise for reporting the issue.
     (Closes: #821016)
+  * apt-file: Fix bug where package listing did not work if the
+    Contents files did not include sections.  Thanks to
+    "Unit 193" for the repport.  (Closes: #820560)
 
  -- Niels Thykier <niels@thykier.net>  Sat, 02 Apr 2016 20:37:50 +0000
 
