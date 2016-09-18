@@ -680,9 +680,9 @@ sub contents_file_paths {
         $any_entries = 1;
         ($index_name, $arch, $filename) = split(' ', $line, 3);
         if ($arch ne '$(ARCHITECTURE)') {
-            next if not any { $_ eq $arch } @{$arch_res};
+            next if none { $_ eq $arch } @{$arch_res};
         }
-        next if not $any_index and not any { $_ eq $index_name } @{$index_names};
+        next if not $any_index and none { $_ eq $index_name } @{$index_names};
         push(@paths, $filename);
     }
     if (not @paths) {
