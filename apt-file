@@ -451,18 +451,63 @@ sub get_options() {
         "fixed-string|F"    => \$Conf->{fixed_strings},
         "from-file|f"       => \$Conf->{from_file},
         "from-deb|D"        => \$Conf->{from_deb},
-        'config-file|c=s@'  => sub { push(@{$Conf->{'apt_options'}}, ['-c', $_[1]]); },
-        'option|o=s@'       => sub { push(@{$Conf->{'apt_options'}}, ['-o', $_[1]]); },
+        'config-file|c=s@'  => \&_parse_apt_config_file,
+        'option|o=s@'       => \&_parse_apt_option,
         "help|h"            => \$Conf->{help},
     );
     Getopt::Long::Configure("bundling");
     GetOptions(%options) || print_help(RETURN_CODE_GENERIC_ERROR);
 }
 
+sub _parse_apt_config_file {
+    my (undef, $conf_file) = @_;
+    if ( -d $conf_file) {
+        print STDERR <<EOF;
+You passed a directory to -c but apt-file (now) expects a file.
+
+The "-c" option is now short for "--config-file" and parses an APT
+config file.  It /used/ to be the option for specifying a custom
+"cache-dir", but support for these were retired in apt-file 3.
+
+If you need the cache-dir feature, please create an APT config file
+that makes APT use the desired cache dir directory.  (The man page has
+an example to get you started.)
+
+EOF
+        errorx("Please pass an APT config file after -c/--config-file");
+    }
+    debug("Parsed $conf_file (due to --config-file)");
+
+    $_config->read_file($conf_file)
+        or error("Cannot parse ${conf_file}");
+    push(@apt_options, '-c', $conf_file);
+    return;
+}
+
+sub _parse_apt_option {
+    my (undef, $option_str) = @_;
+    my ($opt_name, $opt_value) = split(m/=/, $option_str, 2);
+    if (not defined($opt_value)) {
+        if ($opt_name =~ m/ /) {
+            my ($n, $v) = split(m/ /, $opt_name);
+            warning("Did you perhaps intend to use -o \"${n}=${v}\"?");
+        }
+        errorx("Missing value for ${opt_name}: Expected -o \"Foo::Bar=value\"");
+    }
+    $_config->set($opt_name, $opt_value);
+    debug("Parsed set ${opt_name} to ${opt_value} (due to --option)");
+    push(@apt_options, '-o', $option_str);
+    return;
+}
+
 sub main {
     my ($action, $is_search, @arch_res, @index_names);
-    get_options();
     $_config->init;
+    if (@ARGV and ($ARGV[0] eq '-v' or $ARGV[1] eq '--verbose')) {
+        # To enable debug for the apt-file.conf
+        shift(@ARGV);
+        $Conf->{verbose} = 1;
+    }
     if (my $apt_file_conf = $_config->get_file('Dir::Etc::apt-file-main')) {
         debug "Dir::Etc::apt-file-main is set to $apt_file_conf";
         if ( -l $apt_file_conf or -e $apt_file_conf) {
@@ -476,46 +521,7 @@ sub main {
     } else {
         debug "Dir::Etc::apt-file-main was not set";
     }
-    for my $apt_option (@{$Conf->{'apt_options'} // []}) {
-        my ($param_name, $param_value) = @{$apt_option};
-        if ($param_name eq '-o') {
-            my ($opt_name, $opt_value) = split(m/=/, $param_value, 2);
-            if (not defined($opt_value)) {
-                if ($opt_name =~ m/ /) {
-                    my ($n, $v) = split(m/ /, $opt_name);
-                    warning("Did you perhaps intend to use -o \"${n}=${v}\"?");
-                }
-                errorx("Missing value for ${opt_name}: Expected -o \"Foo::Bar=value\"");
-            }
-            $_config->set($opt_name, $opt_value);
-            debug("Parsed set ${opt_name} to ${opt_value} (due to --option)");
-        } elsif ($param_name eq '-c') {
-            my $conf_file = $param_value;
-            if ( -d $param_value) {
-                print STDERR <<EOF;
-You passed a directory to -c but apt-file (now) expects a file.
-
-The "-c" option is now short for "--config-file" and parses an APT
-config file.  It /used/ to be the option for specifying a custom
-"cache-dir", but support for these were retired in apt-file 3.
-
-If you need the cache-dir feature, please create an APT config file
-that makes APT use the desired cache dir directory.  (The man page has
-an example to get you started.)
-
-EOF
-                errorx("Please pass an APT config file after -c/--config-file");
-            }
-            debug("Parsed $conf_file (due to --config-file)");
-
-            $_config->read_file($conf_file)
-                or error("Cannot parse ${conf_file}");
-        } else {
-            stop_with_msg("Unhandled apt option ${param_name}", 255);
-        }
-        push(@apt_options, $param_name, $param_value);
-    }
-
+    get_options();
     @arch_res = split(m/\s*,\s*/,
                       $Conf->{arch} || $_config->{'APT::Architecture'});
     if (none { $_ eq 'all' } @arch_res) {
