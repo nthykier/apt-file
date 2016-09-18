@@ -1,4 +1,4 @@
-apt-file (3.1) UNRELEASED; urgency=medium
+apt-file (3.1) unstable; urgency=medium
 
   * Move apt-file under the APT packaging team.
   * apt-file: Fix bug in handling patterns starting with "-".
@@ -29,7 +29,7 @@ apt-file (3.1) UNRELEASED; urgency=medium
     requirements for debhelper to 10.
   * Bump Standards-Versions to 3.9.8 - no changes required.
 
- -- Niels Thykier <niels@thykier.net>  Sat, 02 Apr 2016 20:37:50 +0000
+ -- Niels Thykier <niels@thykier.net>  Sun, 18 Sep 2016 09:59:50 +0000
 
 apt-file (3.0) unstable; urgency=low
 
