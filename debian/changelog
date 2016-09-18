@@ -25,6 +25,8 @@ apt-file (3.1) UNRELEASED; urgency=medium
   * apt-file: Exit with an error if a subprocess exits non-zero
     (except for grep) or is killed by a signal.  Thanks to
     Paul Wise for the suggestion.  (Closes: #825883)
+  * Set debhelper compat to "beta-tester" and bump the minimum
+    requirements for debhelper to 10.
 
  -- Niels Thykier <niels@thykier.net>  Sat, 02 Apr 2016 20:37:50 +0000
 
