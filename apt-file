@@ -49,13 +49,6 @@ sub warning {
 
 sub error($) {
     my ($msg) = @_;
-    print STDERR "E: $msg", $! ? ": $!" : "", "\n";
-    undef $!;
-    exit RETURN_CODE_GENERIC_ERROR;
-}
-
-sub errorx($) {
-    my ($msg) = @_;
     print STDERR "E: $msg\n";
     exit RETURN_CODE_GENERIC_ERROR;
 }
@@ -275,7 +268,7 @@ sub do_grep($$) {
     debug_line "\n";
     waitpid(-1, 0);
     if ($?) {
-        errorx("A subprocess exited uncleanly (raw: $?)");
+        error("A subprocess exited uncleanly (raw: $?)");
     }
     return reverse_hash($ret);
 }
@@ -476,7 +469,7 @@ that makes APT use the desired cache dir directory.  (The man page has
 an example to get you started.)
 
 EOF
-        errorx("Please pass an APT config file after -c/--config-file");
+        error("Please pass an APT config file after -c/--config-file");
     }
     debug("Parsed $conf_file (due to --config-file)");
 
@@ -494,7 +487,7 @@ sub _parse_apt_option {
             my ($n, $v) = split(m/ /, $opt_name);
             warning("Did you perhaps intend to use -o \"${n}=${v}\"?");
         }
-        errorx("Missing value for ${opt_name}: Expected -o \"Foo::Bar=value\"");
+        error("Missing value for ${opt_name}: Expected -o \"Foo::Bar=value\"");
     }
     $_config->set($opt_name, $opt_value);
     debug("Parsed set ${opt_name} to ${opt_value} (due to --option)");
@@ -540,13 +533,13 @@ sub main {
     $action = shift(@ARGV) // 'none';
 
     if ($Conf->{fixed_strings} and $Conf->{is_regexp}) {
-        errorx('Cannot use -F together with -x');
+        error('Cannot use -F together with -x');
     }
     if ($Conf->{fixed_strings} and $Conf->{substring_match}) {
-        errorx('Cannot use -F together with --substring-match');
+        error('Cannot use -F together with --substring-match');
     }
     if ($Conf->{is_regexp} and $Conf->{substring_match}) {
-        errorx('Cannot use -x together with --substring-match');
+        error('Cannot use -x together with --substring-match');
     }
 
     if ($action =~ m/^(?:search|find|list|show)$/) {
@@ -573,7 +566,7 @@ sub main {
             foreach my $deb (@ARGV) {
                 push @content, qx{dpkg-deb -c \Q$deb};
                 if ($? != 0) {
-                    errorx("Couldn't get contents from $deb");
+                    error("Couldn't get contents from $deb");
                 }
             }
             foreach my $line (@content) {
@@ -594,7 +587,7 @@ sub main {
                     next;
                 }
                 open(my $fh, '<', $file)
-                    or error("Can't open $file");
+                    or error("Cannot open $file: $!");
                 push @list, <$fh>;
                 close($fh);
             }
@@ -672,7 +665,7 @@ sub contents_file_paths {
     debug('Index restriction [arch]: ' .  join(' ', @{$arch_res}));
     debug("Running @cmd");
     open(my $fd, '-|', @cmd)
-      or errorx('Cannot execute apt-get indextargets');
+      or error('Cannot execute apt-get indextargets');
     while (my $line = <$fd>) {
         my ($index_name, $arch, $filename);
         chomp($line);
