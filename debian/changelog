@@ -22,6 +22,9 @@ apt-file (3.1) UNRELEASED; urgency=medium
     udebs are disabled in the apt-file 2 -> 3 transition.  These
     must be manually reabled.  Thanks to Cyril Brulebois for the
     report.  (Closes: #825293)
+  * apt-file: Exit with an error if a subprocess exits non-zero
+    (except for grep) or is killed by a signal.  Thanks to
+    Paul Wise for the suggestion.  (Closes: #825883)
 
  -- Niels Thykier <niels@thykier.net>  Sat, 02 Apr 2016 20:37:50 +0000
 
