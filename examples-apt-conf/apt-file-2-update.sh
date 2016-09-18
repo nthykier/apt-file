@@ -47,9 +47,9 @@ if [ "$1" = "--install" ] ; then
         echo "/etc/apt/apt.conf.d/60disable-contents-fetching.conf" 2>&1
         exit 1
     fi
-    run mkdir -p /var/lib/apt-file/partial
-    run chown _apt:root /var/lib/apt-file/partial
-    run chmod 0700 /var/lib/apt-file/partial
+    run mkdir -p /var/lib/apt-file/lists/partial
+    run chown _apt:root /var/lib/apt-file/lists/partial
+    run chmod 0700 /var/lib/apt-file/lists/partial
 
     run cp -a "${dir}/apt-file.conf" /etc/apt/
     run cp -a "${dir}/60disable-contents-fetching.conf" /etc/apt/apt.conf.d
