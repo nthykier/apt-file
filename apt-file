@@ -27,6 +27,8 @@ use constant {
     RETURN_CODE_GENERIC_ERROR => 2,
     RETURN_CODE_CACHE_IS_EMPTY => 3,
     RETURN_CODE_CACHE_NO_MATCHING_INDICES => 4,
+
+    CONFIG_SEARCH_INDEX_NAMES => 'apt-file::Index-Names',
 };
 
 use POSIX qw(_exit);
@@ -442,7 +444,7 @@ EOF
 sub get_options() {
     my %options = (
         "architecture|a=s"  => \$Conf->{arch},
-        "index-names|I=s"   => \$Conf->{index_names},
+        "index-names|I=s"   => sub { $_config->set(CONFIG_SEARCH_INDEX_NAMES, $_[1]) },
         "verbose|v"         => \$Conf->{verbose},
         "ignore-case|i"     => \$Conf->{ignore_case},
         "regexp|x"          => \$Conf->{is_regexp},
@@ -529,7 +531,8 @@ sub main {
         # separate file"
         push(@arch_res, 'all');
     }
-    @index_names = split(m/\s*,\s*/, $Conf->{index_names} || 'deb');
+    @index_names = split(m/\s*,\s*/,
+                         $_config->get(CONFIG_SEARCH_INDEX_NAMES, 'deb'));
 
     $action = shift(@ARGV) // 'none';
 

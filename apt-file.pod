@@ -103,6 +103,9 @@ or more of the names used in the APT configuration (minus leading
 
 Then, apt-file will recognise "deb", "dsc" and "udeb" as index names.
 
+This option defaults to the value of the "apt-file::Index-Names" apt
+config option (or "deb" if omitted).
+
 =item -i, --ignore-case
 
 Ignore case when searching for pattern.
