@@ -654,6 +654,8 @@ sub contents_file_paths {
     my (@paths, $any_entries);
     my @cmd = ('apt-get', @apt_options, 'indextargets',
                '--format', '$(IDENTIFIER) $(ARCHITECTURE) $(FILENAME)');
+    debug('Index restriction [name]: ' . join(' ', @{$index_names}));
+    debug('Index restriction [arch]: ' .  join(' ', @{$arch_res}));
     debug("Running @cmd");
     open(my $fd, '-|', @cmd)
       or errorx('Cannot execute apt-get indextargets');
