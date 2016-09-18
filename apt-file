@@ -653,7 +653,7 @@ sub contents_file_paths {
     my ($index_names, $arch_res) = @_;
     my (@paths, $any_entries);
     my @cmd = ('apt-get', @apt_options, 'indextargets',
-               '--format', '$(CREATED_BY) $(ARCHITECTURE) $(FILENAME)');
+               '--format', '$(IDENTIFIER) $(ARCHITECTURE) $(FILENAME)');
     debug("Running @cmd");
     open(my $fd, '-|', @cmd)
       or errorx('Cannot execute apt-get indextargets');
