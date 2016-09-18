@@ -164,6 +164,8 @@ apt-file (3.0~exp) experimental; urgency=medium
       LP: #1156717, LP: #1395988)
     - respects APT proxy settings (Closes: LP: #817517,
       LP: #767061)
+    - now silently accepts that not all mirrors have Contents
+      files (Closes: LP#567895, LP#619659).
     (Closes: #752292)
   * Expand the README a bit to give a quick introduction to
     apt-file and indices.
