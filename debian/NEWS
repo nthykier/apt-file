@@ -12,7 +12,10 @@ apt-file (3.0) unstable; urgency=low
   Beyond this, apt-file now uses apt's acquire system to
   download Contents files.
     - Please consult /etc/apt/apt.conf.d/50apt-file.conf to
-      assert you are fetching the desired Contents files
+      assert you are fetching the desired Contents files.
+      (Notably Contents for sources and debian-installer are
+       disabled by default and have to be renabled if you want
+       them.)
     - Run "apt update" to re-fetch the Contents files.
     - The previous system-wide cache will been removed on
       upgrade.
