@@ -533,6 +533,9 @@ sub main {
     }
     @index_names = split(m/\s*,\s*/,
                          $_config->get(CONFIG_SEARCH_INDEX_NAMES, 'deb'));
+    if (@index_names > 1 and any { $_ eq 'ALL' } @index_names) {
+        @index_names = ('ALL');
+    }
 
     $action = shift(@ARGV) // 'none';
 
@@ -661,8 +664,10 @@ sub main {
 sub contents_file_paths {
     my ($index_names, $arch_res) = @_;
     my (@paths, $any_entries);
+    my $any_index = 0;
     my @cmd = ('apt-get', @apt_options, 'indextargets',
                '--format', '$(IDENTIFIER) $(ARCHITECTURE) $(FILENAME)');
+    $any_index = 1 if @{$index_names} and $index_names->[0] eq 'ALL';
     debug('Index restriction [name]: ' . join(' ', @{$index_names}));
     debug('Index restriction [arch]: ' .  join(' ', @{$arch_res}));
     debug("Running @cmd");
@@ -677,7 +682,7 @@ sub contents_file_paths {
         if ($arch ne '$(ARCHITECTURE)') {
             next if not any { $_ eq $arch } @{$arch_res};
         }
-        next if not any { $_ eq $index_name } @{$index_names};
+        next if not $any_index and not any { $_ eq $index_name } @{$index_names};
         push(@paths, $filename);
     }
     if (not @paths) {

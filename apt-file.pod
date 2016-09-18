@@ -93,10 +93,12 @@ This is default for B<show> and B<list> actions.
 
 =item --index-names I<type[,...]>, -I I<type[,...]>
 
-Only search indexes of the given name(s).  The name(s) must match one
-or more of the identifiers used in the APT configuration (minus
-leading "Contents-").  Example if the configuration has the following
-snippets:
+Only search indexes of the given name(s). If set to the special value
+I<ALL> (case-sensitive), then all B<apt-file> indices are searched.
+
+The name(s) must match one or more of the identifiers used in the APT
+configuration (minus leading "Contents-").  Example if the
+configuration has the following snippets:
 
  Acquire::IndexTargets::deb::Contents-deb { ... };
  Acquire::IndexTargets::deb-src::Contents-dsc { ... };

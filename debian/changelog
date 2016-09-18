@@ -15,6 +15,9 @@ apt-file (3.1) UNRELEASED; urgency=medium
   * apt-file: Support setting a default value for -I/--index-names
     in the apt config file.  Thanks to Cyril Brulebois for the
     suggestion (part of #825293)
+  * apt-file: Accept "ALL" as a special index name for -I.  When
+    given, apt-file will search all of its indices.  Thanks to
+    Cyril Brulebois for the suggestion (part of #825293).
 
  -- Niels Thykier <niels@thykier.net>  Sat, 02 Apr 2016 20:37:50 +0000
 
