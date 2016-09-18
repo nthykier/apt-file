@@ -275,7 +275,7 @@ sub do_grep($$) {
     debug_line "\n";
     waitpid(-1, 0);
     if ($?) {
-        error("A subprocess exited uncleanly (raw: $?)");
+        errorx("A subprocess exited uncleanly (raw: $?)");
     }
     return reverse_hash($ret);
 }
