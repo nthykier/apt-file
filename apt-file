@@ -498,7 +498,7 @@ sub _parse_apt_option {
 sub main {
     my ($action, $is_search, @arch_res, @index_names);
     $_config->init;
-    if (@ARGV and ($ARGV[0] eq '-v' or $ARGV[1] eq '--verbose')) {
+    if (@ARGV and ($ARGV[0] eq '-v' or $ARGV[0] eq '--verbose')) {
         # To enable debug for the apt-file.conf
         shift(@ARGV);
         $Conf->{verbose} = 1;
