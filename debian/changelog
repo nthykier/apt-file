@@ -1,4 +1,4 @@
-apt-file (3.1.1) UNRELEASED; urgency=medium
+apt-file (3.1.1) unstable; urgency=medium
 
   * apt-file: Fix off-by-one causing "uninitialized value"
     warning.  Thanks to Paul Wise for reporting the issue.
@@ -7,7 +7,7 @@ apt-file (3.1.1) UNRELEASED; urgency=medium
     command if STDOUT is not a TTY.  This is to avoid a
     warning from apt about it being unsuitable for scripts.
 
- -- Niels Thykier <niels@thykier.net>  Mon, 19 Sep 2016 16:58:50 +0000
+ -- Niels Thykier <niels@thykier.net>  Wed, 21 Sep 2016 18:53:01 +0000
 
 apt-file (3.1) unstable; urgency=medium
 
