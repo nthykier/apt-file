@@ -3,6 +3,9 @@ apt-file (3.1.1) UNRELEASED; urgency=medium
   * apt-file: Fix off-by-one causing "uninitialized value"
     warning.  Thanks to Paul Wise for reporting the issue.
     (Closes: #838296)
+  * apt-file: Use "apt-get" instead of "apt" for the update
+    command if STDOUT is not a TTY.  This is to avoid a
+    warning from apt about it being unsuitable for scripts.
 
  -- Niels Thykier <niels@thykier.net>  Mon, 19 Sep 2016 16:58:50 +0000
 

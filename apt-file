@@ -91,6 +91,7 @@ sub reverse_hash($) {
 
 sub fetch_files ($) {
     my @cmd = ('apt', @apt_options, 'update');
+    $cmd[0] = 'apt-get' if not -t STDOUT;
     debug("Running @cmd");
     exec(@cmd);
 }
