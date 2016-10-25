@@ -166,12 +166,20 @@ sub open_data_pipeline {
     $pid = fork()
         // error("fork failed: $!");
     if (not $pid) {
-        my ($to_cat, $dead_pid, $failed_cmd, $cat_pid, %pid_table);
+        my ($to_cat, $dead_pid, $failed_cmd, $cat_pid, $sed_pid, %pid_table);
         my $sub_proc_error = 0;
         my $grep_pattern = $Conf->{grep_pattern} // '.';
-        my @cat_cmd = ('xargs', '-0r',
-                       '/usr/lib/apt/apt-helper',
-                       @apt_options, 'cat-file');
+        my @cat_cmd = (
+            'xargs',
+            '-0r',
+            '/usr/lib/apt/apt-helper',
+            @apt_options,
+            'cat-file'
+        );
+        my @sed_cmd = (
+            'sed',
+            '/^This file maps each file available/,/^FILE *LOCATION$/d'
+        );
         close($read_end)
             or error("Close read end of pipeline: $!");
         if ($grep_pattern ne '.' and not $Conf->{is_regexp}) {
@@ -194,6 +202,10 @@ sub open_data_pipeline {
                 'cmd' => \@grep_cmd,
             };
         }
+        ($write_end, $sed_pid) = start_pipe_to_cmd($write_end, @sed_cmd);
+        $pid_table{$sed_pid} = {
+            'cmd' => \@sed_cmd,
+        };
         ($to_cat, $cat_pid) = start_pipe_to_cmd($write_end, @cat_cmd);
         $pid_table{$cat_pid} = {
             'cmd' => \@cat_cmd,
@@ -252,11 +264,6 @@ sub do_grep($$) {
         next if !/$quick_regexp/o;
 
         next if !( ( $fname, $pkgs ) = /$regexp/o );
-
-        # skip header lines
-        # we can safely assume that the name of the top level directory
-        # does not contain spaces
-        next if !m{^[^\s/]*/};
 
         debug_line ".";
         foreach ( split /,/, $pkgs ) {
