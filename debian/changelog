@@ -1,4 +1,4 @@
-apt-file (3.1.2) UNRELEASED; urgency=medium
+apt-file (3.1.2) unstable; urgency=medium
 
   [ Niels Thykier ]
   * apt-file: Strip Contents header without discarding results (Closes: #676642)
@@ -16,7 +16,7 @@ apt-file (3.1.2) UNRELEASED; urgency=medium
   [ Time Potter ]
   * Fix typo in apt-file manpage.  (Closes: #843122)
 
- -- Niels Thykier <niels@thykier.net>  Tue, 25 Oct 2016 16:14:00 +0000
+ -- Niels Thykier <niels@thykier.net>  Sat, 05 Nov 2016 15:54:12 +0000
 
 apt-file (3.1.1) unstable; urgency=medium
 
