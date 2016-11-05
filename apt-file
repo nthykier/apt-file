@@ -29,6 +29,8 @@ use constant {
     RETURN_CODE_CACHE_NO_MATCHING_INDICES => 4,
 
     CONFIG_SEARCH_INDEX_NAMES => 'apt-file::Index-Names',
+    CONFIG_SEARCH_FILTER_ORIGINS => 'apt-file::Search-Filter::Origin',
+    CONFIG_SEARCH_FILTER_SUITES => 'apt-file::Search-Filter::Suite',
 };
 
 use POSIX qw(_exit);
@@ -430,6 +432,10 @@ Search filter options:
 
     --architecture     -a  <arch>       Use specific architecture [L]
     --index-names      -I  <names>      Only search indices listed in <names> [L]
+    --filter-suites        <suites>     Only search indices for the listed <suites> [L]
+                                        (E.g. "unstable")
+    --filter-origins       <origins>    Only search indices from <origins> [L]
+                                        (E.g. "Debian")
 
 Other options:
 ==============
@@ -465,12 +471,20 @@ sub get_options() {
         "fixed-string|F"    => \$Conf->{fixed_strings},
         "from-file|f"       => \$Conf->{from_file},
         "from-deb|D"        => \$Conf->{from_deb},
+        'filter-suites=s'   => sub { _set_option('in-suites', CONFIG_SEARCH_FILTER_SUITES, $_[1]); },
+        'filter-origins=s'  => sub { _set_option('from-origin', CONFIG_SEARCH_FILTER_ORIGINS, $_[1]); },
         'config-file|c=s@'  => \&_parse_apt_config_file,
         'option|o=s@'       => \&_parse_apt_option,
         "help|h"            => \$Conf->{help},
     );
     Getopt::Long::Configure("bundling");
     GetOptions(%options) || print_help(RETURN_CODE_GENERIC_ERROR);
+}
+
+sub _set_option {
+    my ($option_name, $apt_option_name, $value) = @_;
+    $_config->set($apt_option_name, $value);
+    debug("Set ${apt_option_name} to ${value} (due to --${option_name})");
 }
 
 sub _parse_apt_config_file {
@@ -515,7 +529,7 @@ sub _parse_apt_option {
 }
 
 sub main {
-    my ($action, $is_search, @arch_res, @index_names);
+    my ($action, $is_search, @arch_res, @index_names, @origins, @suites);
     $_config->init;
     if (@ARGV and ($ARGV[0] eq '-v' or $ARGV[0] eq '--verbose')) {
         # To enable debug for the apt-file.conf
@@ -538,11 +552,15 @@ sub main {
     get_options();
     @arch_res = split(m/\s*,\s*/,
                       $Conf->{arch} || $_config->{'APT::Architecture'});
+    @suites = split(m/\s*,\s*/, $_config->get(CONFIG_SEARCH_FILTER_SUITES) // '');
+    @origins = split(m/\s*,\s*/, $_config->get(CONFIG_SEARCH_FILTER_ORIGINS) // '');
     if (none { $_ eq 'all' } @arch_res) {
         # Automatically support that arch:all contents move to a
         # separate file"
         push(@arch_res, 'all');
     }
+    @suites = () if (any { $_ eq '*' } @suites);
+    @origins = () if (any { $_ eq '*' } @origins);
     @index_names = split(m/\s*,\s*/,
                          $_config->get(CONFIG_SEARCH_INDEX_NAMES, 'deb'));
     if (@index_names > 1 and any { $_ eq 'ALL' } @index_names) {
@@ -665,7 +683,11 @@ sub main {
     }
 
     if ($is_search) {
-        my @contents = contents_file_paths(\@index_names, \@arch_res);
+        my @contents = contents_file_paths(\@index_names,
+                                           \@arch_res,
+                                           \@suites,
+                                           \@origins,
+        );
         $action_handler->(\@contents);
     } else {
         $action_handler->();
@@ -674,27 +696,34 @@ sub main {
 }
 
 sub contents_file_paths {
-    my ($index_names, $arch_res) = @_;
+    my ($index_names, $arch_res, $suite_ref, $origin_ref) = @_;
     my (@paths, $any_entries);
     my $any_index = 0;
     my @cmd = ('apt-get', @apt_options, 'indextargets',
-               '--format', '$(IDENTIFIER) $(ARCHITECTURE) $(FILENAME)');
+               '--format', '$(IDENTIFIER) $(ARCHITECTURE) $(ORIGIN) $(CODENAME),$(SUITE) $(FILENAME)');
     $any_index = 1 if @{$index_names} and $index_names->[0] eq 'ALL';
     debug('Index restriction [name]: ' . join(' ', @{$index_names}));
     debug('Index restriction [arch]: ' .  join(' ', @{$arch_res}));
+    debug('Index restriction [suite]: ' . join(' ', @{$suite_ref}));
+    debug('Index restriction [origin]: ' . join(' ', @{$origin_ref}));
     debug("Running @cmd");
     open(my $fd, '-|', @cmd)
       or error('Cannot execute apt-get indextargets');
     while (my $line = <$fd>) {
-        my ($index_name, $arch, $filename);
+        my ($index_name, $arch, $origin, $suite_names, $filename);
         chomp($line);
         next if $line !~ s/^Contents-//;
         $any_entries = 1;
-        ($index_name, $arch, $filename) = split(' ', $line, 3);
+        ($index_name, $arch, $origin, $suite_names, $filename) = split(' ', $line, 5);
         if ($arch ne '$(ARCHITECTURE)') {
             next if none { $_ eq $arch } @{$arch_res};
         }
         next if not $any_index and none { $_ eq $index_name } @{$index_names};
+        if (@{$suite_ref}) {
+            my ($codename, $suite) = split(m/,/, $suite_names);
+            next if none { $_ eq $codename or $_ eq $suite } @{$suite_ref};
+        }
+        next if @{$origin_ref} and none { $_ eq $origin } @{$origin_ref};
         push(@paths, $filename);
     }
     if (not @paths) {

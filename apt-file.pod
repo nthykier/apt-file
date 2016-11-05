@@ -84,6 +84,26 @@ Read patterns from the given file(s), one per line.  Use - as filename
 for stdin.  If no files are given, then the list will be read from
 stdin.  This is much faster than invoking apt-file many times.
 
+=item --filter-origins I<origin[,...]>
+
+Only search indices from the listed origins (e.g. "Debian").
+
+This filter matches against the name listed in the I<Origin> field
+from the Release file.
+
+Alias of the APT config option: B<apt-file::Search-Filter::Origin>
+
+=item --filter-suites I<suite[,...]>
+
+Only search indices from the listed suites or codenames
+(e.g. "unstable").
+
+This filter matches against the name listed in the I<Codename> and
+I<Suite> fields from the Release file.  This means that either
+"unstable" or "sid" will match Debian's unstable suite.
+
+Alias of the APT config option: B<apt-file::Search-Filter::Suite>
+
 =item -F, --fixed-string
 
 Do not expand search pattern with generic characters at pattern's

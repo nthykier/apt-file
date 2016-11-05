@@ -3,6 +3,9 @@ apt-file (3.1.2) UNRELEASED; urgency=medium
   [ Niels Thykier ]
   * apt-file: Strip Contents header without discarding results (Closes: #676642)
   * apt-file: Restructure --help output.
+  * apt-file: Support --filter-suites and --filter-origins options.  These
+    make it possible to only search in (e.g.) Debian/unstable even if
+    other origins or/and suites are downloaded.
 
   [ Paul Wise ]
   * Make the package filter regex match the sectionless Contents-source format
