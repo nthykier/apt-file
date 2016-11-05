@@ -412,18 +412,29 @@ apt-file [options] action [pattern]
 apt-file [options] -f action <file>
 apt-file [options] -D action <debfile>
 
-Configuration options:
-    --architecture     -a  <arch>       Use specific architecture [L]
+Patern options:
+===============
+
     --fixed-string     -F               Do not expand pattern
     --from-deb         -D               Use file list of .deb package(s) as
                                         patterns; implies -F
     --from-file        -f               Read patterns from file(s), one per line
                                         (use '-' for stdin)
     --ignore-case      -i               Ignore case distinctions
-    --index-names      -I  <names>      Only search indices listed in <names> [L]
-    --package-only     -l               Only display packages name
     --substring-match                   pattern is a substring (no glob/regex)
     --regexp           -x               pattern is a regular expression
+
+
+Search filter options:
+======================
+
+    --architecture     -a  <arch>       Use specific architecture [L]
+    --index-names      -I  <names>      Only search indices listed in <names> [L]
+
+Other options:
+==============
+
+    --package-only     -l               Only display packages name
     --verbose          -v               run in verbose mode
     --config           -c <file>        Parse the given APT config file [R]
     --option           -o <A::B>=<V>    Set the APT config option A::B to "V" [R]
