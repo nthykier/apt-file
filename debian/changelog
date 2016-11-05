@@ -6,6 +6,8 @@ apt-file (3.1.2) UNRELEASED; urgency=medium
   * apt-file: Support --filter-suites and --filter-origins options.  These
     make it possible to only search in (e.g.) Debian/unstable even if
     other origins or/and suites are downloaded.
+  * apt-file.1: Clarify that --config-file and --option can be used to
+    overwrite other command line parameters.
 
   [ Paul Wise ]
   * Make the package filter regex match the sectionless Contents-source format

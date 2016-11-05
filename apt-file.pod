@@ -73,6 +73,12 @@ file. If configuration settings need to be set before the default
 configuration files are parsed specify a file with the B<APT_CONFIG>
 environment variable. See L<apt.conf(5)> for syntax information.
 
+The configuration file will be read relative to when it appears on the
+command line and can overwrite options that appear before it.
+
+Note that the config file will also be passed to all APT tools called
+by B<apt-file>.
+
 =item -D, --from-deb
 
 Use contents of the given .deb archives(s) as patterns.  Useful for
@@ -154,6 +160,13 @@ Set a Configuration Option; This will set an arbitrary configuration
 option. The syntax is B<-o APT::Option=Value>.  B<-o> and B<--option>
 can be used multiple times to set different options.
 
+This option I<can> be used to overwrite other command line options
+(e.g. "-o apt-file::Search-Filter::Origin=Debian" is effectively the
+same as "--filter-origins Debian").
+
+Note that the config options passed via this option will also be
+passed to all APT tools called by B<apt-file>.
+
 =item --substring-match
 
 Match if the given search I<pattern> is a substring of a path or
@@ -205,8 +218,8 @@ is merely the default value of that option.
 
 If this file is present, B<apt-file> will read this file I<after> all
 default APT configuration files.  Any config file B<-c> or option
-(B<-o>) will be evaluated I<after> this file (and can override options
-set in it).
+(B<-o>) will be evaluated I<before> this file (and can override
+options set in it).
 
 The file will also be passed on to all APT tools called by
 B<apt-file>.
