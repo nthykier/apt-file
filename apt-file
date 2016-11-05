@@ -426,7 +426,7 @@ Configuration options:
     --regexp           -x               pattern is a regular expression
     --verbose          -v               run in verbose mode
     --config           -c <file>        Parse the given APT config file [R]
-    --option           -o <A::B=V>      Set the given APT config option to "V" [R]
+    --option           -o <A::B>=<V>    Set the APT config option A::B to "V" [R]
     --help             -h               Show this help.
                        --               End of options (neccessary if pattern
                                         starts with a '-')
