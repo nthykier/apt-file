@@ -39,7 +39,7 @@ Since Contents files does not contain directories, the pattern must
 match (part of a) file name.
 
 By default, the B<search> action interprets its pattern as if
-B<--substring-string> was specified.
+B<--substring-match> was specified.
 
 =item show
 
