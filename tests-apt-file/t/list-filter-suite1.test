@@ -1,0 +1,2 @@
+args=list --filter-suites unstable lintian
+

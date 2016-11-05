@@ -4,5 +4,5 @@ if [ "$1" != "indextargets" ]; then
     echo "$0: Fake apt-get does not support $1" >&1
     exit 1
 fi
-echo "Contents-deb fooarch oldoldstable:lenny Debian $TEST_DIR/cache/site1_debian_dists_lenny_main_Contents-fooarch.gz"
-echo "Contents-deb fooarch unstable:sid Debian $TEST_DIR/cache/site1_debian_dists_sid_main_Contents-fooarch"
+echo "Contents-deb fooarch Debian oldoldstable,lenny $TEST_DIR/cache/site1_debian_dists_lenny_main_Contents-fooarch.gz"
+echo "Contents-deb fooarch Debian unstable,sid $TEST_DIR/cache/site1_debian_dists_sid_main_Contents-fooarch"

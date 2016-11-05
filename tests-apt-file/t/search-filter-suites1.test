@@ -1,0 +1,2 @@
+args=search --filter-suites unstable share/lintian/
+

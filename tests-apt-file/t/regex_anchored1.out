@@ -1,1 +1,4 @@
 libtemplate-perl: /usr/lib/perl5/Template.pm
+lintian: /usr/share/lintian/checks/group.pm
+lintian: /usr/share/lintian/checks/only-in-lenny.pm
+lintian: /usr/share/lintian/checks/only-in-unstable.pm
