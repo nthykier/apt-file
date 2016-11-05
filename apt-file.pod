@@ -91,6 +91,9 @@ Only search indices from the listed origins (e.g. "Debian").
 This filter matches against the name listed in the I<Origin> field
 from the Release file.
 
+If set to '*', this filter will be disabled (mostly useful for
+overriding the setting in a configuration file)
+
 Alias of the APT config option: B<apt-file::Search-Filter::Origin>
 
 =item --filter-suites I<suite[,...]>
@@ -101,6 +104,9 @@ Only search indices from the listed suites or codenames
 This filter matches against the name listed in the I<Codename> and
 I<Suite> fields from the Release file.  This means that either
 "unstable" or "sid" will match Debian's unstable suite.
+
+If set to '*', this filter will be disabled (mostly useful for
+overriding the setting in a configuration file)
 
 Alias of the APT config option: B<apt-file::Search-Filter::Suite>
 
