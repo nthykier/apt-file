@@ -561,7 +561,7 @@ sub main {
     }
 
     if ($Conf->{from_file} || $Conf->{from_deb}) {
-        use Regexp::Assemble;
+        require Regexp::Assemble;
         my $ra = Regexp::Assemble->new;
         my @list;
         if ($Conf->{from_deb}) {
