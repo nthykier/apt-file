@@ -1,3 +1,10 @@
+apt-file (3.1.3) UNRELEASED; urgency=medium
+
+  * apt-file: Gracefully handle if origins (or suites) have spaces
+    in them.  (Closes: #843401, #843403)
+
+ -- Niels Thykier <niels@thykier.net>  Sun, 06 Nov 2016 14:31:13 +0000
+
 apt-file (3.1.2) unstable; urgency=medium
 
   [ Niels Thykier ]

@@ -4,5 +4,12 @@ if [ "$1" != "indextargets" ]; then
     echo "$0: Fake apt-get does not support $1" >&1
     exit 1
 fi
-echo "Contents-deb fooarch Debian oldoldstable,lenny $TEST_DIR/cache/site1_debian_dists_lenny_main_Contents-fooarch.gz"
-echo "Contents-deb fooarch Debian unstable,sid $TEST_DIR/cache/site1_debian_dists_sid_main_Contents-fooarch"
+
+emit_source() {
+    /usr/bin/printf "%s\x1f%s\x1f%s\x1f%s\x1f%s\n" "$@"
+}
+
+emit_source Contents-deb fooarch Debian oldoldstable,lenny "$TEST_DIR/cache/site1_debian_dists_lenny_main_Contents-fooarch.gz"
+emit_source Contents-deb fooarch Debian unstable,sid "$TEST_DIR/cache/site1_debian_dists_sid_main_Contents-fooarch"
+# Random stuff that apt-file should ignore
+emit_source Packagess fooarch "Unofficial Debian Repo" "raring proposed,devel" "$TEST_DIR/cache/some-file-that-apt-file-should-never-attempt-to-read"

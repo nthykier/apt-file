@@ -699,14 +699,25 @@ sub contents_file_paths {
     my ($index_names, $arch_res, $suite_ref, $origin_ref) = @_;
     my (@paths, $any_entries);
     my $any_index = 0;
+    my $format = join("\x1F",
+                      '$(IDENTIFIER)',
+                      '$(ARCHITECTURE)',
+                      '$(ORIGIN)',
+                      '$(CODENAME),$(SUITE)',
+                      '$(FILENAME)');
     my @cmd = ('apt-get', @apt_options, 'indextargets',
-               '--format', '$(IDENTIFIER) $(ARCHITECTURE) $(ORIGIN) $(CODENAME),$(SUITE) $(FILENAME)');
+               '--format', $format);
+    my $cmd_debug = join(' ', map {
+        my $c = $_;
+        $c =~ s/\x1F/\\x1F/g;
+        "\"$c\""
+    } @cmd);
     $any_index = 1 if @{$index_names} and $index_names->[0] eq 'ALL';
     debug('Index restriction [name]: ' . join(' ', @{$index_names}));
     debug('Index restriction [arch]: ' .  join(' ', @{$arch_res}));
     debug('Index restriction [suite]: ' . join(' ', @{$suite_ref}));
     debug('Index restriction [origin]: ' . join(' ', @{$origin_ref}));
-    debug("Running @cmd");
+    debug("Running $cmd_debug");
     open(my $fd, '-|', @cmd)
       or error('Cannot execute apt-get indextargets');
     while (my $line = <$fd>) {
@@ -714,7 +725,7 @@ sub contents_file_paths {
         chomp($line);
         next if $line !~ s/^Contents-//;
         $any_entries = 1;
-        ($index_name, $arch, $origin, $suite_names, $filename) = split(' ', $line, 5);
+        ($index_name, $arch, $origin, $suite_names, $filename) = split("\x1F", $line, 5);
         if ($arch ne '$(ARCHITECTURE)') {
             next if none { $_ eq $arch } @{$arch_res};
         }
