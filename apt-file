@@ -699,7 +699,7 @@ sub contents_file_paths {
                       '$(IDENTIFIER)',
                       '$(ARCHITECTURE)',
                       '$(ORIGIN)',
-                      '$(CODENAME),$(SUITE)',
+                      '$(SUITE),$(CODENAME)',
                       '$(FILENAME)');
     my @cmd = ('apt-get', @apt_options, 'indextargets',
                '--format', $format);
@@ -708,6 +708,7 @@ sub contents_file_paths {
         $c =~ s/\x1F/\\x1F/g;
         "\"$c\""
     } @cmd);
+    my $debug_level = $Conf->{verbose} // 0;
     $any_index = 1 if @{$index_names} and $index_names->[0] eq 'ALL';
     debug(1, 'Index restriction [name]: ' . join(' ', @{$index_names}));
     debug(1, 'Index restriction [arch]: ' .  join(' ', @{$arch_res}));
@@ -722,6 +723,16 @@ sub contents_file_paths {
         next if $line !~ s/^Contents-//;
         $any_entries = 1;
         ($index_name, $arch, $origin, $suite_names, $filename) = split("\x1F", $line, 5);
+        if ($debug_level > 1) {
+            my $c = $line;
+            $c =~ s/\x1F/\\x1F/g;
+            debug(2, "Contents index [line]: $c");
+            debug(2, " - index identifier: $index_name");
+            debug(2, " - architecture: $arch");
+            debug(2, " - origin: $origin");
+            debug(2, " - suite/codenames: $suite_names");
+            debug(2, " - filename: $filename");
+        }
         if ($arch ne '$(ARCHITECTURE)') {
             next if none { $_ eq $arch } @{$arch_res};
         }
