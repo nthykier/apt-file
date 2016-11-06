@@ -65,14 +65,10 @@ sub stop_with_msg {
     exit $return_code;
 }
 
-sub debug($;$) {
-    return if !defined $Conf->{verbose};
-    my ( $msg, $use_errstr ) = @_;
-    my $d = "D: ${msg}";
-    $d .= $! ? ": $!" : '' if $use_errstr;
-    $d .= "\n";
-    print STDERR $d;
-    undef $!;
+sub debug {
+    my ($level, $msg) = @_;
+    return if not defined $Conf->{verbose} or $level > $Conf->{verbose};
+    print STDERR "D: ${msg}\n";
 }
 
 sub debug_line($) {
@@ -94,7 +90,7 @@ sub reverse_hash($) {
 sub fetch_files ($) {
     my @cmd = ('apt', @apt_options, 'update');
     $cmd[0] = 'apt-get' if not -t STDOUT;
-    debug("Running @cmd");
+    debug(1, "Running @cmd");
     exec(@cmd);
 }
 
@@ -118,7 +114,7 @@ sub print_winners ($$) {
     }
 
     if (not $filtered_db or not %{$filtered_db}) {
-        debug('No matches');
+        debug(1, 'No matches');
         exit RETURN_CODE_NO_RESULTS;
     }
 
@@ -149,7 +145,7 @@ sub start_pipe_to_cmd {
             or error("fdup stdout failed: $!");
         close($our_write_end)
             or error("close write end of pipe: $!");
-        debug 'starting ' . join(' ', @cmd);
+        debug(1, 'starting ' . join(' ', @cmd));
         exec {$cmd[0]} @cmd
             or error('exec ' . join(' ', @cmd) . " failed: $!");
     }
@@ -212,12 +208,12 @@ sub open_data_pipeline {
         $pid_table{$cat_pid} = {
             'cmd' => \@cat_cmd,
         };
-        debug "Starting to pass files";
+        debug(1, "Starting to pass files");
         for my $file (uniq(@{$file_list})) {
-            debug "Passing $file";
+            debug(1, "Passing $file");
             printf {$to_cat} "%s\0", $file;
         }
-        debug "Closing input to cat";
+        debug(1, "Closing input to cat");
         close($to_cat)
             or error("close write end of xargs pipe: $!");
         do {
@@ -254,7 +250,7 @@ sub open_data_pipeline {
 sub do_grep($$) {
     my ( $data, $pattern ) = @_;
     my ( $pkgs, $fname, @cmd, $ret);
-    debug "regexp: ${pattern}";
+    debug(1, "regexp: ${pattern}");
     $| = 1;
     my $regexp = eval { $Conf->{ignore_case} ? qr/${pattern}/i : qr/${pattern}/ };
     error($@) if $@;
@@ -441,7 +437,7 @@ Other options:
 ==============
 
     --package-only     -l               Only display packages name
-    --verbose          -v               run in verbose mode
+    --verbose          -v               run in verbose mode [R]
     --config           -c <file>        Parse the given APT config file [R]
     --option           -o <A::B>=<V>    Set the APT config option A::B to "V" [R]
     --help             -h               Show this help.
@@ -463,7 +459,7 @@ sub get_options() {
     my %options = (
         "architecture|a=s"  => \$Conf->{arch},
         "index-names|I=s"   => sub { $_config->set(CONFIG_SEARCH_INDEX_NAMES, $_[1]) },
-        "verbose|v"         => \$Conf->{verbose},
+        "verbose|v+"        => \$Conf->{verbose},
         "ignore-case|i"     => \$Conf->{ignore_case},
         "regexp|x"          => \$Conf->{is_regexp},
         "substring-match"   => \$Conf->{substring_match},
@@ -484,7 +480,7 @@ sub get_options() {
 sub _set_option {
     my ($option_name, $apt_option_name, $value) = @_;
     $_config->set($apt_option_name, $value);
-    debug("Set ${apt_option_name} to ${value} (due to --${option_name})");
+    debug(1, "Set ${apt_option_name} to ${value} (due to --${option_name})");
 }
 
 sub _parse_apt_config_file {
@@ -504,7 +500,7 @@ an example to get you started.)
 EOF
         error("Please pass an APT config file after -c/--config-file");
     }
-    debug("Parsed $conf_file (due to --config-file)");
+    debug(1, "Parsed $conf_file (due to --config-file)");
 
     $_config->read_file($conf_file)
         or error("Cannot parse ${conf_file}");
@@ -523,7 +519,7 @@ sub _parse_apt_option {
         error("Missing value for ${opt_name}: Expected -o \"Foo::Bar=value\"");
     }
     $_config->set($opt_name, $opt_value);
-    debug("Parsed set ${opt_name} to ${opt_value} (due to --option)");
+    debug(1, "Parsed set ${opt_name} to ${opt_value} (due to --option)");
     push(@apt_options, '-o', $option_str);
     return;
 }
@@ -537,17 +533,17 @@ sub main {
         $Conf->{verbose} = 1;
     }
     if (my $apt_file_conf = $_config->get_file('Dir::Etc::apt-file-main')) {
-        debug "Dir::Etc::apt-file-main is set to $apt_file_conf";
+        debug(1, "Dir::Etc::apt-file-main is set to $apt_file_conf");
         if ( -l $apt_file_conf or -e $apt_file_conf) {
-            debug "Reading ${apt_file_conf}";
+            debug(1, "Reading ${apt_file_conf}");
             $_config->read_file($apt_file_conf)
                 or error("Cannot parse ${apt_file_conf}");
             push(@apt_options, '-c', $apt_file_conf);
         } else {
-            debug "The file ${apt_file_conf} does not exist";
+            debug(1, "The file ${apt_file_conf} does not exist");
         }
     } else {
-        debug "Dir::Etc::apt-file-main was not set";
+        debug(1, "Dir::Etc::apt-file-main was not set");
     }
     get_options();
     @arch_res = split(m/\s*,\s*/,
@@ -583,7 +579,7 @@ sub main {
         $is_search = 1;
         if (not defined($Conf->{substring_match}) and
             not $Conf->{fixed_strings} and not $Conf->{is_regexp}) {
-            debug('substring match (default)');
+            debug(1, 'substring match (default)');
             $Conf->{fixed_strings} = 1
               if $action eq 'list' or $action eq 'show';
         }
@@ -598,7 +594,7 @@ sub main {
             $Conf->{fixed_strings} = 1;
             $Conf->{is_regexp} = 0;
 
-            debug("this is a .deb file, calling dpkg-deb to get contents");
+            debug(1, "this is a .deb file, calling dpkg-deb to get contents");
             my @content;
             foreach my $deb (@ARGV) {
                 push @content, qx{dpkg-deb -c \Q$deb};
@@ -713,11 +709,11 @@ sub contents_file_paths {
         "\"$c\""
     } @cmd);
     $any_index = 1 if @{$index_names} and $index_names->[0] eq 'ALL';
-    debug('Index restriction [name]: ' . join(' ', @{$index_names}));
-    debug('Index restriction [arch]: ' .  join(' ', @{$arch_res}));
-    debug('Index restriction [suite]: ' . join(' ', @{$suite_ref}));
-    debug('Index restriction [origin]: ' . join(' ', @{$origin_ref}));
-    debug("Running $cmd_debug");
+    debug(1, 'Index restriction [name]: ' . join(' ', @{$index_names}));
+    debug(1, 'Index restriction [arch]: ' .  join(' ', @{$arch_res}));
+    debug(1, 'Index restriction [suite]: ' . join(' ', @{$suite_ref}));
+    debug(1, 'Index restriction [origin]: ' . join(' ', @{$origin_ref}));
+    debug(1, "Running $cmd_debug");
     open(my $fd, '-|', @cmd)
       or error('Cannot execute apt-get indextargets');
     while (my $line = <$fd>) {
