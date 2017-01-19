@@ -2,6 +2,9 @@ apt-file (3.1.4) UNRELEASED; urgency=medium
 
   * Fix typo in 60disable-contents-fetching.conf.  Thanks to
     Felix Geyer for spotting it.  (Closes: #843453)
+  * apt-file: Fix two spelling mistakes in the --help output.
+    Thanks to "axhn" on IRC and Guillem Jover for spotting
+    them.
 
  -- Niels Thykier <niels@thykier.net>  Sun, 06 Nov 2016 18:25:23 +0000
 

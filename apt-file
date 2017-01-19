@@ -410,8 +410,8 @@ apt-file [options] action [pattern]
 apt-file [options] -f action <file>
 apt-file [options] -D action <debfile>
 
-Patern options:
-===============
+Pattern options:
+================
 
     --fixed-string     -F               Do not expand pattern
     --from-deb         -D               Use file list of .deb package(s) as
@@ -441,7 +441,7 @@ Other options:
     --config           -c <file>        Parse the given APT config file [R]
     --option           -o <A::B>=<V>    Set the APT config option A::B to "V" [R]
     --help             -h               Show this help.
-                       --               End of options (neccessary if pattern
+                       --               End of options (necessary if pattern
                                         starts with a '-')
 
 [L]: Takes a comma-separated list of values.
