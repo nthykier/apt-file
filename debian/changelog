@@ -1,4 +1,4 @@
-apt-file (3.1.4) UNRELEASED; urgency=medium
+apt-file (3.1.4) unstable; urgency=medium
 
   * Fix typo in 60disable-contents-fetching.conf.  Thanks to
     Felix Geyer for spotting it.  (Closes: #843453)
@@ -6,7 +6,7 @@ apt-file (3.1.4) UNRELEASED; urgency=medium
     Thanks to "axhn" on IRC and Guillem Jover for spotting
     them.
 
- -- Niels Thykier <niels@thykier.net>  Sun, 06 Nov 2016 18:25:23 +0000
+ -- Niels Thykier <niels@thykier.net>  Mon, 23 Jan 2017 20:39:04 +0000
 
 apt-file (3.1.3) unstable; urgency=medium
 
