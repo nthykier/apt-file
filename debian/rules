@@ -6,3 +6,7 @@ override_dh_install:
 	dh_install
 	install -d                                        debian/apt-file/usr/share/apt-file
 	install -m 755 debian/apt-file.is-cache-empty     debian/apt-file/usr/share/apt-file/is-cache-empty
+
+# The apt-file package is perfectly reproducible without
+# strip-nondeterminism; Drop the helper to prove it.
+override_dh_strip_nondeterminism:
