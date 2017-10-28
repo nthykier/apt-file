@@ -1,9 +1,15 @@
+apt-file (3.1.6) UNRELEASED; urgency=medium
+
+  * Fix typo in the changelog
+
+ -- Niels Thykier <niels@thykier.net>  Sat, 28 Oct 2017 11:17:05 +0000
+
 apt-file (3.1.5) unstable; urgency=medium
 
   * Remove rapt-file and two obsolete .sgml files from the source.
   * Set R³ to no; apt-file does not need (fake)root during the
     binary-targets in the package builds.
-  * Skip dh_strip_determinism; it is a no-op at the moment and
+  * Skip dh_strip_nondeterminism; it is a no-op at the moment and
     is planned to be removed eventually.
   * Set debhelper compat to 10.
   * Bump Standards-Version to 4.1.1 - no additional changes
