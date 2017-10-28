@@ -1,3 +1,9 @@
+apt-file (3.1.5) UNRELEASED; urgency=medium
+
+  * Remove rapt-file and two obsolete .sgml files from the source.
+
+ -- Niels Thykier <niels@thykier.net>  Sat, 28 Oct 2017 10:36:24 +0000
+
 apt-file (3.1.4) unstable; urgency=medium
 
   * Fix typo in 60disable-contents-fetching.conf.  Thanks to
