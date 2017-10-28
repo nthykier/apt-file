@@ -5,6 +5,7 @@ apt-file (3.1.5) UNRELEASED; urgency=medium
     binary-targets in the package builds.
   * Skip dh_strip_determinism; it is a no-op at the moment and
     is planned to be removed eventually.
+  * Set debhelper compat to 10.
 
  -- Niels Thykier <niels@thykier.net>  Sat, 28 Oct 2017 10:36:24 +0000
 
