@@ -3,6 +3,8 @@ apt-file (3.1.6) UNRELEASED; urgency=medium
   * Fix typo in the changelog
   * Update Vcs-* fields to point to salsa.debian.org.
   * Bump Standards-Versions to 4.1.4 - No changes required.
+  * Bump debhelper compat 11 via the new "debhelper-compat"
+    dependency.
 
  -- Niels Thykier <niels@thykier.net>  Sat, 28 Oct 2017 11:17:05 +0000
 
