@@ -1,4 +1,4 @@
-apt-file (3.1.6) UNRELEASED; urgency=medium
+apt-file (3.1.6) unstable; urgency=medium
 
   * Fix typo in the changelog
   * Update Vcs-* fields to point to salsa.debian.org.
@@ -6,7 +6,7 @@ apt-file (3.1.6) UNRELEASED; urgency=medium
   * Bump debhelper compat 11 via the new "debhelper-compat"
     dependency.
 
- -- Niels Thykier <niels@thykier.net>  Sat, 28 Oct 2017 11:17:05 +0000
+ -- Niels Thykier <niels@thykier.net>  Sat, 28 Apr 2018 09:43:50 +0000
 
 apt-file (3.1.5) unstable; urgency=medium
 
