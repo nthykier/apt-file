@@ -1,6 +1,7 @@
 apt-file (3.1.6) UNRELEASED; urgency=medium
 
   * Fix typo in the changelog
+  * Update Vcs-* fields to point to salsa.debian.org.
 
  -- Niels Thykier <niels@thykier.net>  Sat, 28 Oct 2017 11:17:05 +0000
 
