@@ -495,8 +495,8 @@ Pattern options:
     --from-file        -f               Read patterns from file(s), one per line
                                         (use '-' for stdin)
     --ignore-case      -i               Ignore case distinctions
-    --substring-match                   pattern is a substring (no glob/regex)
     --regexp           -x               pattern is a regular expression
+    --substring-match                   pattern is a substring (no glob/regex)
 
 
 Search filter options:
@@ -512,10 +512,10 @@ Search filter options:
 Other options:
 ==============
 
-    --package-only     -l               Only display packages name
-    --verbose          -v               run in verbose mode [R]
     --config           -c <file>        Parse the given APT config file [R]
     --option           -o <A::B>=<V>    Set the APT config option A::B to "V" [R]
+    --package-only     -l               Only display packages name
+    --verbose          -v               run in verbose mode [R]
     --help             -h               Show this help.
                        --               End of options (necessary if pattern
                                         starts with a '-')
@@ -524,10 +524,10 @@ Other options:
 [R]: The option can be used repeatedly
 
 Action:
-    update                              Fetch Contents files from apt-sources.
-    search|find        <pattern>        Search files in packages
     list|show          <pattern>        List files in packages
     list-indices                        List indices configured in APT.
+    search|find        <pattern>        Search files in packages
+    update                              Fetch Contents files from apt-sources.
 EOF
     exit $err_code;
 }
