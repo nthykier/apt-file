@@ -838,7 +838,7 @@ sub contents_file_paths {
     my ($res, $paths) = lookup_indices(@_);
     if ($res != RETURN_CODE_SUCCESS) {
         if ($res == RETURN_CODE_CACHE_IS_EMPTY) {
-            stop_with_msg('The cache is empty. You need to run "apt update" first.',
+            stop_with_msg('The cache is empty. You need to run "apt-file update" first.',
                           RETURN_CODE_CACHE_IS_EMPTY);
         }
         if ($res == RETURN_CODE_CACHE_NO_MATCHING_INDICES) {
