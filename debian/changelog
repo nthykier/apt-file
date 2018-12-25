@@ -13,6 +13,9 @@ apt-file (3.2) UNRELEASED; urgency=medium
   * Reset the error message for when the apt-file cache is empty
     to refer to "apt-file update" instead of "apt update".
     (Closes: #857095)
+  * Clarify in apt-file.1 that "apt-file update" is not deprecated
+    as it has a special case where it is different from a regular
+    "apt update" / "apt-get update".
 
  -- Niels Thykier <niels@thykier.net>  Tue, 25 Dec 2018 09:29:45 +0000
 

@@ -65,7 +65,14 @@ Alias for list.
 
 =item update
 
-Deprecated action that just calls "apt update".
+This action that just calls B<apt update> or B<apt-get update>
+(depending on whether a tty is available).
+
+The only advantage using this over a regular B<apt update> or
+B<apt-get update> directly is for the case where you have configured
+an apt-file specific configuration (via the B<Dir::Etc::apt-file-main>
+configuration option).  In that case, said configuration will be
+included automatically.
 
 =back
 
