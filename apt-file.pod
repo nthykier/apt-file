@@ -32,15 +32,21 @@ B<--fixed-string> was specified.
 
 =item list-indices
 
-List the Contents indices registrered in APT and their global default
-status in a human readable format.  These indices can be searched via
-the B<-I> option (when enabled and after fetching the indices).
+List the known Content indices and their status in a human readable
+format.  These indices can be searched via the B<-I> option (when
+enabled and after fetching the indices).  The output is subject to
+change without notice and is therefore unsuited for script usage /
+automation.
+
+For a machine-readable formats (e.g. automation), please use
+B<apt-config dump> (search for options starting with
+B<Acquire::IndexTargets>) and B<apt-get indextargets> for checking the
+cache (Look for entries with an I<Identifier> field starting with
+I<Contents->).
 
 Note that individual sources.list entries can override the global
-default.
-
-For a machine-readable format, please use L<apt-config(1)> (search for
-B<Acquire::IndexTargets>).
+default.  Please consult L<sources.list(5)> for more information on
+advanced configuration of the B<sources.list> files.
 
 =item search
 

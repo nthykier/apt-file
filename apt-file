@@ -23,6 +23,7 @@ use strict;
 use warnings;
 
 use constant {
+    RETURN_CODE_SUCCESS => 0,
     RETURN_CODE_NO_RESULTS => 1,
     RETURN_CODE_GENERIC_ERROR => 2,
     RETURN_CODE_CACHE_IS_EMPTY => 3,
@@ -414,10 +415,15 @@ sub list_indices {
             header => 'DefaultEnabled (Apt config)',
             key => 'default-enabled',
         },
+        {
+            header => 'Index Status',
+            key => 'cache-lookup',
+        },
     );
     my @len = map { length($_->{header}) } @headers;
     while (defined(my $key = $iter->next)) {
         my ($type, $index_name) = @_;
+        my $results;
         next if $key !~ m/^Acquire::IndexTargets::(deb|deb-src)::Contents-([^:  \t]+)$/;
         ($type, $index_name) = ($1, $2);
         my $index =  {
@@ -429,6 +435,15 @@ sub list_indices {
         };
         # Hide fallback-of entries.
         next if $index->{'fallback-of'};
+        ($results, undef) = lookup_indices([$index_name], [], [], []);
+        if ($results == RETURN_CODE_SUCCESS) {
+            $index->{'cache-lookup'} = 'Ok';
+        } elsif ($results == RETURN_CODE_CACHE_IS_EMPTY
+                 || $results == RETURN_CODE_CACHE_NO_MATCHING_INDICES) {
+            $index->{'cache-lookup'} = "Empty (code: $results)";
+        } else {
+            $index->{'cache-lookup'} = "Error (code: $results)";
+        }
         for my $i (0..$#headers) {
             my $header = $headers[$i];
             my $value = $index->{$header->{'key'}};
@@ -747,7 +762,7 @@ sub main {
 
 }
 
-sub contents_file_paths {
+sub lookup_indices {
     my ($index_names, $arch_res, $suite_ref, $origin_ref) = @_;
     my (@paths, $any_entries);
     my $any_index = 0;
@@ -765,6 +780,7 @@ sub contents_file_paths {
         "\"$c\""
     } @cmd);
     my $debug_level = $Conf->{verbose} // 0;
+    my $code = RETURN_CODE_SUCCESS;
     $any_index = 1 if @{$index_names} and $index_names->[0] eq 'ALL';
     debug(1, 'Index restriction [name]: ' . join(' ', @{$index_names}));
     debug(1, 'Index restriction [arch]: ' .  join(' ', @{$arch_res}));
@@ -789,7 +805,7 @@ sub contents_file_paths {
             debug(2, " - suite/codenames: $suite_names");
             debug(2, " - filename: $filename");
         }
-        if ($arch ne '$(ARCHITECTURE)') {
+        if ($arch ne '$(ARCHITECTURE)' and @{$arch_res}) {
             next if none { $_ eq $arch } @{$arch_res};
         }
         next if not $any_index and none { $_ eq $index_name } @{$index_names};
@@ -800,17 +816,32 @@ sub contents_file_paths {
         next if @{$origin_ref} and none { $_ eq $origin } @{$origin_ref};
         push(@paths, $filename);
     }
+    close($fd);
     if (not @paths) {
         if (not $any_entries) {
+            $code = RETURN_CODE_CACHE_IS_EMPTY;
+        } else {
+            $code = RETURN_CODE_CACHE_NO_MATCHING_INDICES;
+        }
+    }
+    return ($code, \@paths);
+}
+
+sub contents_file_paths {
+    my ($res, $paths) = lookup_indices(@_);
+    if ($res != RETURN_CODE_SUCCESS) {
+        if ($res == RETURN_CODE_CACHE_IS_EMPTY) {
             stop_with_msg('The cache is empty. You need to run "apt update" first.',
                           RETURN_CODE_CACHE_IS_EMPTY);
         }
-        stop_with_msg('No Contents in the cache with the given restrictions',
-                      RETURN_CODE_CACHE_NO_MATCHING_INDICES);
+        if ($res == RETURN_CODE_CACHE_NO_MATCHING_INDICES) {
+            stop_with_msg('No Contents in the cache with the given restrictions',
+                          RETURN_CODE_CACHE_NO_MATCHING_INDICES);
+        }
+        stop_with_msg('Unknown / unexpected error returned when looking up indices.',
+                      255);
     }
-
-    close($fd);
-    return @paths;
+    return @{$paths};
 }
 
 eval {
