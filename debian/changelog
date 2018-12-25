@@ -3,6 +3,13 @@ apt-file (3.2) UNRELEASED; urgency=medium
   * Drop now unnecessary lintian-overrides.
   * Add a new "list-indices" command to list which indices can be
     enabled/disabled and searched (using the -I command).
+  * Assume that Contents files no longer have a descriptive header
+    that contains human-readable instructions for how to read the
+    file.  If you are working with Contents files that still have
+    them, then set "apt-file::Parser::Check-For-Description-Header"
+    to "true" in /etc/apt/apt.conf.d/50apt-file.conf.  Thanks to
+    Paul Wise for making this factor 2 speed improvement possible.
+    (Closes: #881405)
 
  -- Niels Thykier <niels@thykier.net>  Tue, 25 Dec 2018 09:29:45 +0000
 

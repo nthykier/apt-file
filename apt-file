@@ -32,6 +32,7 @@ use constant {
     CONFIG_SEARCH_INDEX_NAMES => 'apt-file::Index-Names',
     CONFIG_SEARCH_FILTER_ORIGINS => 'apt-file::Search-Filter::Origin',
     CONFIG_SEARCH_FILTER_SUITES => 'apt-file::Search-Filter::Suite',
+    CONFIG_SEARCH_PARSER_DESC_HEADER => 'apt-file::Parser::Check-For-Description-Header',
 };
 
 use POSIX qw(_exit);
@@ -160,6 +161,7 @@ sub start_pipe_to_cmd {
 sub open_data_pipeline {
     my ($file_list) = @_;
     my ($read_end, $write_end, $pid);
+    my $remove_header = $_config->get_bool(CONFIG_SEARCH_PARSER_DESC_HEADER, 0);
     pipe($read_end, $write_end)
         or error("pipe failed: $!");
     $pid = fork()
@@ -201,10 +203,15 @@ sub open_data_pipeline {
                 'cmd' => \@grep_cmd,
             };
         }
-        ($write_end, $sed_pid) = start_pipe_to_cmd($write_end, @sed_cmd);
-        $pid_table{$sed_pid} = {
-            'cmd' => \@sed_cmd,
-        };
+        if ($remove_header) {
+            debug(1, 'Using sed to remove header');
+            ($write_end, $sed_pid) = start_pipe_to_cmd($write_end, @sed_cmd);
+            $pid_table{$sed_pid} = {
+                'cmd' => \@sed_cmd,
+            };
+        } else {
+            debug(1, 'Assuming there is no header in Contents to skip');
+        }
         ($to_cat, $cat_pid) = start_pipe_to_cmd($write_end, @cat_cmd);
         $pid_table{$cat_pid} = {
             'cmd' => \@cat_cmd,
