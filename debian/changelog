@@ -18,6 +18,7 @@ apt-file (3.2) UNRELEASED; urgency=medium
     "apt update" / "apt-get update".
   * Sort the options in the --help output (except for --help and
     "--", which are both deliberately last).  (Closes: #651684)
+  * Bump Standards-Version to 4.3.0.
 
  -- Niels Thykier <niels@thykier.net>  Tue, 25 Dec 2018 09:29:45 +0000
 

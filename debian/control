@@ -14,7 +14,7 @@ Build-Depends:
  perl,
  bash-completion,
 Rules-Requires-Root: no
-Standards-Version: 4.1.4
+Standards-Version: 4.3.0
 Vcs-Browser: https://salsa.debian.org/apt-team/apt-file
 Vcs-Git: https://salsa.debian.org/apt-team/apt-file.git
 
