@@ -1,6 +1,8 @@
-apt-file (3.1.7) UNRELEASED; urgency=medium
+apt-file (3.2) UNRELEASED; urgency=medium
 
   * Drop now unnecessary lintian-overrides.
+  * Add a new "list-indices" command to list which indices can be
+    enabled/disabled and searched (using the -I command).
 
  -- Niels Thykier <niels@thykier.net>  Tue, 25 Dec 2018 09:29:45 +0000
 

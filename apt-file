@@ -401,6 +401,60 @@ sub grep_package($) {
     print_winners $ret, 0;
 }
 
+sub list_indices {
+    my $iter = AptPkg::Config::Iter->new($_config);
+
+    my @indices;
+    my @headers = (
+        {
+            header => 'Index Name (-I)',
+            key => 'name'
+        },
+        {
+            header => 'DefaultEnabled (Apt config)',
+            key => 'default-enabled',
+        },
+    );
+    my @len = map { length($_->{header}) } @headers;
+    while (defined(my $key = $iter->next)) {
+        my ($type, $index_name) = @_;
+        next if $key !~ m/^Acquire::IndexTargets::(deb|deb-src)::Contents-([^:  \t]+)$/;
+        ($type, $index_name) = ($1, $2);
+        my $index =  {
+            'name' => $index_name,
+            'type' => $type,
+            'key' => $key,
+            'default-enabled' => ($_config->{"${key}::DefaultEnabled"} // '<unset>'),
+            'fallback-of' => $_config->{"${key}::Fallback-Of"},
+        };
+        # Hide fallback-of entries.
+        next if $index->{'fallback-of'};
+        for my $i (0..$#headers) {
+            my $header = $headers[$i];
+            my $value = $index->{$header->{'key'}};
+            $len[$i] = length($value) if length($value) > $len[$i];
+        }
+        push(@indices, $index);
+    }
+
+    my $row_delimit = sprintf("+-%s-+", join('-+-', map { '-' x $len[$_] } (0..$#headers)));
+
+    printf("%s\n", $row_delimit);
+    printf("| %s |\n", join(' | ', map { sprintf("%-*s", $len[$_], $headers[$_]{'header'}) }
+                        (0..$#headers)));
+    printf("%s\n", $row_delimit);
+    for my $index (@indices) {
+        my $name = $index->{'name'};
+        my $type = $index->{'type'};
+        my $key = $index->{'key'};
+        my $enabled = $_config->{"${key}::DefaultEnabled"} // '<unset>';
+        printf("| %s |\n", join(' | ', map {
+            sprintf("%-*s", $len[$_], $index->{$headers[$_]{'key'}})
+        } (0..$#headers)));
+    }
+    printf("%s\n", $row_delimit);
+}
+
 sub print_help {
     my $err_code = shift || 0;
 
@@ -451,6 +505,7 @@ Action:
     update                              Fetch Contents files from apt-sources.
     search|find        <pattern>        Search files in packages
     list|show          <pattern>        List files in packages
+    list-indices                        List indices configured in APT.
 EOF
     exit $err_code;
 }
@@ -665,6 +720,7 @@ sub main {
         find   => \&grep_file,
         list   => \&grep_package,
         show   => \&grep_package,
+        'list-indices' => \&list_indices,
     };
 
     if ($Conf->{help}) {

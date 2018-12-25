@@ -30,6 +30,18 @@ fetched.
 By default, the B<list> action interprets its pattern as if
 B<--fixed-string> was specified.
 
+=item list-indices
+
+List the Contents indices registrered in APT and their global default
+status in a human readable format.  These indices can be searched via
+the B<-I> option (when enabled and after fetching the indices).
+
+Note that individual sources.list entries can override the global
+default.
+
+For a machine-readable format, please use L<apt-config(1)> (search for
+B<Acquire::IndexTargets>).
+
 =item search
 
 Search in which package a file is included. A list of all packages
