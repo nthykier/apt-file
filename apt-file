@@ -67,6 +67,24 @@ sub stop_with_msg {
     exit $return_code;
 }
 
+{
+    my $do_progress;
+    my $clear_length = 0;
+    sub tty_human_status {
+        my ($msg) = @_;
+        if (not defined($do_progress)) {
+            $do_progress = 0;
+            if (-t STDOUT and $Conf->{verbose} // 0 == 0) {
+                $do_progress = 1;
+            }
+        }
+        return if not $do_progress;
+        print "\r" . (' ' x $clear_length) . "\r";
+        print $msg;
+        $clear_length = length($msg);
+    }
+}
+
 sub debug {
     my ($level, $msg) = @_;
     return if not defined $Conf->{verbose} or $level > $Conf->{verbose};
@@ -104,6 +122,7 @@ sub print_winners ($$) {
         # Everything is a match
         $filtered_db = $db;
     } else {
+        tty_human_status('Filtering matches ...');
         # $db is a hash from package name to array of file names.  It
         # is a superset of the matching cases, so first we filter this
         # by the real pattern.
@@ -114,6 +133,8 @@ sub print_winners ($$) {
             }
         }
     }
+
+    tty_human_status('');
 
     if (not $filtered_db or not %{$filtered_db}) {
         debug(1, 'No matches');
@@ -336,6 +357,7 @@ sub grep_file($) {
     my $data    = shift;
     my $pattern = $Conf->{pattern};
 
+    tty_human_status("Searching through filenames ...");
     # If pattern starts with /, we need to match both ^pattern-without-slash
     # (which is put in $pattern) and ^.*pattern (put in $pattern2).
     # Later, they will be or'ed together.
@@ -380,6 +402,8 @@ sub grep_package($) {
     my $data = shift;
 
     my $pkgpat = $Conf->{pattern};
+    tty_human_status("Searching for contents of the packages ...");
+
     if ( $Conf->{is_regexp} ) {
         if ( $pkgpat !~ s{^(\^|\\A)}{} ) {
             $pkgpat = '\S*' . $pkgpat;
@@ -430,9 +454,7 @@ sub list_indices {
     my @len = map { length($_->{header}) } @headers;
     my ($results, $entries, %files_by_index);
 
-    if ($Conf->{verbose} // 0 < 1 and -t STDOUT) {
-        print "Computing index status ...";
-    }
+    tty_human_status('Computing index status ...');
 
     ($results, $entries) = lookup_indices(['ALL'], [], [], []);
 
@@ -480,9 +502,7 @@ sub list_indices {
 
     my $row_delimit = sprintf("+-%s-+", join('-+-', map { '-' x $len[$_] } (0..$#headers)));
 
-    if ($Conf->{verbose} // 0 < 1 and -t STDOUT) {
-        print "\r";
-    }
+    tty_human_status('');
 
     printf("%s\n", $row_delimit);
     printf("| %s |\n", join(' | ', map { sprintf("%-*s", $len[$_], $headers[$_]{'header'}) }
@@ -780,6 +800,7 @@ sub main {
     }
 
     if ($is_search) {
+        tty_human_status('Finding relevant cache files to search ...');
         my @contents = contents_file_paths(\@index_names,
                                            \@arch_res,
                                            \@suites,
