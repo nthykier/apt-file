@@ -1,3 +1,10 @@
+apt-file (3.2.1) UNRELEASED; urgency=medium
+
+  * Include a final new-line in the 50apt-file.conf file.  Thanks to
+    Sven Joachim for reporting its absence.  (Closes: #917304)
+
+ -- Niels Thykier <niels@thykier.net>  Wed, 26 Dec 2018 09:00:01 +0000
+
 apt-file (3.2) unstable; urgency=medium
 
   * Drop now unnecessary lintian-overrides.
