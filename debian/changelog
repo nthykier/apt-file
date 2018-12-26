@@ -5,6 +5,9 @@ apt-file (3.2.1) UNRELEASED; urgency=medium
   * Optimize "apt-file list-indices" by about a factor 3 in the
     default case by calling "apt-get indextargets" only once rather
     than once per index.
+  * Have "apt-file list-indices" print a little message to indicate
+    that it is working as the start up can be a bit slower than human
+    reaction times making it "feel slow" without a message.
 
  -- Niels Thykier <niels@thykier.net>  Wed, 26 Dec 2018 09:00:01 +0000
 

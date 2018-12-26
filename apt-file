@@ -428,8 +428,14 @@ sub list_indices {
         },
     );
     my @len = map { length($_->{header}) } @headers;
-    my ($results, $entries) = lookup_indices(['ALL'], [], [], []);
-    my %files_by_index;
+    my ($results, $entries, %files_by_index);
+
+    if ($Conf->{verbose} // 0 < 1 and -t STDOUT) {
+        print "Computing index status ...";
+    }
+
+    ($results, $entries) = lookup_indices(['ALL'], [], [], []);
+
     if ($results == RETURN_CODE_SUCCESS) {
         for my $entry (@{$entries}) {
             $files_by_index{$entry->{'index'}}++;
@@ -473,6 +479,10 @@ sub list_indices {
     }
 
     my $row_delimit = sprintf("+-%s-+", join('-+-', map { '-' x $len[$_] } (0..$#headers)));
+
+    if ($Conf->{verbose} // 0 < 1 and -t STDOUT) {
+        print "\r";
+    }
 
     printf("%s\n", $row_delimit);
     printf("| %s |\n", join(' | ', map { sprintf("%-*s", $len[$_], $headers[$_]{'header'}) }
