@@ -428,9 +428,17 @@ sub list_indices {
         },
     );
     my @len = map { length($_->{header}) } @headers;
+    my ($results, $entries) = lookup_indices(['ALL'], [], [], []);
+    my %files_by_index;
+    if ($results == RETURN_CODE_SUCCESS) {
+        for my $entry (@{$entries}) {
+            $files_by_index{$entry->{'index'}}++;
+        }
+    }
+
     while (defined(my $key = $iter->next)) {
         my ($type, $index_name) = @_;
-        my $results;
+        my $cache_status = 'Ok';
         next if $key !~ m/^Acquire::IndexTargets::(deb|deb-src)::Contents-([^:  \t]+)$/;
         ($type, $index_name) = ($1, $2);
         my $index =  {
@@ -442,15 +450,20 @@ sub list_indices {
         };
         # Hide fallback-of entries.
         next if $index->{'fallback-of'};
-        ($results, undef) = lookup_indices([$index_name], [], [], []);
-        if ($results == RETURN_CODE_SUCCESS) {
-            $index->{'cache-lookup'} = 'Ok';
-        } elsif ($results == RETURN_CODE_CACHE_IS_EMPTY
+        if (exists($files_by_index{$index_name})) {
+            $cache_status = 'Ok';
+        } elsif ($results == RETURN_CODE_SUCCESS
+                 || $results == RETURN_CODE_CACHE_IS_EMPTY
                  || $results == RETURN_CODE_CACHE_NO_MATCHING_INDICES) {
-            $index->{'cache-lookup'} = "Empty (code: $results)";
+            my $code = $results;
+            if ($code == RETURN_CODE_SUCCESS) {
+                $code = RETURN_CODE_CACHE_NO_MATCHING_INDICES;
+            }
+            $cache_status = "Empty (code: $code)";
         } else {
-            $index->{'cache-lookup'} = "Error (code: $results)";
+            $cache_status = "Error (code: $results)";
         }
+        $index->{'cache-lookup'} = $cache_status;
         for my $i (0..$#headers) {
             my $header = $headers[$i];
             my $value = $index->{$header->{'key'}};
@@ -771,7 +784,7 @@ sub main {
 
 sub lookup_indices {
     my ($index_names, $arch_res, $suite_ref, $origin_ref) = @_;
-    my (@paths, $any_entries);
+    my (@cache_entries, $any_entries);
     my $any_index = 0;
     my $format = join("\x1F",
                       '$(IDENTIFIER)',
@@ -821,21 +834,24 @@ sub lookup_indices {
             next if none { $_ eq $codename or $_ eq $suite } @{$suite_ref};
         }
         next if @{$origin_ref} and none { $_ eq $origin } @{$origin_ref};
-        push(@paths, $filename);
+        push(@cache_entries, {
+            'path'  => $filename,
+            'index' => $index_name,
+        });
     }
     close($fd);
-    if (not @paths) {
+    if (not @cache_entries) {
         if (not $any_entries) {
             $code = RETURN_CODE_CACHE_IS_EMPTY;
         } else {
             $code = RETURN_CODE_CACHE_NO_MATCHING_INDICES;
         }
     }
-    return ($code, \@paths);
+    return ($code, \@cache_entries);
 }
 
 sub contents_file_paths {
-    my ($res, $paths) = lookup_indices(@_);
+    my ($res, $entries) = lookup_indices(@_);
     if ($res != RETURN_CODE_SUCCESS) {
         if ($res == RETURN_CODE_CACHE_IS_EMPTY) {
             stop_with_msg('The cache is empty. You need to run "apt-file update" first.',
@@ -848,7 +864,7 @@ sub contents_file_paths {
         stop_with_msg('Unknown / unexpected error returned when looking up indices.',
                       255);
     }
-    return @{$paths};
+    return map { $_->{'path'} } @{$entries};
 }
 
 eval {
