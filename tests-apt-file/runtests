@@ -17,6 +17,7 @@ if (!scalar @ARGV) {
 print "runtests started\n";
 print "ARGV: @ARGV\n";
 print "PATH=$ENV{PATH}\n";
+print "APT_CONFIG=$ENV{APT_CONFIG}\n";
 print "\n";
 
 foreach my $t (sort @tests) {
