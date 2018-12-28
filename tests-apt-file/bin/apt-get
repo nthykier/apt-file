@@ -1,5 +1,10 @@
 #!/bin/sh
 
+while [ "x$1" = "x-c" ] || [ "x$1" = "x-o" ] ; do
+    shift
+    shift
+done
+
 if [ "$1" != "indextargets" ]; then
     echo "$0: Fake apt-get does not support $1" >&1
     exit 1
