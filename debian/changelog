@@ -7,6 +7,8 @@ apt-file (3.2.1) UNRELEASED; urgency=medium
     than once per index.
   * Have apt-file print status indicators when stdout is a TTY
     (and when not running in debug mode).
+  * Explicitly pass configuration file to apt-file during the test
+    to fix a problem with the autopkgtests failing.
 
  -- Niels Thykier <niels@thykier.net>  Wed, 26 Dec 2018 09:00:01 +0000
 
