@@ -14,6 +14,11 @@ if (!scalar @ARGV) {
 	die "apt-file command not given";
 }
 
+print "runtests started\n";
+print "ARGV: @ARGV\n";
+print "PATH=$ENV{PATH}\n";
+print "\n";
+
 foreach my $t (sort @tests) {
 	$t =~ m{/([^/]*).test$};
 	my $name = $1;
