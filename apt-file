@@ -283,6 +283,7 @@ sub do_grep($$) {
     $| = 1;
     my $regexp = eval { $Conf->{ignore_case} ? qr/${pattern}/i : qr/${pattern}/ };
     error($@) if $@;
+    my $matches = 0;
     my $quick_regexp = escape_parens($regexp);
     my $fd = open_data_pipeline($data);
     while (<$fd>) {
@@ -297,6 +298,9 @@ sub do_grep($$) {
 
             # Put leading slash on file name
             push @{ $ret->{"/$fname"} }, basename $_;
+        }
+        if (++$matches % 10 == 0) {
+            tty_human_status("Searching, found $matches results so far ...");
         }
     }
     close($fd);
