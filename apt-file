@@ -42,8 +42,11 @@ use File::Path;
 use File::Temp;
 use AptPkg::Config '$_config';
 use List::MoreUtils qw/any none uniq/;
+use Time::HiRes qw(gettimeofday tv_interval);
 
 my ($Conf, @apt_options);
+my $time_baseline = [gettimeofday()];
+my $time_since_last = $time_baseline;
 
 sub warning {
     my ($msg) = @_;
@@ -88,7 +91,11 @@ sub stop_with_msg {
 sub debug {
     my ($level, $msg) = @_;
     return if not defined $Conf->{verbose} or $level > $Conf->{verbose};
-    print STDERR "D: ${msg}\n";
+    my $now = [gettimeofday()];
+    my $diff_baseline = tv_interval($time_baseline, $now);
+    my $diff_last = tv_interval($time_since_last, $now);
+    $time_since_last = $now;
+    print STDERR sprintf("D: <%.3fs> [%.3fs] ($$) %s\n", $diff_baseline, $diff_last, $msg);
 }
 
 sub debug_line($) {
@@ -158,6 +165,7 @@ sub print_winners ($$) {
 sub start_pipe_to_cmd {
     my ($sub_proc_write_end, @cmd) = @_;
     my ($read_end, $our_write_end, $pid);
+    my $parser_pid = $$;
     pipe($read_end, $our_write_end)
         or error("pipe failed: $!");
     $pid = fork()
@@ -168,7 +176,7 @@ sub start_pipe_to_cmd {
             or error("fdup stdout failed: $!");
         close($our_write_end)
             or error("close write end of pipe: $!");
-        debug(1, 'starting ' . join(' ', @cmd));
+        debug(1, "[${parser_pid}] starting " . join(' ', @cmd));
         exec {$cmd[0]} @cmd
             or error('exec ' . join(' ', @cmd) . " failed: $!");
     }
@@ -237,14 +245,15 @@ sub open_data_pipeline {
         $pid_table{$cat_pid} = {
             'cmd' => \@cat_cmd,
         };
-        debug(1, "Starting to pass files");
+        debug(1, 'Starting to pass files');
         for my $file (uniq(@{$file_list})) {
             debug(1, "Passing $file");
             printf {$to_cat} "%s\0", $file;
         }
-        debug(1, "Closing input to cat");
+        debug(1, 'Closing input to cat');
         close($to_cat)
             or error("close write end of xargs pipe: $!");
+        debug(1, 'Input closed, reaping completed children');
         do {
             $dead_pid = waitpid(-1, 0);
             if ($dead_pid > 0) {
@@ -260,6 +269,7 @@ sub open_data_pipeline {
                 }
             }
         } while ($dead_pid > 0);
+        debug(1, 'Reaped children complete');
         if (my $sig = ($sub_proc_error & 0x7f)) {
             warn("Command ${failed_cmd} was killed by signal ${sig}");
             POSIX::_exit($sig);
@@ -286,6 +296,7 @@ sub do_grep($$) {
     my $matches = 0;
     my $quick_regexp = escape_parens($regexp);
     my $fd = open_data_pipeline($data);
+    debug(1, "Pipeline open, waiting for input");
     while (<$fd>) {
 
         # faster, non-capturing search first
@@ -309,6 +320,7 @@ sub do_grep($$) {
     if ($?) {
         error("A subprocess exited uncleanly (raw: $?)");
     }
+    debug(1, 'Read all input');
     return reverse_hash($ret);
 }
 
