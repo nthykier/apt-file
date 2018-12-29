@@ -74,7 +74,7 @@ sub stop_with_msg {
         my ($msg) = @_;
         if (not defined($do_progress)) {
             $do_progress = 0;
-            if (-t STDOUT and $Conf->{verbose} // 0 == 0) {
+            if (-t STDOUT and ($Conf->{verbose} // 0) == 0) {
                 $do_progress = 1;
             }
         }
