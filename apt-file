@@ -176,7 +176,7 @@ sub start_pipe_to_cmd {
             or error("fdup stdout failed: $!");
         close($our_write_end)
             or error("close write end of pipe: $!");
-        debug(1, "[${parser_pid}] starting " . join(' ', @cmd));
+        debug(1, "Starting " . join(' ', @cmd));
         exec {$cmd[0]} @cmd
             or error('exec ' . join(' ', @cmd) . " failed: $!");
     }
