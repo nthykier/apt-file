@@ -221,5 +221,5 @@ please have a look at the following blog posts of Julian Andres Klode:
  * [Much faster incremental apt updates][much-faster-incremental-apt-updates]
  * [APT 1.1.8 to 1.1.10 – going “faster”][apt-1-1-8-to-1-1-10-going-faster]
 
-[much-faster-incremental-apt-updates]: https://juliank.wordpress.com/2015/12/26/much-faster-incremental-apt-updates/
-[apt-1-1-8-to-1-1-10-going-faster]: https://juliank.wordpress.com/2015/12/30/apt-1-1-8-to-1-1-10-going-faster/
+[much-faster-incremental-apt-updates]: https://blog.jak-linux.org/2015/12/26/much-faster-incremental-apt-updates/
+[apt-1-1-8-to-1-1-10-going-faster]: https://blog.jak-linux.org/2015/12/30/apt-1-1-8-to-1-1-10-going-faster/

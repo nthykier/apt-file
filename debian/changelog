@@ -3,6 +3,7 @@ apt-file (3.2.2) UNRELEASED; urgency=medium
   * Fix bug where the progress indicator was still been using
     under debug mode (despite the intention for it to be
     disabled as it clashes with the debug messages).
+  * README.md: Update links to Julian's blog.  (Closes: #921115)
 
  -- Niels Thykier <niels@thykier.net>  Sat, 29 Dec 2018 09:42:48 +0000
 
