@@ -38,10 +38,8 @@ use constant {
 use POSIX qw(_exit);
 use Getopt::Long qw/:config gnu_getopt no_ignore_case/;
 use File::Basename;
-use File::Path;
-use File::Temp;
 use AptPkg::Config '$_config';
-use List::MoreUtils qw/any none uniq/;
+use List::Util qw/any none uniq/;
 use Time::HiRes qw(gettimeofday tv_interval);
 
 my ($Conf, @apt_options);
@@ -774,6 +772,7 @@ sub main {
         }
         else {
             # create tmpfile for zgrep with patterns that have leading slash removed
+            require File::Temp;
             my @zgrep_list = @list;
             map { s{^/}{} } @zgrep_list;
             my $tmpfile = File::Temp->new();
