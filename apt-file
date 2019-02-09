@@ -516,6 +516,7 @@ sub list_indices {
         push(@indices, $index);
     }
 
+    debug(1, 'All information collected; creating table');
     my $row_delimit = sprintf("+-%s-+", join('-+-', map { '-' x $len[$_] } (0..$#headers)));
 
     tty_human_status('');
@@ -534,6 +535,8 @@ sub list_indices {
         } (0..$#headers)));
     }
     printf("%s\n", $row_delimit);
+    debug(1, 'Finished writing table');
+
 }
 
 sub print_help {
@@ -886,6 +889,7 @@ sub lookup_indices {
             'index' => $index_name,
         });
     }
+    debug(1, "Finished reading output from $cmd_debug");
     close($fd);
     if (not @cache_entries) {
         if (not $any_entries) {
