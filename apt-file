@@ -35,7 +35,6 @@ use constant {
     CONFIG_SEARCH_PARSER_DESC_HEADER => 'apt-file::Parser::Check-For-Description-Header',
 };
 
-use POSIX qw(_exit);
 use Getopt::Long qw/:config gnu_getopt no_ignore_case/;
 use File::Basename;
 use AptPkg::Config '$_config';
@@ -252,6 +251,9 @@ sub open_data_pipeline {
         close($to_cat)
             or error("close write end of xargs pipe: $!");
         debug(1, 'Input closed, reaping completed children');
+        # We load POSIX here as it take ~0.010s and the children will
+        # be vastly longer, so we can "hide" the load time here.
+        require POSIX;
         do {
             $dead_pid = waitpid(-1, 0);
             if ($dead_pid > 0) {
