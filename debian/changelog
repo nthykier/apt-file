@@ -1,3 +1,10 @@
+apt-file (3.2.3) UNRELEASED; urgency=medium
+
+  * Drop no longer supported add-log-mailing-address setting from
+    debian/changelog.
+
+ -- Debian Janitor <janitor@jelmer.uk>  Fri, 27 Dec 2019 01:58:57 +0000
+
 apt-file (3.2.2) unstable; urgency=medium
 
   * Fix bug where the progress indicator was still been using
@@ -1010,7 +1017,3 @@ apt-file (0.2.0-1) unstable; urgency=low
   * Initial Release.
 
  -- Sebastien J. Gross <seb@sjgross.org>  Sat, 13 Oct 2001 21:36:47 +0200
-
-Local variables:
-mode: debian-changelog
-End:
