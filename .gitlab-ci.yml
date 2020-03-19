@@ -1,16 +1,7 @@
-include: https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/salsa-ci.yml
-
-build:
-  extends: .build-unstable
-
-reprotest:
-  extends: .test-reprotest
-
-lintian:
-  extends: .test-lintian
-
-autopkgtest:
-  extends: .test-autopkgtest
-
-piuparts:
-  extends: .test-piuparts
+tests-unstable:
+  stage: test
+  image: debian:unstable
+  script:
+    - apt-get update
+    - apt-get build-dep -y .
+    - dpkg-buildpackage -us -uc -tc
