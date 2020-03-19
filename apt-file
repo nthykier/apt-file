@@ -305,11 +305,11 @@ sub do_grep($$) {
         next if !( ( $fname, $pkgs ) = /$regexp/o );
 
         debug_line ".";
-        foreach ( split /,/, $pkgs ) {
-
-            # Put leading slash on file name
-            push @{ $ret->{"/$fname"} }, basename $_;
-        }
+        # Put leading slash on file name
+        push(@{ $ret->{"/$fname"} },
+             # ... and extract the package name
+             map { basename($_) } split(m/,/, $pkgs)
+        );
         if (++$matches % 10 == 0) {
             tty_human_status("Searching, found $matches results so far ...");
         }
