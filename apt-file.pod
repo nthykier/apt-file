@@ -179,6 +179,21 @@ Ignore case when searching for pattern.
 
 Only display package name; do not display file names.
 
+=item --stream-results
+
+I<This is a special-usage option useful for dealing with searches that
+produce a high number of matches (10 000+) or/and automated processing
+of results.>
+
+Disable deduplication logic and immediately emit a result when a match
+is found.
+
+This can greatly reduce the memory requirements for apt-file when
+processing searches with many matches.  It will also reduce the time
+until the first match is emitted, which can be useful if matches can
+be processed as they are discovered and the consumer can handle
+duplicated matches.
+
 =item -o, --option APT::Option=Value
 
 Set a Configuration Option; This will set an arbitrary configuration

@@ -296,6 +296,8 @@ sub do_grep($$) {
     my $matches = 0;
     my $quick_regexp = escape_parens($regexp);
     my $fd = open_data_pipeline($data);
+    my $stream_results = $Conf->{streaming};
+    tty_human_status('') if $stream_results;
     debug(1, "Pipeline open, waiting for input");
     while (<$fd>) {
 
@@ -305,13 +307,18 @@ sub do_grep($$) {
         next if !( ( $fname, $pkgs ) = /$regexp/o );
 
         debug_line ".";
-        # Put leading slash on file name
-        push(@{ $ret->{"/$fname"} },
-             # ... and extract the package name
-             map { basename($_) } split(m/,/, $pkgs)
-        );
-        if (++$matches % 10 == 0) {
-            tty_human_status("Searching, found $matches results so far ...");
+
+        if ($stream_results) {
+            stream_results("/$fname", map { basename($_) } split(m/,/, $pkgs));
+        } else {
+            # Put leading slash on file name
+            push(@{ $ret->{"/$fname"} },
+                 # ... and extract the package name
+                 map { basename($_) } split(m/,/, $pkgs)
+            );
+            if (++$matches % 10 == 0) {
+                tty_human_status("Searching, found $matches results so far ...");
+            }
         }
     }
     close($fd);
@@ -321,7 +328,20 @@ sub do_grep($$) {
         error("A subprocess exited uncleanly (raw: $?)");
     }
     debug(1, 'Read all input');
+    return if $stream_results;
     return reverse_hash($ret);
+}
+
+sub stream_results {
+    my ($filename, @pkgs) = @_;
+    if ($Conf->{package_only}) {
+        print map { "$_\n" } @pkgs;
+    } else {
+        for my $pkg (@pkgs) {
+            print "$pkg: $filename\n";
+        }
+    }
+    return;
 }
 
 sub escape_parens {
@@ -577,6 +597,7 @@ Other options:
     --config           -c <file>        Parse the given APT config file [R]
     --option           -o <A::B>=<V>    Set the APT config option A::B to "V" [R]
     --package-only     -l               Only display packages name
+    --stream-results                    Emit results immediately (without deduplication)
     --verbose          -v               run in verbose mode [R]
     --help             -h               Show this help.
                        --               End of options (necessary if pattern
@@ -606,6 +627,7 @@ sub get_options() {
         "fixed-string|F"    => \$Conf->{fixed_strings},
         "from-file|f"       => \$Conf->{from_file},
         "from-deb|D"        => \$Conf->{from_deb},
+        'stream-results'    => \$Conf->{streaming},
         'filter-suites=s'   => sub { _set_option('in-suites', CONFIG_SEARCH_FILTER_SUITES, $_[1]); },
         'filter-origins=s'  => sub { _set_option('from-origin', CONFIG_SEARCH_FILTER_ORIGINS, $_[1]); },
         'config-file|c=s@'  => \&_parse_apt_config_file,
