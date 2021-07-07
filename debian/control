@@ -7,7 +7,6 @@ Build-Depends:
  apt (>= 1.3~exp1~),
  debhelper-compat (= 11),
  libapt-pkg-perl,
- liblist-moreutils-perl,
  libregexp-assemble-perl,
  libtest-minimumversion-perl,
  libtest-strict-perl,
@@ -22,8 +21,7 @@ Package: apt-file
 Architecture: all
 Depends: ${perl:Depends}, ${misc:Depends},
  apt (>= 1.3~exp1~),
- libapt-pkg-perl, liblist-moreutils-perl,
- libregexp-assemble-perl
+ libapt-pkg-perl, libregexp-assemble-perl
 Breaks: apt-venv (<< 1.0.0-1~),
         command-not-found (<< 0.2.38-2~),
         devscripts (<< 2.15.10~),
