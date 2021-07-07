@@ -10,6 +10,11 @@ apt-file (3.3) UNRELEASED; urgency=medium
     but also emit duplicate results in many cases.  It can greatly
     reduce memory usage and runtime spent up to first result.
 
+  [ Lucy Phipps ]
+  * apt-file: Fix invalid call to stop_with_msg.
+  * debian/control: Remove obsolete (build-)dependency on
+    liblist-moreutils-perl.
+
  -- Debian Janitor <janitor@jelmer.uk>  Fri, 27 Dec 2019 01:58:57 +0000
 
 apt-file (3.2.2) unstable; urgency=medium
